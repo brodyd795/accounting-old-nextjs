@@ -1,15 +1,19 @@
 {
-  "name": "accounting-new",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },
-  "dependencies": {
-    "next": "9.4.0",
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
-  }
+	"name": "accounting-new",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start"
+	},
+	"dependencies": {
+		"next": "9.4.0",
+		"react": "16.13.1",
+		"react-dom": "16.13.1",
+		"styled-components": "5.0.1"
+	},
+	"devDependencies": {
+		"babel-plugin-styled-components": "^1.8.0"
+	}
 }

@@ -13,9 +13,9 @@ const StyledDiv = styled.div`
 `;
 
 const Index = () => (
-	<Page title={"Home"}>
+	<Page title={"Search"}>
 		<StyledDiv>
-			<p>Home</p>
+			<p>Search</p>
 		</StyledDiv>
 	</Page>
 );

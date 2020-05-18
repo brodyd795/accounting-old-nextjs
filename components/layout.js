@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 
 import Navbar from "./navbar";
-import Main from "./main";
+import Header from "./header";
 
-const PageInnerWrapper = ({ children }) => {
+const Layout = ({ children }) => {
 	const [open, setOpen] = useState(false);
 
 	return (
 		<>
 			<Navbar open={open} setOpen={setOpen} />
-			<Main setOpen={setOpen} />
-			{children}
+			<Header setOpen={setOpen} children />
 		</>
 	);
 };
 
-export default PageInnerWrapper;
+export default Layout;

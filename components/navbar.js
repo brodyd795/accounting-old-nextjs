@@ -1,7 +1,12 @@
-import React, { useEffect } from "react";
-
+import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
+
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faHome } from "@fortawesome/free-solid-svg-icons";
+
+import NavCloseToggler from "./navCloseToggler";
+import NavLink from "./navLink";
 
 const StyledNavbar = styled.nav`
 	margin: 0;
@@ -9,13 +14,13 @@ const StyledNavbar = styled.nav`
 	width: 14em;
 	position: fixed;
 	overflow: auto;
-	background-color: gray;
+	background-color: #333;
+	text-align: center;
 
 	@media (max-width: 768px) {
 		width: ${(props) => (props.open === true ? "100%" : "0")};
 		z-index: 1;
 		overflow-x: hidden;
-		text-align: center;
 		border: none;
 		transition: 0.3s;
 	}
@@ -27,31 +32,23 @@ const StyledNavbar = styled.nav`
 	a:hover {
 		color: blue;
 	}
-`;
 
-const StyledCloseToggler = styled.button`
-	@media (min-width: 769px) {
-		display: none;
+	.active {
+		background-color: gray;
 	}
 `;
 
 const Navbar = ({ open, setOpen }) => {
 	return (
 		<StyledNavbar id="nav" open={open}>
+			<NavCloseToggler setOpen={setOpen} />
 			<h1>Accounting</h1>
-			<Link href="#">
-				<a>Link 1</a>
+			<Link href="/" as="/">
+				<NavLink path={"/"} icon={faHome} text="Home" />
 			</Link>
-
-			<Link href="#">
-				<a>Link 2</a>
+			<Link href="/search" as="/search">
+				<NavLink path={"/search"} icon={faSearch} text="Search" />
 			</Link>
-			<StyledCloseToggler
-				onClick={() => {
-					setOpen(false);
-				}}>
-				Exit Toggle
-			</StyledCloseToggler>
 		</StyledNavbar>
 	);
 };

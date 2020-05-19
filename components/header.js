@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import Welcome from "./welcome";
 
 const StyledHeader = styled.div`
 	position: relative;
@@ -14,9 +15,6 @@ const StyledHeader = styled.div`
 	a.icon {
 		background: red;
 		display: block;
-		// position: absolute;
-		// right: 0;
-		// top: 0;
 	}
 `;
 
@@ -26,10 +24,14 @@ const iconStyle = {
 	cursor: "pointer",
 };
 
-const inputStyle = {
-	margin: "5px",
-	float: "right",
-};
+const StyledInputWrapper = styled.div`
+	margin: "5px";
+	@media (max-width: 768px) {
+		display: none;
+	}
+	display: flex;
+	justify-content: flex-end;
+`;
 
 const IconWrapper = styled.div`
 	@media (min-width: 769px) {
@@ -50,7 +52,10 @@ const Header = ({ setOpen, children }) => (
 					}}
 				/>
 			</IconWrapper>
-			<input type="text" placeholder="Search" style={inputStyle} />
+			<StyledInputWrapper>
+				<input placeholder="Search..." />
+			</StyledInputWrapper>
+			<Welcome />
 			{children}
 		</div>
 	</StyledHeader>

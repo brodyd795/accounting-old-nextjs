@@ -16,13 +16,13 @@ const iconStyle = {
 };
 
 const textStyle = {
-	paddingLeft: "5px",
+	paddingLeft: "10px",
 };
 
 const NavLink = ({ path, icon, text }) => {
 	const router = useRouter();
 	return (
-		<StyledLinkDiv className={router.pathname === `path` && "active"}>
+		<StyledLinkDiv className={router.pathname === path && "active"}>
 			<FontAwesomeIcon icon={icon} style={iconStyle} />
 			<span style={textStyle}>{text}</span>
 		</StyledLinkDiv>

@@ -44,10 +44,14 @@ const Navbar = ({ open, setOpen }) => {
 			<NavCloseToggler setOpen={setOpen} />
 			<h1>Accounting</h1>
 			<Link href="/" as="/">
-				<NavLink path={"/"} icon={faHome} text="Home" />
+				<div>
+					<NavLink path={"/"} icon={faHome} text="Home" />
+				</div>
 			</Link>
 			<Link href="/search" as="/search">
-				<NavLink path={"/search"} icon={faSearch} text="Search" />
+				<div>
+					<NavLink path={"/search"} icon={faSearch} text="Search" />
+				</div>
 			</Link>
 		</StyledNavbar>
 	);

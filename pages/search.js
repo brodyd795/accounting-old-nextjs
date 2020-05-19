@@ -1,23 +1,9 @@
 import Page from "../components/page";
-import styled from "styled-components";
 
-const StyledDiv = styled.div`
-	@media (min-width: 768px) {
-		margin-left: 14em;
-		margin-top: 0;
-	}
-	p {
-		margin: 0;
-		padding-top: 20px;
-	}
-`;
-
-const Index = () => (
+const Search = () => (
 	<Page title={"Search"}>
-		<StyledDiv>
-			<p>Search</p>
-		</StyledDiv>
+		<p>Search</p>
 	</Page>
 );
 
-export default Index;
+export default Search;

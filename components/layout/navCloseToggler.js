@@ -17,12 +17,17 @@ const StyledNavCloseToggler = styled.div`
 	}
 `;
 
+const iconStyle = {
+	width: "25px",
+	height: "25px",
+};
+
 const NavCloseToggler = ({ setOpen }) => (
 	<StyledNavCloseToggler
 		onClick={() => {
 			setOpen(false);
 		}}>
-		<FontAwesomeIcon icon={faTimes} />
+		<FontAwesomeIcon icon={faTimes} style={iconStyle} />
 	</StyledNavCloseToggler>
 );
 

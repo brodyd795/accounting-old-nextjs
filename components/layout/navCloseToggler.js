@@ -26,7 +26,8 @@ const NavCloseToggler = ({ setOpen }) => (
 	<StyledNavCloseToggler
 		onClick={() => {
 			setOpen(false);
-		}}>
+		}}
+		className="noSelect">
 		<FontAwesomeIcon icon={faTimes} style={iconStyle} />
 	</StyledNavCloseToggler>
 );

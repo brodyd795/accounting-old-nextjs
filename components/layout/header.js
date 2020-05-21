@@ -54,6 +54,7 @@ const Header = ({ setOpen, children }) => (
 					onClick={() => {
 						setOpen(true);
 					}}
+					className="noSelect"
 				/>
 			</IconWrapper>
 			<StyledInputWrapper>

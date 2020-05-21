@@ -9,6 +9,10 @@ const GlobalStyle = createGlobalStyle`
         color: white;
         font-family: Arial, Helvetica, sans-serif;
     }
+
+    .noSelect {
+        -webkit-tap-highlight-color: transparent;
+    }
 `;
 
 export default GlobalStyle;

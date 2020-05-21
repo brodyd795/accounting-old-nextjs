@@ -5,18 +5,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const StyledLinkDiv = styled.div`
 	cursor: pointer;
+	padding: 10px 5px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
 
 	:hover {
-		background-color: gray;
+		background-color: #222;
 	}
 `;
 
 const iconStyle = {
-	width: "20px",
+	width: "25px",
+	height: "25px",
 };
 
 const textStyle = {
 	paddingLeft: "10px",
+	fontSize: "20px",
 };
 
 const NavLink = ({ path, icon, text }) => {

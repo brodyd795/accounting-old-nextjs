@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const StyledNavCloseToggler = styled.div`
 	text-align: right;
@@ -7,7 +9,7 @@ const StyledNavCloseToggler = styled.div`
 	cursor: pointer;
 
 	:hover {
-		color: blue;
+		color: gray;
 	}
 
 	@media (min-width: 769px) {
@@ -20,7 +22,7 @@ const NavCloseToggler = ({ setOpen }) => (
 		onClick={() => {
 			setOpen(false);
 		}}>
-		X
+		<FontAwesomeIcon icon={faTimes} />
 	</StyledNavCloseToggler>
 );
 

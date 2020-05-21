@@ -18,19 +18,23 @@ const StyledHeader = styled.div`
 	}
 `;
 
-const iconStyle = {
+const navbarTogglerStyle = {
 	width: "20px",
 	margin: "5px",
 	cursor: "pointer",
 };
 
 const StyledInputWrapper = styled.div`
-	margin: "5px";
+	margin: 5px;
 	@media (max-width: 768px) {
 		display: none;
 	}
 	display: flex;
 	justify-content: flex-end;
+`;
+
+const StyledInput = styled.input`
+	font-size: 15px;
 `;
 
 const IconWrapper = styled.div`
@@ -46,14 +50,14 @@ const Header = ({ setOpen, children }) => (
 			<IconWrapper>
 				<FontAwesomeIcon
 					icon={faBars}
-					style={iconStyle}
+					style={navbarTogglerStyle}
 					onClick={() => {
 						setOpen(true);
 					}}
 				/>
 			</IconWrapper>
 			<StyledInputWrapper>
-				<input placeholder="Search..." />
+				<StyledInput placeholder="Search..." />
 			</StyledInputWrapper>
 			<Welcome />
 			{children}

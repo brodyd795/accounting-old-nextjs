@@ -1,4 +1,4 @@
-import Page from "../components/page";
+import Page from "../components/layout/page";
 
 const Index = () => (
 	<Page title={"Home"}>

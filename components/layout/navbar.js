@@ -29,30 +29,50 @@ const StyledNavbar = styled.nav`
 		display: block;
 	}
 
-	a:hover {
-		color: blue;
+	.active {
+		background-color: #222;
+		border-left: 2px solid red;
 	}
 
-	.active {
-		background-color: gray;
+	#brand {
+		font-size: 30px;
 	}
+`;
+
+const StyledLinksList = styled.ul`
+	margin-top: 100px;
+	padding-left: 10px;
+
+	li {
+		list-style-type: none;
+		padding: 0;
+	}
+`;
+
+const StyledBrand = styled.div`
+	font-size: 30px;
+	margin-top: 1em;
 `;
 
 const Navbar = ({ open, setOpen }) => {
 	return (
 		<StyledNavbar id="nav" open={open}>
 			<NavCloseToggler setOpen={setOpen} />
-			<h1>Accounting</h1>
-			<Link href="/" as="/">
-				<div>
-					<NavLink path={"/"} icon={faHome} text="Home" />
-				</div>
-			</Link>
-			<Link href="/search" as="/search">
-				<div>
-					<NavLink path={"/search"} icon={faSearch} text="Search" />
-				</div>
-			</Link>
+			<StyledBrand>
+				<span>Accounting</span>
+			</StyledBrand>
+			<StyledLinksList>
+				<Link href="/" as="/">
+					<li className="navLinkWrapper">
+						<NavLink path={"/"} icon={faHome} text="Home" />
+					</li>
+				</Link>
+				<Link href="/search" as="/search">
+					<li className="navLinkWrapper">
+						<NavLink path={"/search"} icon={faSearch} text="Search" />
+					</li>
+				</Link>
+			</StyledLinksList>
 		</StyledNavbar>
 	);
 };

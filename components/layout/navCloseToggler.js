@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import Times from "../../static/svgs/times.svg";
+import Times from "../../public/svgs/times.svg";
 
 const StyledNavCloseToggler = styled.div`
 	text-align: right;

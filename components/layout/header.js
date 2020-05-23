@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import Welcome from "./welcome";
-import Bars from "../../static/svgs/bars.svg";
+import Bars from "../../public/svgs/bars.svg";
 
 const StyledHeader = styled.div`
 	position: relative;

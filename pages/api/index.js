@@ -1,8 +1,9 @@
-import message from "./test";
+const db = require("./db");
+const escape = require("sql-template-strings");
 
 export default async (req, res) => {
-	return res.end(`
-    db user: ${process.env.DB_USER}
-    message: ${message}
+	const data = await db.query(escape`
+        SELECT * FROM dingel
     `);
+	res.status(200).json({ data: data });
 };

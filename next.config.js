@@ -10,4 +10,7 @@ module.exports = {
 
 		return config;
 	},
+	env: {
+		db_user: process.env.DB_USER,
+	},
 };

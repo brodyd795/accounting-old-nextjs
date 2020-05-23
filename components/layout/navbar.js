@@ -7,18 +7,6 @@ import NavCloseToggler from "./navCloseToggler";
 import HomeIcon from "../../public/svgs/home.svg";
 import SearchIcon from "../../public/svgs/search.svg";
 
-const StyledLinkItem = styled.li`
-	cursor: pointer;
-	padding: 10px 5px;
-	display: flex;
-	justify-content: center;
-	align-items: flex-end;
-
-	:hover {
-		background-color: #222;
-	}
-`;
-
 const StyledNavbar = styled.nav`
 	margin: 0;
 	height: 100%;
@@ -62,11 +50,23 @@ const StyledLinksList = styled.ul`
 	li {
 		list-style-type: none;
 	}
+`;
 
-	.link-text {
-		padding-left: 10px;
-		font-size: 20px;
+const StyledLinkItem = styled.li`
+	cursor: pointer;
+	padding: 10px 5px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+
+	:hover {
+		background-color: #222;
 	}
+`;
+
+const StyledLinkText = styled.span`
+	padding-left: 10px;
+	font-size: 20px;
 `;
 
 const StyledBrand = styled.div`
@@ -79,20 +79,18 @@ const Navbar = ({ open, setOpen }) => {
 	return (
 		<StyledNavbar id="nav" open={open}>
 			<NavCloseToggler setOpen={setOpen} />
-			<StyledBrand>
-				<span>Accounting</span>
-			</StyledBrand>
+			<StyledBrand>Accounting</StyledBrand>
 			<StyledLinksList>
 				<Link href="/" as="/">
 					<StyledLinkItem className={router.pathname === "/" && "active"}>
 						<HomeIcon />
-						<span className="link-text">{"Home"}</span>
+						<StyledLinkText>{"Home"}</StyledLinkText>
 					</StyledLinkItem>
 				</Link>
 				<Link href="/search" as="/search">
 					<StyledLinkItem className={router.pathname === "/search" && "active"}>
 						<SearchIcon />
-						<span className="link-text">{"Search"}</span>
+						<StyledLinkText>{"Search"}</StyledLinkText>
 					</StyledLinkItem>
 				</Link>
 			</StyledLinksList>

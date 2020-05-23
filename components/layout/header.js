@@ -43,6 +43,7 @@ const IconWrapper = styled.div`
 		display: none;
 	}
 	display: inline;
+	padding-left: 5px;
 `;
 
 const Header = ({ setOpen, children }) => (

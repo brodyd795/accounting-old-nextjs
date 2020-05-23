@@ -1,10 +1,11 @@
 import styled from "styled-components";
 
 const StyledWelcome = styled.div`
-	background-color: #333;
+	background-color: white;
 
 	h2 {
 		padding: 1em;
+		color: #222;
 	}
 `;
 
@@ -22,7 +23,7 @@ const Welcome = () => {
 	}
 
 	return (
-		<StyledWelcome id="welcome">
+		<StyledWelcome>
 			<h2>{timeOfDay}</h2>
 		</StyledWelcome>
 	);

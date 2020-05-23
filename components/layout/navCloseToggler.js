@@ -14,12 +14,12 @@ const StyledNavCloseToggler = styled.div`
 	@media (min-width: 769px) {
 		display: none;
 	}
-`;
 
-const iconStyle = {
-	width: "25px",
-	height: "25px",
-};
+	svg {
+		width: 25px;
+		height: 25px;
+	}
+`;
 
 const NavCloseToggler = ({ setOpen }) => (
 	<StyledNavCloseToggler
@@ -27,7 +27,7 @@ const NavCloseToggler = ({ setOpen }) => (
 			setOpen(false);
 		}}
 		className="noSelect">
-		<Times style={iconStyle} />
+		<Times />
 	</StyledNavCloseToggler>
 );
 

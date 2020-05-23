@@ -10,21 +10,19 @@ const StyledWelcome = styled.div`
 `;
 
 const Welcome = () => {
-	let today = new Date();
-	let curHr = today.getHours();
-
-	let timeOfDay;
-	if (curHr < 12) {
-		timeOfDay = "Good morning, Brody & Rachel";
-	} else if (curHr < 18) {
-		timeOfDay = "Good afternoon, Brody & Rachel";
-	} else {
-		timeOfDay = "Good evening, Brody & Rachel";
-	}
+	const today = new Date();
+	const utcHour = today.getUTCHours();
+	const localHour = utcHour >= 5 ? utcHour - 5 : utcHour - 5 + 24;
+	const greeting =
+		localHour < 12
+			? "Good morning, Brody & Rachel"
+			: localHour < 18
+			? "Good afternoon, Brody & Rachel"
+			: "Good evening, Brody & Rachel";
 
 	return (
 		<StyledWelcome>
-			<h2>{timeOfDay}</h2>
+			<h2>{greeting}</h2>
 		</StyledWelcome>
 	);
 };

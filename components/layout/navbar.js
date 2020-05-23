@@ -72,6 +72,9 @@ const StyledLinkText = styled.span`
 const StyledBrand = styled.div`
 	font-size: 30px;
 	margin-top: 1em;
+	:hover {
+		cursor: pointer;
+	}
 `;
 
 const Navbar = ({ open, setOpen }) => {
@@ -79,15 +82,17 @@ const Navbar = ({ open, setOpen }) => {
 	return (
 		<StyledNavbar id="nav" open={open}>
 			<NavCloseToggler setOpen={setOpen} />
-			<StyledBrand>Accounting</StyledBrand>
+			<Link href="/">
+				<StyledBrand>Accounting</StyledBrand>
+			</Link>
 			<StyledLinksList>
-				<Link href="/" as="/">
+				<Link href="/">
 					<StyledLinkItem className={router.pathname === "/" && "active"}>
 						<HomeIcon />
 						<StyledLinkText>{"Home"}</StyledLinkText>
 					</StyledLinkItem>
 				</Link>
-				<Link href="/search" as="/search">
+				<Link href="/search">
 					<StyledLinkItem className={router.pathname === "/search" && "active"}>
 						<SearchIcon />
 						<StyledLinkText>{"Search"}</StyledLinkText>

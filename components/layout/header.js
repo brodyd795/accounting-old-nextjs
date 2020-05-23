@@ -1,8 +1,6 @@
 import styled from "styled-components";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Welcome from "./welcome";
-import Bars from "../../public/svgs/bars.svg";
+import Bars from "../../static/svgs/bars.svg";
 
 const StyledHeader = styled.div`
 	position: relative;

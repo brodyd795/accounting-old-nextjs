@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 
 import NavCloseToggler from "./navCloseToggler";
-import HomeIcon from "../../public/svgs/home.svg";
-import SearchIcon from "../../public/svgs/search.svg";
+import HomeIcon from "../../static/svgs/home.svg";
+import SearchIcon from "../../static/svgs/search.svg";
 
 const StyledNavbar = styled.nav`
 	margin: 0;

@@ -7,7 +7,5 @@ export default async (req, res) => {
 	`);
 	data = data[0];
 
-	setTimeout(() => {
-		res.json(data);
-	}, 2000);
+	res.json(data);
 };

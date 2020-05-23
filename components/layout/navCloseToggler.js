@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import Times from "../../public/svgs/times.svg";
 
 const StyledNavCloseToggler = styled.div`
 	text-align: right;
@@ -15,12 +14,12 @@ const StyledNavCloseToggler = styled.div`
 	@media (min-width: 769px) {
 		display: none;
 	}
-`;
 
-const iconStyle = {
-	width: "25px",
-	height: "25px",
-};
+	svg {
+		width: 25px;
+		height: 25px;
+	}
+`;
 
 const NavCloseToggler = ({ setOpen }) => (
 	<StyledNavCloseToggler
@@ -28,7 +27,7 @@ const NavCloseToggler = ({ setOpen }) => (
 			setOpen(false);
 		}}
 		className="noSelect">
-		<FontAwesomeIcon icon={faTimes} style={iconStyle} />
+		<Times />
 	</StyledNavCloseToggler>
 );
 

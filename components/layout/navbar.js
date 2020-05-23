@@ -1,12 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
-
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faHome } from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router";
 
 import NavCloseToggler from "./navCloseToggler";
-import NavLink from "./navLink";
+import HomeIcon from "../../public/svgs/home.svg";
+import SearchIcon from "../../public/svgs/search.svg";
 
 const StyledNavbar = styled.nav`
 	margin: 0;
@@ -37,6 +36,11 @@ const StyledNavbar = styled.nav`
 	#brand {
 		font-size: 30px;
 	}
+
+	svg {
+		height: 25px;
+		width: 25px;
+	}
 `;
 
 const StyledLinksList = styled.ul`
@@ -45,8 +49,24 @@ const StyledLinksList = styled.ul`
 
 	li {
 		list-style-type: none;
-		padding: 0;
 	}
+`;
+
+const StyledLinkItem = styled.li`
+	cursor: pointer;
+	padding: 10px 5px;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+
+	:hover {
+		background-color: #222;
+	}
+`;
+
+const StyledLinkText = styled.span`
+	padding-left: 10px;
+	font-size: 20px;
 `;
 
 const StyledBrand = styled.div`
@@ -55,22 +75,23 @@ const StyledBrand = styled.div`
 `;
 
 const Navbar = ({ open, setOpen }) => {
+	const router = useRouter();
 	return (
 		<StyledNavbar id="nav" open={open}>
 			<NavCloseToggler setOpen={setOpen} />
-			<StyledBrand>
-				<span>Accounting</span>
-			</StyledBrand>
+			<StyledBrand>Accounting</StyledBrand>
 			<StyledLinksList>
 				<Link href="/" as="/">
-					<li className="navLinkWrapper">
-						<NavLink path={"/"} icon={faHome} text="Home" />
-					</li>
+					<StyledLinkItem className={router.pathname === "/" && "active"}>
+						<HomeIcon />
+						<StyledLinkText>{"Home"}</StyledLinkText>
+					</StyledLinkItem>
 				</Link>
 				<Link href="/search" as="/search">
-					<li className="navLinkWrapper">
-						<NavLink path={"/search"} icon={faSearch} text="Search" />
-					</li>
+					<StyledLinkItem className={router.pathname === "/search" && "active"}>
+						<SearchIcon />
+						<StyledLinkText>{"Search"}</StyledLinkText>
+					</StyledLinkItem>
 				</Link>
 			</StyledLinksList>
 		</StyledNavbar>

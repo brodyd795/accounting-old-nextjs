@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faBars } from "@fortawesome/free-solid-svg-icons";
 import Welcome from "./welcome";
+import Bars from "../../public/svgs/bars.svg";
 
 const StyledHeader = styled.div`
 	position: relative;
@@ -42,14 +43,14 @@ const IconWrapper = styled.div`
 		display: none;
 	}
 	display: inline;
+	padding-left: 5px;
 `;
 
 const Header = ({ setOpen, children }) => (
 	<StyledHeader>
 		<div>
 			<IconWrapper>
-				<FontAwesomeIcon
-					icon={faBars}
+				<Bars
 					style={navbarTogglerStyle}
 					onClick={() => {
 						setOpen(true);

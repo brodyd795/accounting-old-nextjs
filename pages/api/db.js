@@ -123,9 +123,7 @@ const getTransactionIdentifiers = async () => {
 };
 
 const getAll = async () => {
-	let results = await db.query(
-		escape`SELECT * FROM first ORDER BY transactionId desc`
-	);
+	let results = await db.query(escape`SELECT * FROM dingel ORDER BY id desc`);
 	await db.quit();
 	return results;
 };

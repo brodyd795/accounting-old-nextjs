@@ -6,7 +6,8 @@
 		"DB_NAME": "@db_name",
 		"DB_TABLE": "@db_table",
 		"EMAIL": "@email",
-		"EMAIL_PASSWORD": "@email_password"
+		"EMAIL_PASSWORD": "@email_password",
+		"BANK_EMAIL": "@bank_email"
 	},
 	"build": {
 		"env": {
@@ -16,7 +17,8 @@
 			"DB_NAME": "@db_name",
 			"DB_TABLE": "@db_table",
 			"EMAIL": "@email",
-			"EMAIL_PASSWORD": "@email_password"
+			"EMAIL_PASSWORD": "@email_password",
+			"BANK_EMAIL": "@bank_email"
 		}
 	}
 }

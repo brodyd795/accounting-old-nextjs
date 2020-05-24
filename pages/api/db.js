@@ -35,7 +35,6 @@ const db = mysql({
 // });
 
 const insertTransaction = async (transaction) => {
-	console.log(transaction);
 	let {
 		id,
 		debit,
@@ -165,16 +164,31 @@ const getAllAccountBalances = async () => {
 const getLastAccountBalances = async (debit, credit, id) => {
 	let lastAccountBalances = {};
 	let debitResults = await db.query(escape`
-    	SELECT debit_balance FROM dingel WHERE (debit = ${debit} OR credit = ${debit}) AND (id < ${id}) ORDER BY id desc limit 1
+    	SELECT debit, credit, debit_balance, credit_balance FROM dingel WHERE (debit = ${debit} OR credit = ${debit}) AND (id < ${id}) ORDER BY id desc limit 1
 	`);
 	let creditResults = await db.query(escape`
-		SELECT credit_balance FROM dingel WHERE (debit = ${credit} OR credit = ${credit}) AND (id < ${id}) ORDER BY id desc limit 1
+		SELECT debit, credit, debit_balance, credit_balance FROM dingel WHERE (debit = ${credit} OR credit = ${credit}) AND (id < ${id}) ORDER BY id desc limit 1
 	`);
+	if (debitResults.length > 0) {
+		if (debitResults[0].debit === debit) {
+			lastAccountBalances.debit = debitResults[0].debit_balance;
+		} else {
+			lastAccountBalances.debit = debitResults[0].credit_balance;
+		}
+	} else {
+		lastAccountBalances.debit = 0;
+	}
 
-	lastAccountBalances.debit =
-		debitResults.length > 0 ? debitResults[0].debit_balance : 0;
-	lastAccountBalances.credit =
-		creditResults.length > 0 ? creditResults[0].credit_balance : 0;
+	if (creditResults.length > 0) {
+		if (creditResults[0].debit === credit) {
+			lastAccountBalances.credit = creditResults[0].debit_balance;
+		} else {
+			lastAccountBalances.credit = creditResults[0].credit_balance;
+		}
+	} else {
+		lastAccountBalances.credit = 0;
+	}
+
 	await db.quit();
 	return lastAccountBalances;
 };

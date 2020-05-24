@@ -35,7 +35,7 @@ imaps.connect(config).then((connection) => {
 	});
 });
 
-const processEmails = (emails) => {
+const processEmails = async (emails) => {
 	db.getLastId().then((lastId) => {
 		let transactions = [];
 
@@ -43,23 +43,18 @@ const processEmails = (emails) => {
 			new Date().toISOString().slice(0, 10).replace(/-/g, "").replace(/$/, "00")
 		);
 
-		for (let i = 0; i < emails.length; i++) {
-			const body = emails[i].parts[0].body;
-			const id = today > lastId ? today + i + 1 : lastId + i + 1;
-
-			parseEmail(body)
-				.then((results) => {
-					transactions.push({
-						id,
-						...results,
-					});
-				})
-				.then(() => {
-					if (transactions.length === emails.length)
-						processTransactions(transactions);
-				})
-				.catch((error) => console.log(error));
-		}
+		(async function () {
+			for (let i = 0; i < emails.length; i++) {
+				let body = emails[i].parts[0].body;
+				let id = today > lastId ? today + i : lastId + i + 1;
+				let results = await parseEmail(body);
+				transactions.push({ id, ...results });
+				if (transactions.length === emails.length) {
+					console.log(transactions);
+					processTransactions(transactions);
+				}
+			}
+		})();
 	});
 };
 
@@ -158,14 +153,16 @@ const processTransaction = async (transaction) => {
 		transaction.credit,
 		transaction.id
 	);
-	console.log(accountBalances);
+	// console.log(transaction);
+	// console.log(accountBalances);
 	transaction.debit_balance = accountBalances.debit + transaction.amount;
 	transaction.credit_balance = accountBalances.credit - transaction.amount;
+	// console.log(transaction);
 	await db.insertTransaction(transaction);
 };
 
 async function processTransactions(transactions) {
-	for (const transaction of transactions) {
+	for (let transaction of transactions) {
 		await processTransaction(transaction);
 	}
 }

@@ -35,23 +35,24 @@ const db = mysql({
 // });
 
 const insertTransaction = async (transaction) => {
+	console.log(transaction);
 	let {
-		transactionId,
+		id,
 		debit,
 		credit,
 		amount,
-		debitBalance,
-		creditBalance,
+		debit_balance,
+		credit_balance,
 		comment,
 	} = transaction;
 	await db.query(
-		escape`INSERT INTO first VALUES(${transactionId}, ${debit}, ${credit}, ${amount}, ${debitBalance}, ${creditBalance}, ${comment})`
+		escape`INSERT INTO dingel VALUES(${id}, ${debit}, ${credit}, ${amount}, ${debit_balance}, ${credit_balance}, ${comment})`
 	);
 	await db.query(
-		escape`UPDATE first SET DebitBalance = DebitBalance + ${amount} WHERE TransactionId > ${transactionId} AND (Debit = ${debit} OR Debit = ${credit})`
+		escape`UPDATE dingel SET debit_balance = debit_balance + ${amount} WHERE id > ${id} AND (debit = ${debit} OR debit = ${credit})`
 	);
 	await db.query(
-		escape`UPDATE first SET CreditBalance = CreditBalance - ${amount} WHERE TransactionId > ${transactionId} AND (Credit = ${debit} OR Credit = ${credit})`
+		escape`UPDATE dingel SET credit_balance = credit_balance - ${amount} WHERE id > ${id} AND (credit = ${debit} OR credit = ${credit})`
 	);
 
 	await db.quit();

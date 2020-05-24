@@ -161,7 +161,7 @@ const processTransaction = async (transaction) => {
 	console.log(accountBalances);
 	transaction.debit_balance = accountBalances.debit + transaction.amount;
 	transaction.credit_balance = accountBalances.credit - transaction.amount;
-	// await db.insertTransaction(transaction);
+	await db.insertTransaction(transaction);
 };
 
 async function processTransactions(transactions) {

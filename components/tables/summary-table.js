@@ -22,11 +22,13 @@ const SummaryTable = ({ data }) => (
 				<th>From Balance</th>
 				<th>Comment</th>
 			</tr>
-			<tr>
-				{Object.values(data).map((cell, key) => (
-					<td key={key}>{cell}</td>
-				))}
-			</tr>
+			{data.map((transaction) => (
+				<tr>
+					{Object.values(transaction).map((cell, key) => (
+						<td key={key}>{cell}</td>
+					))}
+				</tr>
+			))}
 		</tbody>
 	</StyledTable>
 );

@@ -1,0 +1,11 @@
+const db = require("../db");
+
+export default ({ query: { account } }, res) => {
+	db.getAccountTransactions(account).then((results) => {
+		if (results.length > 0) {
+			res.json(results);
+		} else {
+			res.json({ message: `Results for account ${account} not found` });
+		}
+	});
+};

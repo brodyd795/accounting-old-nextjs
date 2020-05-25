@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 import Loader from "../components/loader";
 import Page from "../components/layout/page";
-import RecentTable from "../components/tables/recent-table";
+import SummaryTable from "../components/tables/summary-table";
 import PageHeader from "../components/page-header";
 
 const Index = () => {
@@ -13,8 +13,7 @@ const Index = () => {
 	return (
 		<Page title="Home">
 			<PageHeader text="Home" />
-			{/* {JSON.stringify(data)} */}
-			{data ? <RecentTable data={data} /> : <Loader />}
+			{data ? <SummaryTable data={data} /> : <Loader />}
 		</Page>
 	);
 };

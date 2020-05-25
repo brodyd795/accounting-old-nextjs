@@ -130,35 +130,94 @@ const getAll = async () => {
 
 const getAllAccountBalances = async () => {
 	let balances = {};
-	for (let account of Accounts.open) {
-		let lastDebit = await db.query(escape`
-			SELECT DebitBalance FROM first where Debit=${account} order by transactionId desc limit 1;
+	let accounts = await db.query(
+		escape`SELECT name FROM accounts WHERE closed = false`
+	);
+	for (let account of accounts) {
+		const name = account.name;
+		const lastDebit = await db.query(escape`
+			SELECT debit_balance FROM dingel where debit=${name} order by id desc limit 1;
 		`);
-		let lastCredit = await db.query(escape`
-      		SELECT CreditBalance FROM first where Credit=${account} order by transactionId desc limit 1;
-    	`);
+		const lastCredit = await db.query(escape`
+	  		SELECT credit_balance FROM dingel where credit=${name} order by id desc limit 1;
+		`);
 		await db.quit();
 
 		// has the account had *both* debits and credits?
 		if (lastDebit.length > 0 && lastCredit.length > 0) {
 			// if the most recent debit is more recent than the most recent credit
-			if (lastDebit.TransactionId > lastCredit.TransactionId) {
-				balances[account] = lastDebit[0]["DebitBalance"];
+			if (lastDebit.id > lastCredit.id) {
+				balances[name] = lastDebit[0]["debit_balance"];
 			} else {
-				balances[account] = lastCredit[0]["CreditBalance"];
+				balances[name] = lastCredit[0]["credit_balance"];
 			}
 			// has it had any debits?
 		} else if (lastDebit.length > 0) {
-			balances[account] = lastDebit[0]["DebitBalance"];
+			balances[name] = lastDebit[0]["debit_balance"];
 			// has it had any credits?
 		} else if (lastCredit.length > 0) {
-			balances[account] = lastCredit[0]["CreditBalance"];
+			balances[name] = lastCredit[0]["credit_balance"];
 			// it hasn't had any transactions before
 		} else {
-			balances[account] = 0;
+			balances[name] = 0;
 		}
 	}
-	return balances;
+	return summarizeAllAccountBalances(balances);
+};
+
+const summarizeAllAccountBalances = async (balances) => {
+	let categories = {
+		income: {},
+		expenses: {},
+		assets: {},
+		liabilities: {},
+		virtualSavings: {},
+	};
+	Object.entries(balances).map(([key, value]) => {
+		switch (key[0]) {
+			case "I":
+				categories.income[key] = value;
+				break;
+			case "E":
+				categories.expenses[key] = value;
+				break;
+			case "A":
+				categories.assets[key] = value;
+				break;
+			case "L":
+				categories.liabilities[key] = value;
+				break;
+			case "V":
+				categories.virtualSavings[key] = value;
+				break;
+		}
+	});
+	const cleanData = {};
+	Object.entries(categories).map(([category, accounts]) => {
+		const cleanCategory =
+			category[0].toUpperCase() + category.replace(/([A-Z])/, " $1").slice(1);
+		const categorySum = String(
+			Object.values(accounts).reduce((a, b) => a + b, 0)
+		).replace(/(\.\d\d)\d*/, "$1");
+		cleanData[cleanCategory] = {
+			balance: categorySum,
+			accounts: {},
+		};
+
+		Object.entries(accounts).map(([account, balance]) => {
+			const cleanAccount = account.slice(2).replace(/_/g, " ");
+			let cleanBalance = String(balance);
+			if (cleanBalance === "0") {
+				// do nothing
+			} else if (/\.\d$/.test(cleanBalance)) {
+				cleanBalance = cleanBalance.concat("0");
+			} else if (/^[^.]$/.test(cleanBalance)) {
+				cleanBalance = cleanBalance.concat(".00");
+			}
+			cleanData[cleanCategory]["accounts"][cleanAccount] = cleanBalance;
+		});
+	});
+	return cleanData;
 };
 
 const getLastAccountBalances = async (debit, credit, id) => {

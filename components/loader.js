@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 const StyledLoader = styled.div`
 	// adapted from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader
+	text-align: center;
 	border: 4px solid #f3f3f3;
 	border-radius: 50%;
 	border-top: 4px solid #3498db;
@@ -10,8 +11,8 @@ const StyledLoader = styled.div`
 	-webkit-animation: spin 1s linear infinite; /* Safari */
 	animation: spin 1s linear infinite;
 
-	margin-top: 30px;
-	margin-left: 30px;
+	margin: auto;
+	margin-top: 70px;
 
 	/* Safari */
 	@-webkit-keyframes spin {

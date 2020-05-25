@@ -1,6 +1,7 @@
 const db = require("./db");
 
 export default async (req, res) => {
-	const data = await db.getAllAccountBalances();
+	let data = await db.getAll();
+
 	res.json(data);
 };

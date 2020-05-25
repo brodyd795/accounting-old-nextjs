@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import NavCloseToggler from "./navCloseToggler";
 import HomeIcon from "../../public/svgs/home.svg";
 import SearchIcon from "../../public/svgs/search.svg";
+import HistoryIcon from "../../public/svgs/history.svg";
 
 const StyledNavbar = styled.nav`
 	margin: 0;
@@ -96,6 +97,12 @@ const Navbar = ({ open, setOpen }) => {
 					<StyledLinkItem className={router.pathname === "/search" && "active"}>
 						<SearchIcon />
 						<StyledLinkText>{"Search"}</StyledLinkText>
+					</StyledLinkItem>
+				</Link>
+				<Link href="/recent">
+					<StyledLinkItem className={router.pathname === "/recent" && "active"}>
+						<HistoryIcon />
+						<StyledLinkText>{"Recent"}</StyledLinkText>
 					</StyledLinkItem>
 				</Link>
 			</StyledLinksList>

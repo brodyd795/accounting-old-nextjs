@@ -39,27 +39,24 @@ const SummaryTable = ({ data }) => (
 				<th>Balance</th>
 			</tr>
 			{Object.entries(data).map(([category, categoryValues], index) => (
-				<Link key={index} href="#">
-					<>
-						<tr>
-							<td>{category}</td>
-							<td className="balance">{categoryValues.balance}</td>
-						</tr>
-						{Object.entries(categoryValues.accounts).map(
-							([account, accountValues]) => (
-								<Link
-									href="/accounts/[account]"
-									as={`/accounts/${account}`}
-									key={account}>
-									<tr className="account-row">
-										<td className="account">{accountValues.name}</td>
-										<td className="balance">{accountValues.balance}</td>
-									</tr>
-								</Link>
-							)
-						)}
-					</>
-				</Link>
+				<>
+					<tr>
+						<td>{category}</td>
+						<td className="balance">{categoryValues.balance}</td>
+					</tr>
+					{Object.entries(categoryValues.accounts).map(
+						([account, accountValues]) => (
+							<Link
+								href="/accounts/[account]"
+								as={`/accounts/${account.replace("_", "")}`}>
+								<tr className="account-row">
+									<td className="account">{accountValues.name}</td>
+									<td className="balance">{accountValues.balance}</td>
+								</tr>
+							</Link>
+						)
+					)}
+				</>
 			))}
 		</tbody>
 	</StyledTable>

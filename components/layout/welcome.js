@@ -22,7 +22,7 @@ const Welcome = () => {
 
 	return (
 		<StyledWelcome>
-			<h2>{greeting}</h2>
+			<h2>{'hello1'}</h2>
 		</StyledWelcome>
 	);
 };

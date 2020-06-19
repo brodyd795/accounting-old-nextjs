@@ -7,6 +7,7 @@ import NavCloseToggler from "./navCloseToggler";
 import HomeIcon from "../../public/svgs/home.svg";
 import SearchIcon from "../../public/svgs/search.svg";
 import HistoryIcon from "../../public/svgs/history.svg";
+import AccountIcon from "../../public/svgs/user.svg";
 
 const StyledNavbar = styled.nav`
 	margin: 0;
@@ -97,6 +98,18 @@ const Navbar = ({ open, setOpen }) => {
 					<StyledLinkItem className={router.pathname === "/search" && "active"}>
 						<SearchIcon />
 						<StyledLinkText>{"Search"}</StyledLinkText>
+					</StyledLinkItem>
+				</Link>
+				<Link href="/accounts">
+					<StyledLinkItem
+						className={
+							router.pathname === "/accounts" ||
+							router.pathname.includes("/accounts/")
+								? "active"
+								: null
+						}>
+						<AccountIcon />
+						<StyledLinkText>{"Accounts"}</StyledLinkText>
 					</StyledLinkItem>
 				</Link>
 				<Link href="/recent">

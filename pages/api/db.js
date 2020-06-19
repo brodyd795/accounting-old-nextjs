@@ -214,7 +214,11 @@ const summarizeAllAccountBalances = async (balances) => {
 			} else if (/^[^.]$/.test(cleanBalance)) {
 				cleanBalance = cleanBalance.concat(".00");
 			}
-			cleanData[cleanCategory]["accounts"][cleanAccount] = cleanBalance;
+			// cleanData[cleanCategory]["accounts"][cleanAccount] = cleanBalance;
+			cleanData[cleanCategory]["accounts"][account] = {
+				name: cleanAccount,
+				balance: cleanBalance,
+			};
 		});
 	});
 	return cleanData;
@@ -254,7 +258,7 @@ const getLastAccountBalances = async (debit, credit, id) => {
 
 const getAccountTransactions = async (account) => {
 	let results = await db.query(
-		escape`SELECT * FROM first WHERE Credit=${account} OR Debit=${account} ORDER BY TransactionId desc`
+		escape`SELECT * FROM dingel WHERE credit=${account} OR debit=${account} ORDER BY id desc`
 	);
 	await db.quit();
 	return results;

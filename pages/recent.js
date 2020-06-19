@@ -3,7 +3,7 @@ import useSWR from "swr";
 
 import Loader from "../components/loader";
 import Page from "../components/layout/page";
-import SummaryTable from "../components/tables/summary-table";
+import RecentTable from "../components/tables/recent-table";
 import PageHeader from "../components/page-header";
 
 const Recent = () => {
@@ -13,7 +13,7 @@ const Recent = () => {
 	return (
 		<Page title="Recent">
 			<PageHeader text="Recent" />
-			{data ? <SummaryTable data={data} /> : <Loader />}
+			{data ? <RecentTable data={data} /> : <Loader />}
 		</Page>
 	);
 };

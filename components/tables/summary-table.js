@@ -39,24 +39,24 @@ const SummaryTable = ({ data }) => (
 				<th>Balance</th>
 			</tr>
 			{Object.entries(data).map(([category, categoryValues], index) => (
-				<>
+				<React.Fragment key={index}>
 					<tr>
 						<td>{category}</td>
 						<td className="balance">{categoryValues.balance}</td>
 					</tr>
 					{Object.entries(categoryValues.accounts).map(
 						([account, accountValues]) => (
-							<Link
-								href="/accounts/[account]"
-								as={`/accounts/${account.replace("_", "")}`}>
-								<tr className="account-row">
+							<tr className="account-row" key={account}>
+								<Link
+									href="/accounts/[account]"
+									as={`/accounts/${account.replace("_", "")}`}>
 									<td className="account">{accountValues.name}</td>
-									<td className="balance">{accountValues.balance}</td>
-								</tr>
-							</Link>
+								</Link>
+								<td className="balance">{accountValues.balance}</td>
+							</tr>
 						)
 					)}
-				</>
+				</React.Fragment>
 			))}
 		</tbody>
 	</StyledTable>

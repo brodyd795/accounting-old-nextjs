@@ -11,7 +11,7 @@
 // };
 
 // const db = require("../../../lib/accounting-sql/db");
-export default ({ query: { id } }, res) => {
+export default ({ query: { account } }, res) => {
 	//   db.getAccountTransactions(id).then(results => {
 	//     if (results.length > 0) {
 	//       res.status(200).json(results);
@@ -19,6 +19,5 @@ export default ({ query: { id } }, res) => {
 	//       res.status(404).json({ message: `Results with id ${id} not found` });
 	//     }
 	//   });
-	console.log(id);
-	res.json({ message: "Good!" });
+	res.json({ message: account });
 };

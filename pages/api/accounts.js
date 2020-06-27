@@ -2,7 +2,6 @@ const db = require("./db");
 
 export default async ({ query: { account } }, res) => {
 	if (account) {
-		console.log("I have an account");
 		db.getAccountTransactions(account).then((results) => {
 			if (results.length > 0) {
 				res.json(results);

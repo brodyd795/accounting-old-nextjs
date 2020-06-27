@@ -1,11 +1,11 @@
-import fetch from "../libs/fetch";
+import fetch from "../../libs/fetch";
 import useSWR from "swr";
 import Link from "next/link";
 
-import Loader from "../components/loader";
-import Page from "../components/layout/page";
-import RecentTable from "../components/tables/recent-table";
-import PageHeader from "../components/page-header";
+import Loader from "../../components/loader";
+import Page from "../../components/layout/page";
+import RecentTable from "../../components/tables/recent-table";
+import PageHeader from "../../components/page-header";
 
 const Accounts = () => {
 	const { data, error } = useSWR("/api/accounts", fetch);

@@ -47,9 +47,7 @@ const SummaryTable = ({ data }) => (
 					{Object.entries(categoryValues.accounts).map(
 						([account, accountValues]) => (
 							<tr className="account-row" key={account}>
-								<Link
-									href="/accounts/[account]"
-									as={`/accounts/${account.replace("_", "")}`}>
+								<Link href={"/accounts/[account]"} as={`/accounts/${account}`}>
 									<td className="account">{accountValues.name}</td>
 								</Link>
 								<td className="balance">{accountValues.balance}</td>

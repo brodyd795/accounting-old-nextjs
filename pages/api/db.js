@@ -224,6 +224,14 @@ const summarizeAllAccountBalances = async (balances) => {
 	return cleanData;
 };
 
+const getAccountsList = async () => {
+	let accounts = await db.query(
+		escape`SELECT name FROM accounts WHERE closed = false`
+	);
+	await db.quit();
+	return accounts;
+};
+
 const getLastAccountBalances = async (debit, credit, id) => {
 	let lastAccountBalances = {};
 	let debitResults = await db.query(escape`
@@ -341,6 +349,7 @@ module.exports = {
 	getTransaction: getTransaction,
 	deleteTransaction: deleteTransaction,
 	getTransactionIdentifiers: getTransactionIdentifiers,
+	getAccountsList: getAccountsList,
 };
 
 // const rebalance = async (id, account, amount) => {

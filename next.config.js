@@ -1,3 +1,5 @@
+const isProd = process.env.NODE_ENV === "production";
+
 module.exports = {
 	webpack(config) {
 		config.module.rules.push({
@@ -13,4 +15,5 @@ module.exports = {
 	env: {
 		db_user: process.env.DB_USER,
 	},
+	assetPrefix: isProd ? "https://dingel.dev/money" : "",
 };

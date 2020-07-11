@@ -6,10 +6,11 @@ import Loader from "../../components/loader";
 import Page from "../../components/layout/page";
 import RecentTable from "../../components/tables/recent-table";
 import PageHeader from "../../components/page-header";
+import Error from '../../components/error'
 
 const Accounts = () => {
 	const { data, error } = useSWR("/api/accounts", fetch);
-	if (error) return <div>Error!</div>;
+	if (error) return <Error />;
 
 	return (
 		<Page title="Accounts">

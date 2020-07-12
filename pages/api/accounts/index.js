@@ -1,5 +1,7 @@
 const db = require("../db");
 
+import transformAccountsListForDropdown from '../helpers/accounts-select-data-transform'
+
 export default async ({ query: { account } }, res) => {
 	if (account) {
 		db.getAccountTransactions(account).then((results) => {
@@ -13,6 +15,7 @@ export default async ({ query: { account } }, res) => {
 	}
 	const data = await db.getAccountsList();
 	const accounts = data.map((account) => account.name);
+	const transformedAccountsList = transformAccountsListForDropdown(accounts);
 
-	res.json(accounts);
+	res.json(transformedAccountsList);
 };

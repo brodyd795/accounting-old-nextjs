@@ -19,4 +19,4 @@ const Recent = () => {
 	);
 };
 
-export default Recent;
+export default withAuth(Recent);

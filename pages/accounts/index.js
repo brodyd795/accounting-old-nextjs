@@ -1,4 +1,4 @@
-import fetch from "../../libs/fetch";
+import fetch from "../../lib/fetch";
 import useSWR from "swr";
 import Link from "next/link";
 

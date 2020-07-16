@@ -1,3 +1,5 @@
+import { useUser } from "../../lib/user";
+
 import styled from "styled-components";
 import Welcome from "./welcome";
 import Bars from "../../public/svgs/bars.svg";
@@ -44,25 +46,35 @@ const IconWrapper = styled.div`
 	padding-left: 5px;
 `;
 
-const Header = ({ setOpen, children }) => (
-	<StyledHeader>
-		<div>
-			<IconWrapper>
-				<Bars
-					style={navbarTogglerStyle}
-					onClick={() => {
-						setOpen(true);
-					}}
-					className="noSelect"
-				/>
-			</IconWrapper>
-			<StyledInputWrapper>
-				<StyledInput placeholder="Search..." />
-			</StyledInputWrapper>
-			<Welcome />
-			{children}
-		</div>
-	</StyledHeader>
-);
+const Header = ({ setOpen, children }) => {
+	const { user, loading } = useUser();
+
+	return (
+		<StyledHeader>
+			<div>
+				<IconWrapper>
+					<Bars
+						style={navbarTogglerStyle}
+						onClick={() => {
+							setOpen(true);
+						}}
+						className="noSelect"
+					/>
+				</IconWrapper>
+				<StyledInputWrapper>
+					<StyledInput placeholder="Search..." />
+					{!loading &&
+						(user ? (
+							<a href="/api/auth/logout">Logout</a>
+						) : (
+							<a href="/api/auth/login">Login</a>
+						))}
+				</StyledInputWrapper>
+				<Welcome />
+				{children}
+			</div>
+		</StyledHeader>
+	);
+};
 
 export default Header;

@@ -9,6 +9,8 @@ import HomeIcon from "../../public/svgs/home.svg";
 import SearchIcon from "../../public/svgs/search.svg";
 import HistoryIcon from "../../public/svgs/history.svg";
 import AccountIcon from "../../public/svgs/user.svg";
+import LoginIcon from "../../public/svgs/login.svg";
+import LogoutIcon from "../../public/svgs/logout.svg";
 
 const StyledNavbar = styled.nav`
 	margin: 0;
@@ -125,10 +127,22 @@ const Navbar = ({ open, setOpen }) => {
 								<StyledLinkText>{"Recent"}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
-						<a href="/api/auth/logout">Logout</a>
+						<Link href="/api/auth/logout">
+							<StyledLinkItem>
+								<LogoutIcon />
+								<StyledLinkText>{"Logout"}</StyledLinkText>
+							</StyledLinkItem>
+						</Link>
 					</>
 				)}
-				{!loading && !user && <a href="/api/auth/login">Login</a>}
+				{!user && (
+					<Link href="/api/auth/login">
+						<StyledLinkItem>
+							<LoginIcon />
+							<StyledLinkText>{"Login"}</StyledLinkText>
+						</StyledLinkItem>
+					</Link>
+				)}
 			</StyledLinksList>
 		</StyledNavbar>
 	);

@@ -63,12 +63,6 @@ const Header = ({ setOpen, children }) => {
 				</IconWrapper>
 				<StyledInputWrapper>
 					<StyledInput placeholder="Search..." />
-					{!loading &&
-						(user ? (
-							<a href="/api/auth/logout">Logout</a>
-						) : (
-							<a href="/api/auth/login">Login</a>
-						))}
 				</StyledInputWrapper>
 				<Welcome />
 				{children}

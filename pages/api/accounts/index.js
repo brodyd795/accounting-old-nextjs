@@ -1,6 +1,6 @@
 const db = require("../db");
 
-import transformAccountsListForDropdown from '../helpers/accounts-select-data-transform'
+import transformAccountsListForDropdown from "../helpers/accounts-select-data-transform";
 
 export default async ({ query: { account } }, res) => {
 	if (account) {

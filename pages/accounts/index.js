@@ -1,18 +1,12 @@
 import fetch from "../../libs/fetch";
 import useSWR from "swr";
-import Select from 'react-select';
 import  Router  from 'next/router'
-import styled from 'styled-components'
 
 import Loader from "../../components/loader";
 import Page from "../../components/layout/page";
 import PageHeader from "../../components/page-header";
 import Error from '../../components/error'
-
-const StyledSelect = styled(Select)`
-	width: 300px;
-	color: black;
-`;
+import AccountSelect from '../../components/filters/account-select'
 
 const Accounts = () => {
 	const { data, error } = useSWR("/api/accounts", fetch);
@@ -26,7 +20,7 @@ const Accounts = () => {
 		<Page title="Accounts">
 			<PageHeader text="Accounts" />
 			{data ? (
-				<StyledSelect 
+				<AccountSelect 
 					options={data}
 					placeholder="Select account..."
 					onChange={handleChange}

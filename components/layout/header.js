@@ -1,5 +1,3 @@
-import { useUser } from "../../lib/user";
-
 import styled from "styled-components";
 import Welcome from "./welcome";
 import Bars from "../../public/svgs/bars.svg";
@@ -46,9 +44,7 @@ const IconWrapper = styled.div`
 	padding-left: 5px;
 `;
 
-const Header = ({ setOpen, children }) => {
-	const { user, loading } = useUser();
-
+const Header = ({ setOpen, children, user }) => {
 	return (
 		<StyledHeader>
 			<div>
@@ -64,7 +60,7 @@ const Header = ({ setOpen, children }) => {
 				<StyledInputWrapper>
 					<StyledInput placeholder="Search..." />
 				</StyledInputWrapper>
-				<Welcome />
+				<Welcome user={user} />
 				{children}
 			</div>
 		</StyledHeader>

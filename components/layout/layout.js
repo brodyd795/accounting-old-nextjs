@@ -11,7 +11,7 @@ const Layout = ({ user, loading = false, children }) => {
 	return (
 		<UserProvider value={{ user, loading }}>
 			<Navbar open={open} setOpen={setOpen} />
-			<Header setOpen={setOpen} children />
+			<Header setOpen={setOpen} children user={user} />
 			<Main children={children} />
 		</UserProvider>
 	);

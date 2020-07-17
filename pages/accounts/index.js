@@ -1,5 +1,7 @@
-import fetch from "../../libs/fetch";
+import fetch from "../../lib/fetch";
 import useSWR from "swr";
+import Link from "next/link";
+import withAuth from "../../components/with-auth";
 import Select from 'react-select';
 import  Router  from 'next/router'
 import styled from 'styled-components'
@@ -38,4 +40,4 @@ const Accounts = () => {
 	);
 };
 
-export default Accounts;
+export default withAuth(Accounts);

@@ -2,12 +2,15 @@ import React from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { useRouter } from "next/router";
+import { useUser } from "../../lib/user";
 
 import NavCloseToggler from "./navCloseToggler";
 import HomeIcon from "../../public/svgs/home.svg";
 import SearchIcon from "../../public/svgs/search.svg";
 import HistoryIcon from "../../public/svgs/history.svg";
 import AccountIcon from "../../public/svgs/user.svg";
+import LoginIcon from "../../public/svgs/login.svg";
+import LogoutIcon from "../../public/svgs/logout.svg";
 
 const StyledNavbar = styled.nav`
 	margin: 0;
@@ -81,6 +84,8 @@ const StyledBrand = styled.div`
 
 const Navbar = ({ open, setOpen }) => {
 	const router = useRouter();
+	const { user, loading } = useUser();
+
 	return (
 		<StyledNavbar id="nav" open={open}>
 			<NavCloseToggler setOpen={setOpen} />
@@ -94,30 +99,50 @@ const Navbar = ({ open, setOpen }) => {
 						<StyledLinkText>{"Home"}</StyledLinkText>
 					</StyledLinkItem>
 				</Link>
-				<Link href="/search">
-					<StyledLinkItem className={router.pathname === "/search" && "active"}>
-						<SearchIcon />
-						<StyledLinkText>{"Search"}</StyledLinkText>
-					</StyledLinkItem>
-				</Link>
-				<Link href="/accounts">
-					<StyledLinkItem
-						className={
-							router.pathname === "/accounts" ||
-							router.pathname.includes("/accounts/")
-								? "active"
-								: null
-						}>
-						<AccountIcon />
-						<StyledLinkText>{"Accounts"}</StyledLinkText>
-					</StyledLinkItem>
-				</Link>
-				<Link href="/recent">
-					<StyledLinkItem className={router.pathname === "/recent" && "active"}>
-						<HistoryIcon />
-						<StyledLinkText>{"Recent"}</StyledLinkText>
-					</StyledLinkItem>
-				</Link>
+				{!loading && user && (
+					<>
+						<Link href="/search">
+							<StyledLinkItem
+								className={router.pathname === "/search" && "active"}>
+								<SearchIcon />
+								<StyledLinkText>{"Search"}</StyledLinkText>
+							</StyledLinkItem>
+						</Link>
+						<Link href="/accounts">
+							<StyledLinkItem
+								className={
+									router.pathname === "/accounts" ||
+									router.pathname.includes("/accounts/")
+										? "active"
+										: null
+								}>
+								<AccountIcon />
+								<StyledLinkText>{"Accounts"}</StyledLinkText>
+							</StyledLinkItem>
+						</Link>
+						<Link href="/recent">
+							<StyledLinkItem
+								className={router.pathname === "/recent" && "active"}>
+								<HistoryIcon />
+								<StyledLinkText>{"Recent"}</StyledLinkText>
+							</StyledLinkItem>
+						</Link>
+						<Link href="/api/auth/logout">
+							<StyledLinkItem>
+								<LogoutIcon />
+								<StyledLinkText>{"Logout"}</StyledLinkText>
+							</StyledLinkItem>
+						</Link>
+					</>
+				)}
+				{!user && (
+					<Link href="/api/auth/login">
+						<StyledLinkItem>
+							<LoginIcon />
+							<StyledLinkText>{"Login"}</StyledLinkText>
+						</StyledLinkItem>
+					</Link>
+				)}
 			</StyledLinksList>
 		</StyledNavbar>
 	);

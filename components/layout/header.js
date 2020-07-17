@@ -44,25 +44,27 @@ const IconWrapper = styled.div`
 	padding-left: 5px;
 `;
 
-const Header = ({ setOpen, children }) => (
-	<StyledHeader>
-		<div>
-			<IconWrapper>
-				<Bars
-					style={navbarTogglerStyle}
-					onClick={() => {
-						setOpen(true);
-					}}
-					className="noSelect"
-				/>
-			</IconWrapper>
-			<StyledInputWrapper>
-				<StyledInput placeholder="Search..." />
-			</StyledInputWrapper>
-			<Welcome />
-			{children}
-		</div>
-	</StyledHeader>
-);
+const Header = ({ setOpen, children, user }) => {
+	return (
+		<StyledHeader>
+			<div>
+				<IconWrapper>
+					<Bars
+						style={navbarTogglerStyle}
+						onClick={() => {
+							setOpen(true);
+						}}
+						className="noSelect"
+					/>
+				</IconWrapper>
+				<StyledInputWrapper>
+					<StyledInput placeholder="Search..." />
+				</StyledInputWrapper>
+				<Welcome user={user} />
+				{children}
+			</div>
+		</StyledHeader>
+	);
+};
 
 export default Header;

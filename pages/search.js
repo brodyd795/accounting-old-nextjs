@@ -1,3 +1,5 @@
+import withAuth from "../components/with-auth";
+
 import Page from "../components/layout/page";
 import PageHeader from "../components/page-header";
 
@@ -7,4 +9,4 @@ const Search = () => (
 	</Page>
 );
 
-export default Search;
+export default withAuth(Search);

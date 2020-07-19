@@ -1,5 +1,6 @@
-import fetch from "../libs/fetch";
+import fetch from "../lib/fetch";
 import useSWR from "swr";
+import { useFetchUser } from "../lib/user";
 
 import Loader from "../components/loader";
 import Page from "../components/layout/page";
@@ -8,13 +9,20 @@ import PageHeader from "../components/page-header";
 import Error from '../components/error'
 
 const Index = () => {
+	const { user, loading } = useFetchUser();
 	const { data, error } = useSWR("/api", fetch);
 	if (error) return <Error />;
 
 	return (
 		<Page title="Home">
 			<PageHeader text="Home" />
-			{data ? <SummaryTable data={data} /> : <Loader />}
+			{loading || !data ? (
+				<Loader />
+			) : user ? (
+				<SummaryTable data={data} />
+			) : (
+				<p>No user</p>
+			)}
 		</Page>
 	);
 };

@@ -1,9 +1,12 @@
 import Head from "next/head";
 import React from "react";
+import { useFetchUser } from "../../lib/user";
+
 import GlobalStyle from "../GlobalStyle";
 import Layout from "./layout";
 
 const Page = ({ children, title = "Accounting" }) => {
+	const { user, loading } = useFetchUser();
 	return (
 		<>
 			<Head>
@@ -14,7 +17,9 @@ const Page = ({ children, title = "Accounting" }) => {
 				<title>{title}</title>
 			</Head>
 			<GlobalStyle />
-			<Layout>{children}</Layout>
+			<Layout user={user} loading={loading}>
+				{children}
+			</Layout>
 		</>
 	);
 };

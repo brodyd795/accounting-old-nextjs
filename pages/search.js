@@ -9,24 +9,29 @@ import Loader from "../components/loader";
 
 const Search = () => {
 	const { data, error } = useSWR("/api/accounts", fetch);
+	const nullOption = { label: null, value: null };
 	if (error) return <Error />;
 
-	const [fromAccount, setFromAccount] = useState("");
-	const [toAccount, setToAccount] = useState("");
+	const [fromAccount, setFromAccount] = useState(nullOption);
+	const [toAccount, setToAccount] = useState(nullOption);
 
 	const handleFromAccountChange = (e) => {
-		if (toAccount === e.value) {
+		if (e === null) {
+			setFromAccount(nullOption);
+		} else if (toAccount === e) {
 			alert("NO");
 		} else {
-			setFromAccount(e.value);
+			setFromAccount(e);
 		}
 	};
 
 	const handleToAccountChange = (e) => {
-		if (fromAccount === e.value) {
+		if (e === null) {
+			setToAccount(nullOption);
+		} else if (fromAccount === e) {
 			alert("NO");
 		} else {
-			setToAccount(e.value);
+			setToAccount(e);
 		}
 	};
 
@@ -35,16 +40,18 @@ const Search = () => {
 			<PageHeader text="Search" />
 			{data ? (
 				<>
-					<label>From: {fromAccount}</label>
+					<label>From: </label>
 					<AccountSelect
 						options={data}
 						placeholder="Choose account..."
 						onChange={handleFromAccountChange}
 						isClearable={true}
+						value={fromAccount.value == null ? null : fromAccount}
 					/>
-					<label>To: {toAccount}</label>
+					<label>To: </label>
 					<AccountSelect
 						options={data}
+						value={toAccount.value === null ? null : toAccount}
 						placeholder="Choose account..."
 						onChange={handleToAccountChange}
 						isClearable={true}

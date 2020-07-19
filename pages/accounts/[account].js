@@ -1,5 +1,6 @@
-import fetch from "../../libs/fetch";
+import fetch from "../../lib/fetch";
 import useSWR from "swr";
+import withAuth from "../../components/with-auth";
 
 import Loader from "../../components/loader";
 import Page from "../../components/layout/page";
@@ -23,4 +24,4 @@ const Account = () => {
 	);
 };
 
-export default Account;
+export default withAuth(Account);

@@ -1,14 +1,16 @@
-import fetch from "../libs/fetch";
+import fetch from "../lib/fetch";
 import useSWR from "swr";
+import withAuth from "../components/with-auth";
 
 import Loader from "../components/loader";
 import Page from "../components/layout/page";
 import RecentTable from "../components/tables/recent-table";
 import PageHeader from "../components/page-header";
+import Error from '../components/error'
 
 const Recent = () => {
 	const { data, error } = useSWR("/api/recent", fetch);
-	if (error) return <div>Error!</div>;
+	if (error) return <Error />;
 
 	return (
 		<Page title="Recent">
@@ -18,4 +20,4 @@ const Recent = () => {
 	);
 };
 
-export default Recent;
+export default withAuth(Recent);

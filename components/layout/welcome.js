@@ -9,16 +9,18 @@ const StyledWelcome = styled.div`
 	}
 `;
 
-const Welcome = () => {
+const Welcome = ({ user }) => {
 	const today = new Date();
 	const utcHour = today.getUTCHours();
 	const localHour = utcHour >= 5 ? utcHour - 5 : utcHour - 5 + 24;
-	const greeting =
+	const userName = user?.given_name;
+	const timeOfDay =
 		localHour < 12
-			? "Good morning, Brody & Rachel"
+			? "Good morning"
 			: localHour < 18
-			? "Good afternoon, Brody & Rachel"
-			: "Good evening, Brody & Rachel";
+			? "Good afternoon"
+			: "Good evening";
+	const greeting = `${timeOfDay}${userName ? `, ${userName}` : ""}!`;
 
 	return (
 		<StyledWelcome>

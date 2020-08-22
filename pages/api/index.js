@@ -1,4 +1,5 @@
 const db = require("./db");
+import { fetchUser } from "../../lib/user";
 
 export default async (req, res) => {
 	let isAdmin = false;

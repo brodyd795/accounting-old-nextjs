@@ -127,7 +127,7 @@ const Navbar = ({ open, setOpen }) => {
 								<StyledLinkText>{"Recent"}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
-						<Link href="/api/auth/logout">
+						<Link href="/api/logout">
 							<StyledLinkItem>
 								<LogoutIcon />
 								<StyledLinkText>{"Logout"}</StyledLinkText>
@@ -136,7 +136,7 @@ const Navbar = ({ open, setOpen }) => {
 					</>
 				)}
 				{!user && (
-					<Link href="/api/auth/login">
+					<Link href="/api/login">
 						<StyledLinkItem>
 							<LoginIcon />
 							<StyledLinkText>{"Login"}</StyledLinkText>

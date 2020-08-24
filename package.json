@@ -3,7 +3,8 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
-		"dev": "next dev",
+		"start-local-port-forwarding": "ssh -L 127.0.0.1:3306:localhost:3306 dingel.dev -N",
+		"dev": "next dev && npm run start-local-port-forwarding",
 		"build": "next build",
 		"start": "next start"
 	},

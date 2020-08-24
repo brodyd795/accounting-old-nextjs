@@ -7,6 +7,7 @@ export default async (req, res) => {
 		isAdmin = true;
 	}
 
-	const data = await db.getAll();
+	// const data = await db.getAllAccountBalances(isAdmin);
+	const data = await db.getAll(isAdmin);
 	res.json(data);
 };

@@ -134,12 +134,10 @@ const getAll = async (isAdmin) => {
 };
 
 const getAllAccountBalances = async (isAdmin) => {
-	console.log("in db");
 	let balances = {};
 	let accounts = await db.query(
 		escape`SELECT name FROM accounts WHERE closed = false`
 	);
-	console.log("made it");
 	for (let account of accounts) {
 		const name = account.name;
 		const lastDebit = await db.query(escape`

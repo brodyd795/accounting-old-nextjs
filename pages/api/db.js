@@ -122,13 +122,18 @@ const getTransactionIdentifiers = async () => {
 	return identifers;
 };
 
-const getAll = async () => {
-	let results = await db.query(escape`SELECT * FROM dingel ORDER BY id desc`);
-	await db.quit();
-	return results;
+const getAll = async (isAdmin) => {
+	if (isAdmin) {
+		let results = await db.query(
+			escape`SELECT * FROM dingel ORDER BY trn_id desc`
+		);
+		await db.quit();
+		return results;
+	}
+	return { message: "error" };
 };
 
-const getAllAccountBalances = async () => {
+const getAllAccountBalances = async (isAdmin) => {
 	let balances = {};
 	let accounts = await db.query(
 		escape`SELECT name FROM accounts WHERE closed = false`

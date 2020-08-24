@@ -10,21 +10,18 @@ import Error from "../components/error";
 
 const Index = () => {
 	const { user, loading } = useFetchUser();
-	const { data, error } = useSWR("/api", fetch);
+	const { data, error } = useSWR(
+		user ? `/api?user=${user.email}` : null,
+		fetch
+	);
 	if (error) return <Error />;
 
-	const adminEmails = process.env.ADMIN_EMAILS.split(" ");
-
 	return (
-		<Page title="Home">
+		<Page title="Home" loading={loading} user={user}>
 			<PageHeader text="Home" />
-			{loading || !data ? (
-				<Loader />
-			) : user && adminEmails.includes(user.email) ? (
-				<SummaryTable data={data} />
-			) : (
-				<p>No user</p>
-			)}
+			{loading && <Loader />}
+			{!loading && !user && <p>No user</p>}
+			{user && data && JSON.stringify(data)}
 		</Page>
 	);
 };

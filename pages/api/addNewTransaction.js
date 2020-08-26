@@ -58,7 +58,7 @@ const processEmails = async (emails) => {
 };
 
 const parseEmail = async (body) => {
-	let amount, debit, credit, comment;
+	let amount, toAccount, fromAccount, comment;
 	const {
 		fastFoodLocations,
 		gasLocations,
@@ -74,7 +74,7 @@ const parseEmail = async (body) => {
 		amount = /[\d,]+\.\d+/.exec(amount_raw)[0];
 		amount = parseFloat(amount);
 
-		credit = "L_Credit_Card";
+		fromAccount = "L_Credit_Card";
 
 		let location = /at [^\.]+?\./.exec(amount_raw)[0];
 		location = location.replace(/at |\./g, "");
@@ -86,19 +86,19 @@ const parseEmail = async (body) => {
 				location.includes(fastFoodLocation)
 			)
 		) {
-			debit = "E_Fast_Food";
+			toAccount = "E_Fast_Food";
 		} else if (
 			gasLocations.some((gasLocation) => location.includes(gasLocation))
 		) {
-			debit = "E_Gas";
+			toAccount = "E_Gas";
 		} else if (
 			groceryLocations.some((groceryLocation) =>
 				location.includes(groceryLocation)
 			)
 		) {
-			debit = "E_Groceries";
+			toAccount = "E_Groceries";
 		} else {
-			debit = "E_Other";
+			toAccount = "E_Other";
 		}
 	} else if (body.includes("Your transaction of")) {
 		// withdrawals from checking account
@@ -107,20 +107,20 @@ const parseEmail = async (body) => {
 		amount = parseFloat(amount);
 
 		if (amount === parseFloat(rentAmount)) {
-			credit = "A_US_Bank";
-			debit = "E_Bills";
+			fromAccount = "A_US_Bank";
+			toAccount = "E_Bills";
 			comment = "Rent";
 		} else if (amount === parseFloat(carPaymentAmount)) {
-			credit = "A_US_Bank";
-			debit = "E_Bills";
+			fromAccount = "A_US_Bank";
+			toAccount = "E_Bills";
 			comment = "Car payment";
 		} else if (amount > 100) {
-			credit = "A_US_Bank";
-			debit = "L_Credit_Card";
+			fromAccount = "A_US_Bank";
+			toAccount = "L_Credit_Card";
 			comment = "Pay off credit card";
 		} else {
-			credit = "A_US_Bank";
-			debit = "E_Other";
+			fromAccount = "A_US_Bank";
+			toAccount = "E_Other";
 			comment = "Other";
 		}
 	} else if (body.includes("Deposit")) {
@@ -129,32 +129,32 @@ const parseEmail = async (body) => {
 		amount = /[\d,]+\.\d+/.exec(amount_raw)[0];
 		amount = parseFloat(amount);
 		if (amount > parseFloat(salaryAmount)) {
-			credit = "I_Hy-Vee";
+			fromAccount = "I_Hy-Vee";
 			comment = "Salary from Hy-Vee";
 		} else {
-			credit = "I_Other";
+			fromAccount = "I_Other";
 			comment = "Other income";
 		}
-		debit = "A_US_Bank";
+		toAccount = "A_US_Bank";
 	}
 
 	return {
-		debit: debit,
-		credit: credit,
+		toAccount: toAccount,
+		fromAccount: fromAccount,
 		amount: amount,
 		comment: comment,
 	};
 };
 
 const processTransaction = async (transaction) => {
-	console.log("transaction", transaction);
 	let accountBalances = await db.getLastAccountBalances(
-		transaction.debit,
-		transaction.credit,
+		transaction.toAccount,
+		transaction.fromAccount,
 		transaction.id
 	);
-	transaction.debit_balance = accountBalances.debit + transaction.amount;
-	transaction.credit_balance = accountBalances.credit - transaction.amount;
+	transaction.toBalance = accountBalances.toAccount + transaction.amount;
+	transaction.fromBalance = accountBalances.fromAccount - transaction.amount;
+	transaction.userEmail = "brodydingel@gmail.com";
 
 	await db.insertTransaction(transaction);
 };

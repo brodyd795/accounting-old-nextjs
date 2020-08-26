@@ -37,21 +37,23 @@ const db = mysql({
 const insertTransaction = async (transaction) => {
 	let {
 		id,
-		debit,
-		credit,
+		userEmail,
+		toAccount,
+		fromAccount,
 		amount,
-		debit_balance,
-		credit_balance,
+		toBalance,
+		fromBalance,
 		comment,
 	} = transaction;
+	console.log("transaction", transaction);
 	await db.query(
-		escape`INSERT INTO dingel VALUES(${id}, ${debit}, ${credit}, ${amount}, ${debit_balance}, ${credit_balance}, ${comment})`
+		escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
 	);
 	await db.query(
-		escape`UPDATE dingel SET debit_balance = debit_balance + ${amount} WHERE id > ${id} AND (debit = ${debit} OR debit = ${credit})`
+		escape`UPDATE transactions SET to_balance = to_balance + ${amount} WHERE trn_id > ${id} AND (to_account = ${toAccount} OR to_account = ${fromAccount})`
 	);
 	await db.query(
-		escape`UPDATE dingel SET credit_balance = credit_balance - ${amount} WHERE id > ${id} AND (credit = ${debit} OR credit = ${credit})`
+		escape`UPDATE transactions SET from_balance = from_balance - ${amount} WHERE trn_id > ${id} AND (from_account = ${toAccount} OR from_account = ${fromAccount})`
 	);
 
 	await db.quit();
@@ -245,32 +247,32 @@ const getAccountsList = async () => {
 	return accounts;
 };
 
-const getLastAccountBalances = async (debit, credit, id) => {
+const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 	let lastAccountBalances = {};
-	let debitResults = await db.query(escape`
-    	SELECT debit, credit, debit_balance, credit_balance FROM dingel WHERE (debit = ${debit} OR credit = ${debit}) AND (id < ${id}) ORDER BY id desc limit 1
+	let toAccountResults = await db.query(escape`
+    	SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${toAccount} OR from_account = ${toAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
-	let creditResults = await db.query(escape`
-		SELECT debit, credit, debit_balance, credit_balance FROM dingel WHERE (debit = ${credit} OR credit = ${credit}) AND (id < ${id}) ORDER BY id desc limit 1
+	let fromAccountResults = await db.query(escape`
+		SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${fromAccount} OR from_account = ${fromAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
-	if (debitResults.length > 0) {
-		if (debitResults[0].debit === debit) {
-			lastAccountBalances.debit = debitResults[0].debit_balance;
+	if (toAccountResults.length > 0) {
+		if (toAccountResults[0].toAccount === toAccount) {
+			lastAccountBalances.toAccount = toAccountResults[0].to_balance;
 		} else {
-			lastAccountBalances.debit = debitResults[0].credit_balance;
+			lastAccountBalances.toAccount = toAccountResults[0].from_balance;
 		}
 	} else {
-		lastAccountBalances.debit = 0;
+		lastAccountBalances.toAccount = 0;
 	}
 
-	if (creditResults.length > 0) {
-		if (creditResults[0].debit === credit) {
-			lastAccountBalances.credit = creditResults[0].debit_balance;
+	if (fromAccountResults.length > 0) {
+		if (fromAccountResults[0].toAccount === fromAccount) {
+			lastAccountBalances.fromAccount = fromAccountResults[0].to_balance;
 		} else {
-			lastAccountBalances.credit = creditResults[0].credit_balance;
+			lastAccountBalances.fromAccount = fromAccountResults[0].from_balance;
 		}
 	} else {
-		lastAccountBalances.credit = 0;
+		lastAccountBalances.fromAccount = 0;
 	}
 
 	await db.quit();

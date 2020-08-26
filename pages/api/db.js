@@ -82,9 +82,7 @@ const getLastId = async (date) => {
 			}`
 		);
 	} else {
-		lastId = await db.query(
-			`SELECT MAX(id) max_id FROM ${process.env.DB_TABLE}`
-		);
+		lastId = await db.query(`SELECT MAX(trn_id) max_id FROM transactions`);
 	}
 
 	lastId = lastId[0]["max_id"] || date;
@@ -96,30 +94,40 @@ const getTransactionIdentifiers = async () => {
 	const rows = await db.query(`SELECT * FROM transaction_identifiers`);
 	await db.quit();
 
-	const identifers = {
+	const identifiers = {
 		fastFoodLocations: [],
 		gasLocations: [],
-		groceriesLocations: [],
+		groceryLocations: [],
 		rentAmount: null,
 		carPaymentAmount: null,
 		salaryAmount: null,
 	};
-	for (let row of rows) {
-		if (row.subtype === "fastFood") {
-			identifers.fastFoodLocations.push(row.identifier);
-		} else if (row.subtype === "gas") {
-			identifers.gasLocations.push(row.identifier);
-		} else if (row.subtype === "groceries") {
-			identifers.groceriesLocations.push(row.identifier);
-		} else if (row.subtype === "rent") {
-			identifers.rentAmount = row.identifier;
-		} else if (row.subtype === "carPayment") {
-			identifers.carPaymentAmount = row.identifier;
-		} else if (row.subtype === "salary") {
-			identifers.salaryAmount = row.identifier;
+	rows.map((row) => {
+		const { trn_type, trn_identifier } = row;
+
+		switch (trn_type) {
+			case "restaurant":
+				identifiers.fastFoodLocations.push(trn_identifier);
+				break;
+			case "gas":
+				identifiers.gasLocations.push(trn_identifier);
+				break;
+			case "grocery":
+				identifiers.groceryLocations.push(trn_identifier);
+				break;
+			case "rent":
+				identifiers.rentAmount = trn_identifier;
+				break;
+			case "carPayment":
+				identifiers.carPaymentAmount = trn_identifier;
+				break;
+			case "salary":
+				identifiers.salaryAmount = trn_identifier;
+				break;
 		}
-	}
-	return identifers;
+	});
+
+	return identifiers;
 };
 
 const getAll = async (isAdmin) => {

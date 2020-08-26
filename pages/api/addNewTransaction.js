@@ -1,7 +1,7 @@
 const imaps = require("imap-simple");
 const db = require("./db");
-require("dotenv").config();
-// require("dotenv").config({ path: "../../.env" });
+// require("dotenv").config();
+require("dotenv").config({ path: "../../.env" });
 
 let config = {
 	imap: {
@@ -50,7 +50,6 @@ const processEmails = async (emails) => {
 				let results = await parseEmail(body);
 				transactions.push({ id, ...results });
 				if (transactions.length === emails.length) {
-					console.log(transactions);
 					processTransactions(transactions);
 				}
 			}
@@ -63,7 +62,7 @@ const parseEmail = async (body) => {
 	const {
 		fastFoodLocations,
 		gasLocations,
-		groceriesLocations,
+		groceryLocations,
 		rentAmount,
 		carPaymentAmount,
 		salaryAmount,
@@ -93,8 +92,8 @@ const parseEmail = async (body) => {
 		) {
 			debit = "E_Gas";
 		} else if (
-			groceriesLocations.some((groceriesLocation) =>
-				location.includes(groceriesLocation)
+			groceryLocations.some((groceryLocation) =>
+				location.includes(groceryLocation)
 			)
 		) {
 			debit = "E_Groceries";
@@ -148,16 +147,15 @@ const parseEmail = async (body) => {
 };
 
 const processTransaction = async (transaction) => {
+	console.log("transaction", transaction);
 	let accountBalances = await db.getLastAccountBalances(
 		transaction.debit,
 		transaction.credit,
 		transaction.id
 	);
-	// console.log(transaction);
-	// console.log(accountBalances);
 	transaction.debit_balance = accountBalances.debit + transaction.amount;
 	transaction.credit_balance = accountBalances.credit - transaction.amount;
-	// console.log(transaction);
+
 	await db.insertTransaction(transaction);
 };
 

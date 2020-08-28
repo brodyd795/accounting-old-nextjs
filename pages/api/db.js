@@ -11,29 +11,6 @@ const db = mysql({
 	},
 });
 
-// old way of sending a specific query to this file
-
-// exports.query = async (query) => {
-// 	try {
-// 		const results = await db.query(query);
-// 		await db.end();
-// 		return results;
-// 	} catch (error) {
-// 		return { error };
-// 	}
-// };
-
-// how to config it on remote server
-// require("dotenv").config({ path: "../../.env" });
-
-// old way of doing the config
-// mysql.config({
-// 	host: process.env.MYSQL_HOST,
-// 	database: process.env.MYSQL_DATABASE,
-// 	user: process.env.MYSQL_USER,
-// 	password: process.env.MYSQL_PASSWORD,
-// });
-
 const insertTransaction = async (transaction) => {
 	let {
 		id,
@@ -45,7 +22,7 @@ const insertTransaction = async (transaction) => {
 		fromBalance,
 		comment,
 	} = transaction;
-	console.log("transaction", transaction);
+	// console.log("transaction", transaction);
 	await db.query(
 		escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
 	);
@@ -256,7 +233,7 @@ const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 		SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${fromAccount} OR from_account = ${fromAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
 	if (toAccountResults.length > 0) {
-		if (toAccountResults[0].toAccount === toAccount) {
+		if (toAccountResults[0].to_account === toAccount) {
 			lastAccountBalances.toAccount = toAccountResults[0].to_balance;
 		} else {
 			lastAccountBalances.toAccount = toAccountResults[0].from_balance;
@@ -266,7 +243,7 @@ const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 	}
 
 	if (fromAccountResults.length > 0) {
-		if (fromAccountResults[0].toAccount === fromAccount) {
+		if (fromAccountResults[0].to_account === fromAccount) {
 			lastAccountBalances.fromAccount = fromAccountResults[0].to_balance;
 		} else {
 			lastAccountBalances.fromAccount = fromAccountResults[0].from_balance;
@@ -367,6 +344,7 @@ module.exports = {
 	getAccountsList: getAccountsList,
 };
 
+// old function to rebalance full transaction history
 // const rebalance = async (id, account, amount) => {
 // 	await mysql.query(escape``);
 

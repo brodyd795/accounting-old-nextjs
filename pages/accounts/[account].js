@@ -19,7 +19,13 @@ const Account = () => {
 	return (
 		<Page title={account}>
 			<PageHeader text={account} />
-			{!data ? <Loader /> : <RecentTable data={data} />}
+			{!data ? (
+				<Loader />
+			) : data.message ? (
+				data.message
+			) : (
+				<RecentTable data={data} />
+			)}
 		</Page>
 	);
 };

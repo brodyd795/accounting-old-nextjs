@@ -22,7 +22,6 @@ const insertTransaction = async (transaction) => {
 		fromBalance,
 		comment,
 	} = transaction;
-	// console.log("transaction", transaction);
 	await db.query(
 		escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
 	);
@@ -218,7 +217,7 @@ const summarizeAllAccountBalances = async (balances) => {
 
 const getAccountsList = async () => {
 	let accounts = await db.query(
-		escape`SELECT name FROM accounts WHERE closed = false`
+		escape`SELECT acc_name FROM accounts WHERE open = true`
 	);
 	await db.quit();
 	return accounts;
@@ -258,7 +257,7 @@ const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 
 const getAccountTransactions = async (account) => {
 	let results = await db.query(
-		escape`SELECT * FROM dingel WHERE credit=${account} OR debit=${account} ORDER BY id desc`
+		escape`SELECT * FROM transactions WHERE from_account=${account} OR to_account=${account} ORDER BY trn_id desc`
 	);
 	await db.quit();
 	return results;

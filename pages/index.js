@@ -21,7 +21,7 @@ const Index = () => {
 			<PageHeader text="Home" />
 			{loading && <Loader />}
 			{!loading && !user && <p>No user</p>}
-			{user && data && JSON.stringify(data)}
+			{user && data && <SummaryTable data={data} />}
 		</Page>
 	);
 };

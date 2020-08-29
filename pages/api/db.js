@@ -123,15 +123,15 @@ const getAll = async (isAdmin) => {
 const getAllAccountBalances = async (isAdmin) => {
 	let balances = {};
 	let accounts = await db.query(
-		escape`SELECT name FROM accounts WHERE closed = false`
+		escape`SELECT acc_name FROM accounts WHERE open = true`
 	);
 	for (let account of accounts) {
-		const name = account.name;
+		const name = account.acc_name;
 		const lastDebit = await db.query(escape`
-			SELECT debit_balance FROM dingel where debit=${name} order by id desc limit 1;
+			SELECT to_balance FROM transactions where to_account=${name} order by trn_id desc limit 1;
 		`);
 		const lastCredit = await db.query(escape`
-	  		SELECT credit_balance FROM dingel where credit=${name} order by id desc limit 1;
+	  		SELECT from_balance FROM transactions where from_account=${name} order by trn_id desc limit 1;
 		`);
 		await db.quit();
 
@@ -139,16 +139,16 @@ const getAllAccountBalances = async (isAdmin) => {
 		if (lastDebit.length > 0 && lastCredit.length > 0) {
 			// if the most recent debit is more recent than the most recent credit
 			if (lastDebit.id > lastCredit.id) {
-				balances[name] = lastDebit[0]["debit_balance"];
+				balances[name] = lastDebit[0]["to_balance"];
 			} else {
-				balances[name] = lastCredit[0]["credit_balance"];
+				balances[name] = lastCredit[0]["from_balance"];
 			}
 			// has it had any debits?
 		} else if (lastDebit.length > 0) {
-			balances[name] = lastDebit[0]["debit_balance"];
+			balances[name] = lastDebit[0]["to_balance"];
 			// has it had any credits?
 		} else if (lastCredit.length > 0) {
-			balances[name] = lastCredit[0]["credit_balance"];
+			balances[name] = lastCredit[0]["from_balance"];
 			// it hasn't had any transactions before
 		} else {
 			balances[name] = 0;

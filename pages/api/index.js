@@ -1,5 +1,4 @@
 const db = require("./db");
-import { fetchUser } from "../../lib/user";
 
 export default async (req, res) => {
 	let isAdmin = false;
@@ -7,7 +6,6 @@ export default async (req, res) => {
 		isAdmin = true;
 	}
 
-	// const data = await db.getAllAccountBalances(isAdmin);
-	const data = await db.getAll(isAdmin);
+	const data = await db.getAllAccountBalances(isAdmin);
 	res.json(data);
 };

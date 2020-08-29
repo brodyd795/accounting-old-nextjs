@@ -11,47 +11,26 @@ const db = mysql({
 	},
 });
 
-// old way of sending a specific query to this file
-
-// exports.query = async (query) => {
-// 	try {
-// 		const results = await db.query(query);
-// 		await db.end();
-// 		return results;
-// 	} catch (error) {
-// 		return { error };
-// 	}
-// };
-
-// how to config it on remote server
-// require("dotenv").config({ path: "../../.env" });
-
-// old way of doing the config
-// mysql.config({
-// 	host: process.env.MYSQL_HOST,
-// 	database: process.env.MYSQL_DATABASE,
-// 	user: process.env.MYSQL_USER,
-// 	password: process.env.MYSQL_PASSWORD,
-// });
-
 const insertTransaction = async (transaction) => {
 	let {
 		id,
-		debit,
-		credit,
+		userEmail,
+		toAccount,
+		fromAccount,
 		amount,
-		debit_balance,
-		credit_balance,
+		toBalance,
+		fromBalance,
 		comment,
 	} = transaction;
+	// console.log("transaction", transaction);
 	await db.query(
-		escape`INSERT INTO dingel VALUES(${id}, ${debit}, ${credit}, ${amount}, ${debit_balance}, ${credit_balance}, ${comment})`
+		escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
 	);
 	await db.query(
-		escape`UPDATE dingel SET debit_balance = debit_balance + ${amount} WHERE id > ${id} AND (debit = ${debit} OR debit = ${credit})`
+		escape`UPDATE transactions SET to_balance = to_balance + ${amount} WHERE trn_id > ${id} AND (to_account = ${toAccount} OR to_account = ${fromAccount})`
 	);
 	await db.query(
-		escape`UPDATE dingel SET credit_balance = credit_balance - ${amount} WHERE id > ${id} AND (credit = ${debit} OR credit = ${credit})`
+		escape`UPDATE transactions SET from_balance = from_balance - ${amount} WHERE trn_id > ${id} AND (from_account = ${toAccount} OR from_account = ${fromAccount})`
 	);
 
 	await db.quit();
@@ -82,9 +61,7 @@ const getLastId = async (date) => {
 			}`
 		);
 	} else {
-		lastId = await db.query(
-			`SELECT MAX(id) max_id FROM ${process.env.DB_TABLE}`
-		);
+		lastId = await db.query(`SELECT MAX(trn_id) max_id FROM transactions`);
 	}
 
 	lastId = lastId[0]["max_id"] || date;
@@ -96,36 +73,46 @@ const getTransactionIdentifiers = async () => {
 	const rows = await db.query(`SELECT * FROM transaction_identifiers`);
 	await db.quit();
 
-	const identifers = {
+	const identifiers = {
 		fastFoodLocations: [],
 		gasLocations: [],
-		groceriesLocations: [],
+		groceryLocations: [],
 		rentAmount: null,
 		carPaymentAmount: null,
 		salaryAmount: null,
 	};
-	for (let row of rows) {
-		if (row.subtype === "fastFood") {
-			identifers.fastFoodLocations.push(row.identifier);
-		} else if (row.subtype === "gas") {
-			identifers.gasLocations.push(row.identifier);
-		} else if (row.subtype === "groceries") {
-			identifers.groceriesLocations.push(row.identifier);
-		} else if (row.subtype === "rent") {
-			identifers.rentAmount = row.identifier;
-		} else if (row.subtype === "carPayment") {
-			identifers.carPaymentAmount = row.identifier;
-		} else if (row.subtype === "salary") {
-			identifers.salaryAmount = row.identifier;
+	rows.map((row) => {
+		const { trn_type, trn_identifier } = row;
+
+		switch (trn_type) {
+			case "restaurant":
+				identifiers.fastFoodLocations.push(trn_identifier);
+				break;
+			case "gas":
+				identifiers.gasLocations.push(trn_identifier);
+				break;
+			case "grocery":
+				identifiers.groceryLocations.push(trn_identifier);
+				break;
+			case "rent":
+				identifiers.rentAmount = trn_identifier;
+				break;
+			case "carPayment":
+				identifiers.carPaymentAmount = trn_identifier;
+				break;
+			case "salary":
+				identifiers.salaryAmount = trn_identifier;
+				break;
 		}
-	}
-	return identifers;
+	});
+
+	return identifiers;
 };
 
 const getAll = async (isAdmin) => {
 	if (isAdmin) {
 		let results = await db.query(
-			escape`SELECT * FROM dingel ORDER BY trn_id desc`
+			escape`SELECT * FROM transactions ORDER BY trn_id desc`
 		);
 		await db.quit();
 		return results;
@@ -237,32 +224,32 @@ const getAccountsList = async () => {
 	return accounts;
 };
 
-const getLastAccountBalances = async (debit, credit, id) => {
+const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 	let lastAccountBalances = {};
-	let debitResults = await db.query(escape`
-    	SELECT debit, credit, debit_balance, credit_balance FROM dingel WHERE (debit = ${debit} OR credit = ${debit}) AND (id < ${id}) ORDER BY id desc limit 1
+	let toAccountResults = await db.query(escape`
+    	SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${toAccount} OR from_account = ${toAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
-	let creditResults = await db.query(escape`
-		SELECT debit, credit, debit_balance, credit_balance FROM dingel WHERE (debit = ${credit} OR credit = ${credit}) AND (id < ${id}) ORDER BY id desc limit 1
+	let fromAccountResults = await db.query(escape`
+		SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${fromAccount} OR from_account = ${fromAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
-	if (debitResults.length > 0) {
-		if (debitResults[0].debit === debit) {
-			lastAccountBalances.debit = debitResults[0].debit_balance;
+	if (toAccountResults.length > 0) {
+		if (toAccountResults[0].to_account === toAccount) {
+			lastAccountBalances.toAccount = toAccountResults[0].to_balance;
 		} else {
-			lastAccountBalances.debit = debitResults[0].credit_balance;
+			lastAccountBalances.toAccount = toAccountResults[0].from_balance;
 		}
 	} else {
-		lastAccountBalances.debit = 0;
+		lastAccountBalances.toAccount = 0;
 	}
 
-	if (creditResults.length > 0) {
-		if (creditResults[0].debit === credit) {
-			lastAccountBalances.credit = creditResults[0].debit_balance;
+	if (fromAccountResults.length > 0) {
+		if (fromAccountResults[0].to_account === fromAccount) {
+			lastAccountBalances.fromAccount = fromAccountResults[0].to_balance;
 		} else {
-			lastAccountBalances.credit = creditResults[0].credit_balance;
+			lastAccountBalances.fromAccount = fromAccountResults[0].from_balance;
 		}
 	} else {
-		lastAccountBalances.credit = 0;
+		lastAccountBalances.fromAccount = 0;
 	}
 
 	await db.quit();
@@ -357,6 +344,7 @@ module.exports = {
 	getAccountsList: getAccountsList,
 };
 
+// old function to rebalance full transaction history
 // const rebalance = async (id, account, amount) => {
 // 	await mysql.query(escape``);
 

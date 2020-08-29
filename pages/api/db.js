@@ -112,7 +112,7 @@ const getTransactionIdentifiers = async () => {
 const getAll = async (isAdmin) => {
 	if (isAdmin) {
 		let results = await db.query(
-			escape`SELECT * FROM dingel ORDER BY trn_id desc`
+			escape`SELECT * FROM transactions ORDER BY trn_id desc`
 		);
 		await db.quit();
 		return results;

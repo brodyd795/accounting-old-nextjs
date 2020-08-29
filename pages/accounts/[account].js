@@ -12,7 +12,6 @@ const Account = () => {
 		typeof window !== "undefined"
 			? window.location.pathname.replace(/\/accounts\//, "")
 			: "";
-	console.log("account: ", account);
 	const { data, error } = useSWR(`/api/accounts?account=${account}`, fetch);
 	if (error) return <div>{error.message}</div>;
 

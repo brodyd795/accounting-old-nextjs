@@ -14,17 +14,35 @@ const StyledTable = styled.table`
 `;
 
 const RecentTable = ({ data }) => {
-	const [isEditing, setIsEditing] = useState(false);
+	const [isEditing, setIsEditing] = useState(null);
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
 	const [transactionsList, setTransactionsList] = useState(data);
 	const [originalTransaction, setOriginalTransaction] = useState(null);
 	const [editedTransaction, setEditedTransaction] = useState(null);
 
-	const handleDeleteClick = (id) => {
-		const transactionsListCopy = transactionsList.filter(
-			(row) => row.trn_id !== id
+	const handleDelete = (id) => {
+		const confirmDelete = confirm(
+			"Are you sure you wish to delete this transaction? This cannot be undone."
 		);
-		setTransactionsList(transactionsListCopy);
+		if (confirmDelete) {
+			const transactionsListCopy = transactionsList.filter(
+				(row) => row.trn_id !== id
+			);
+			setTransactionsList(transactionsListCopy);
+		}
+	};
+
+	const handleEdit = (id) => {
+		setIsEditing(true);
+		setIdBeingEdited(id);
+	};
+
+	const handleCancel = () => {
+		setIsEditing(false);
+	};
+
+	const handleSave = (id) => {
+		setIsEditing(false);
 	};
 
 	return (
@@ -43,8 +61,12 @@ const RecentTable = ({ data }) => {
 					<EditableRow
 						key={index}
 						row={row}
-						index={index}
-						remove={handleDeleteClick}
+						remove={handleDelete}
+						edit={handleEdit}
+						cancel={handleCancel}
+						save={handleSave}
+						isEditing={isEditing}
+						idBeingEdited={idBeingEdited}
 					/>
 				))}
 			</tbody>

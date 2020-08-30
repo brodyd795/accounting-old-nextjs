@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import EditableRow from "./editable-row";
 
 const StyledTable = styled.table`
 	border: 1px solid black;
@@ -22,12 +23,8 @@ const RecentTable = ({ data }) => (
 				<th>From Balance</th>
 				<th>Comment</th>
 			</tr>
-			{data.map((transaction) => (
-				<tr>
-					{Object.values(transaction).map((cell, key) => (
-						<td key={key}>{cell}</td>
-					))}
-				</tr>
+			{data.map((row) => (
+				<EditableRow row={row} />
 			))}
 		</tbody>
 	</StyledTable>

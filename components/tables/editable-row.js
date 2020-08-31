@@ -15,8 +15,17 @@ const EditableRow = ({
 	const handleEdit = (key, e) => {
 		setEditedRow({
 			...editedRow,
-			trn_id: e.target.value,
+			[key]: e.target.value,
 		});
+	};
+
+	const handleSave = () => {
+		save(editedRow);
+	};
+
+	const handleCancel = () => {
+		setEditedRow(originalRow);
+		cancel(originalRow);
 	};
 
 	return isEditing && idBeingEdited === row.trn_id ? (
@@ -29,38 +38,44 @@ const EditableRow = ({
 			</td>
 			<td>
 				<input
-					value={row.to_account}
-					onChange={() => handleEdit("to_account")}
+					value={editedRow.to_account}
+					onChange={() => handleEdit("to_account", event)}
 				/>
 			</td>
 			<td>
 				<input
-					value={row.from_account}
-					onChange={() => handleEdit("from_account")}
-				/>
-			</td>
-			<td>
-				<input value={row.amount} onChange={() => handleEdit("amount")} />
-			</td>
-			<td>
-				<input
-					value={row.to_balance}
-					onChange={() => handleEdit("to_balance")}
+					value={editedRow.from_account}
+					onChange={() => handleEdit("from_account", event)}
 				/>
 			</td>
 			<td>
 				<input
-					value={row.from_balance}
-					onChange={() => handleEdit("from_balance")}
+					value={editedRow.amount}
+					onChange={() => handleEdit("amount", event)}
 				/>
 			</td>
 			<td>
-				<input value={row.comment} onChange={() => handleEdit("comment")} />
+				<input
+					value={editedRow.to_balance}
+					onChange={() => handleEdit("to_balance", event)}
+				/>
+			</td>
+			<td>
+				<input
+					value={editedRow.from_balance}
+					onChange={() => handleEdit("from_balance", event)}
+				/>
+			</td>
+			<td>
+				<input
+					value={editedRow.comment}
+					onChange={() => handleEdit("comment", event)}
+				/>
 			</td>
 
 			<td>
-				<button onClick={() => cancel(row.trn_id)}>Cancel</button>
-				<button onClick={() => save(row.trn_id)}>Save</button>
+				<button onClick={handleCancel}>Cancel</button>
+				<button onClick={handleSave}>Save</button>
 			</td>
 		</tr>
 	) : (

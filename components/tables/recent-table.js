@@ -35,11 +35,19 @@ const RecentTable = ({ data }) => {
 		setIdBeingEdited(id);
 	};
 
-	const handleCancel = () => {
+	const handleCancel = (cancelledRow) => {
+		const transactionsListCopy = transactionsList.map((row) =>
+			row.trn_id === cancelledRow.trn_id ? cancelledRow : row
+		);
+		setTransactionsList(transactionsListCopy);
 		setIsEditing(false);
 	};
 
-	const handleSave = (id) => {
+	const handleSave = (editedRow) => {
+		const transactionsListCopy = transactionsList.map((row) =>
+			row.trn_id === editedRow.trn_id ? editedRow : row
+		);
+		setTransactionsList(transactionsListCopy);
 		setIsEditing(false);
 	};
 

@@ -17,8 +17,6 @@ const RecentTable = ({ data }) => {
 	const [isEditing, setIsEditing] = useState(null);
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
 	const [transactionsList, setTransactionsList] = useState(data);
-	const [originalTransaction, setOriginalTransaction] = useState(null);
-	const [editedTransaction, setEditedTransaction] = useState(null);
 
 	const handleDelete = (id) => {
 		const confirmDelete = confirm(
@@ -32,7 +30,7 @@ const RecentTable = ({ data }) => {
 		}
 	};
 
-	const handleEdit = (id) => {
+	const handleStartEditing = (id) => {
 		setIsEditing(true);
 		setIdBeingEdited(id);
 	};
@@ -62,7 +60,7 @@ const RecentTable = ({ data }) => {
 						key={index}
 						row={row}
 						remove={handleDelete}
-						edit={handleEdit}
+						edit={handleStartEditing}
 						cancel={handleCancel}
 						save={handleSave}
 						isEditing={isEditing}

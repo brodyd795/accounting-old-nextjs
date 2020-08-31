@@ -1,9 +1,8 @@
 import { useState } from "react";
 import styled from "styled-components";
+import fetch from "isomorphic-unfetch";
 
 import EditableRow from "./editable-row";
-// import fetch from "../../lib/fetch";
-import fetch from "isomorphic-unfetch";
 
 const StyledTable = styled.table`
 	border: 1px solid black;
@@ -58,11 +57,23 @@ const RecentTable = ({ data }) => {
 	};
 
 	const handleSave = (editedRow) => {
-		const transactionsListCopy = transactionsList.map((row) =>
-			row.trn_id === editedRow.trn_id ? editedRow : row
-		);
-		setTransactionsList(transactionsListCopy);
-		setIsEditing(false);
+		fetch("/api/transactions/edit", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ editedRow }),
+		}).then((res) => {
+			if (res.ok) {
+				const transactionsListCopy = transactionsList.map((row) =>
+					row.trn_id === editedRow.trn_id ? editedRow : row
+				);
+				setTransactionsList(transactionsListCopy);
+				setIsEditing(false);
+			} else {
+				console.log(res.status);
+			}
+		});
 	};
 
 	return (

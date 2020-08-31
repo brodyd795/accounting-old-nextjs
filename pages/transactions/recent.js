@@ -1,6 +1,7 @@
 import fetch from "../../lib/fetch";
 import useSWR from "swr";
 import withAuth from "../../components/with-auth";
+import styled from "styled-components";
 
 import { useFetchUser } from "../../lib/user";
 
@@ -9,6 +10,10 @@ import Page from "../../components/layout/page";
 import RecentTable from "../../components/tables/recent-table";
 import PageHeader from "../../components/page-header";
 import Error from "../../components/error";
+
+const TableWrapper = styled.div`
+	overflow-x: scroll;
+`;
 
 const Recent = () => {
 	const { user, loading } = useFetchUser();
@@ -23,7 +28,11 @@ const Recent = () => {
 			<PageHeader text="Recent" />
 			{loading && <Loader />}
 			{!loading && !user && <p>No user</p>}
-			{user && data && <RecentTable data={data} />}
+			{user && data && (
+				<TableWrapper>
+					<RecentTable data={data} />
+				</TableWrapper>
+			)}
 		</Page>
 	);
 };

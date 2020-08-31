@@ -56,13 +56,13 @@ const RecentTable = ({ data }) => {
 		setIsEditing(false);
 	};
 
-	const handleSave = (editedRow) => {
+	const handleSave = (editedRow, originalRow) => {
 		fetch("/api/transactions/edit", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ editedRow }),
+			body: JSON.stringify({ editedRow, originalRow }),
 		}).then((res) => {
 			if (res.ok) {
 				const transactionsListCopy = transactionsList.map((row) =>

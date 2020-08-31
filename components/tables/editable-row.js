@@ -20,7 +20,7 @@ const EditableRow = ({
 	};
 
 	const handleSave = () => {
-		save(editedRow);
+		save(editedRow, originalRow);
 	};
 
 	const handleCancel = () => {

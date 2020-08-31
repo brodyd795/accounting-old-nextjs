@@ -2,6 +2,8 @@ import { useState } from "react";
 import styled from "styled-components";
 
 import EditableRow from "./editable-row";
+// import fetch from "../../lib/fetch";
+import fetch from "isomorphic-unfetch";
 
 const StyledTable = styled.table`
 	border: 1px solid black;
@@ -23,10 +25,22 @@ const RecentTable = ({ data }) => {
 			"Are you sure you wish to delete this transaction? This cannot be undone."
 		);
 		if (confirmDelete) {
-			const transactionsListCopy = transactionsList.filter(
-				(row) => row.trn_id !== id
-			);
-			setTransactionsList(transactionsListCopy);
+			fetch("/api/transactions/delete", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ id }),
+			}).then((res) => {
+				if (res.ok) {
+					const transactionsListCopy = transactionsList.filter(
+						(row) => row.trn_id !== id
+					);
+					setTransactionsList(transactionsListCopy);
+				} else {
+					console.log(res.status);
+				}
+			});
 		}
 	};
 

@@ -19,7 +19,7 @@ const RecentTable = ({ data }) => {
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
 	const [transactionsList, setTransactionsList] = useState(data);
 
-	const handleDelete = (id) => {
+	const handleDelete = (rowToDelete) => {
 		const confirmDelete = confirm(
 			"Are you sure you wish to delete this transaction? This cannot be undone."
 		);
@@ -29,15 +29,16 @@ const RecentTable = ({ data }) => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ id }),
+				body: JSON.stringify({ rowToDelete }),
 			}).then((res) => {
 				if (res.ok) {
 					const transactionsListCopy = transactionsList.filter(
-						(row) => row.trn_id !== id
+						(row) => row.trn_id !== rowToDelete.trn_id
 					);
 					setTransactionsList(transactionsListCopy);
+					alert("Success!");
 				} else {
-					console.log(res.status);
+					alert("An error occurred. Please try again.");
 				}
 			});
 		}

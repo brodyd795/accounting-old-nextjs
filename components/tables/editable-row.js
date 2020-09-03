@@ -87,7 +87,7 @@ const EditableRow = ({
 				<button disabled={isEditing} onClick={() => edit(row.trn_id)}>
 					Edit
 				</button>
-				<button disabled={isEditing} onClick={() => remove(row.trn_id)}>
+				<button disabled={isEditing} onClick={() => remove(row)}>
 					Delete
 				</button>
 			</td>

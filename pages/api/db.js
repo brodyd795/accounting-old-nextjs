@@ -309,23 +309,28 @@ const search = async (params) => {
 	return results;
 };
 
-const deleteTransaction = async (data) => {
-	let { id, amount, debit, credit } = data;
+const deleteTransaction = async (row) => {
+	const { trn_id, amount, from_account, to_account } = row;
+
 	try {
-		let result = await db.query(
-			escape`DELETE FROM first WHERE TransactionId=${id}`
-		);
-		await db.query(
-			escape`UPDATE first SET DebitBalance = DebitBalance - ${amount} WHERE TransactionId > ${id} AND (Debit = ${debit} OR Debit = ${credit})`
-		);
-		await db.query(
-			escape`UPDATE first SET CreditBalance = CreditBalance + ${amount} WHERE TransactionId > ${id} AND (Credit = ${debit} OR Credit = ${credit})`
-		);
+		await db
+			.transaction()
+			.query(`delete from transactions where trn_id = ?`, [trn_id])
+			.query(
+				"UPDATE transactions SET to_balance = to_balance - ? WHERE trn_id > ? AND (to_account = ? OR to_account = ?)",
+				[amount, trn_id, to_account, from_account]
+			)
+			.query(
+				`UPDATE transactions SET from_balance = from_balance + ? WHERE trn_id > ? AND (from_account = ? OR from_account = ?)`,
+				[amount, trn_id, to_account, from_account]
+			)
+			.rollback((e) => console.log("e", e))
+			.commit();
+		return "OK";
+	} catch (error) {
+		return error;
+	} finally {
 		await db.quit();
-		return "ok";
-	} catch (err) {
-		await db.quit();
-		return err;
 	}
 };
 

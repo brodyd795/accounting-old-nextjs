@@ -1,8 +1,10 @@
-const mysql = require("serverless-mysql");
+const mysqlOLD = require("serverless-mysql");
+const mysql = require("mysql2/promise");
 const escape = require("sql-template-strings");
 require("dotenv").config();
 
-const db = mysql({
+// old;
+const db = mysqlOLD({
 	config: {
 		host: process.env.DB_HOST,
 		database: process.env.DB_NAME,
@@ -11,29 +13,56 @@ const db = mysql({
 	},
 });
 
-const insertTransaction = async (transaction) => {
-	let {
-		id,
-		userEmail,
-		toAccount,
-		fromAccount,
-		amount,
-		toBalance,
-		fromBalance,
-		comment,
-	} = transaction;
-	await db.query(
-		escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
-	);
-	await db.query(
-		escape`UPDATE transactions SET to_balance = to_balance + ${amount} WHERE trn_id > ${id} AND (to_account = ${toAccount} OR to_account = ${fromAccount})`
-	);
-	await db.query(
-		escape`UPDATE transactions SET from_balance = from_balance - ${amount} WHERE trn_id > ${id} AND (from_account = ${toAccount} OR from_account = ${fromAccount})`
-	);
+const createConn = async () => {
+	const conn = await mysql.createConnection({
+		host: process.env.DB_HOST,
+		database: process.env.DB_NAME,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+	});
+	return conn;
+};
 
-	await db.quit();
-	return "OK";
+const insertTransaction = async (transaction) => {
+	try {
+		const {
+			id,
+			userEmail,
+			toAccount,
+			fromAccount,
+			amount,
+			toBalance,
+			fromBalance,
+			comment,
+		} = transaction;
+		await db
+			.transaction()
+			.query("INSERT INTO transactions VALUES(?, ?, ?, ?, ?, ?, ?, ?)", [
+				id,
+				userEmail,
+				fromAccount,
+				toAccount,
+				amount,
+				fromBalance,
+				toBalance,
+				comment,
+			])
+			.query(
+				"UPDATE transactions SET to_balance = to_balance + ? WHERE trn_id > ? AND (to_account = ? OR to_account = ?)",
+				[amount, id, toAccount, fromAccount]
+			)
+			.query(
+				"UPDATE transactions SET from_balance = from_balance - ? WHERE trn_id > ? AND (from_account = ? OR from_account = ?)",
+				[amount, id, toAccount, fromAccount]
+			)
+			.rollback((e) => console.log("e", e))
+			.commit();
+		return "OK";
+	} catch (error) {
+		return error;
+	} finally {
+		await db.quit();
+	}
 };
 
 const getTransaction = async (id) => {
@@ -55,7 +84,7 @@ const getLastId = async (date) => {
 
 	if (date) {
 		lastId = await db.query(
-			escape`SELECT MAX(TransactionId) max_id FROM first WHERE TransactionId BETWEEN ${date} AND ${
+			escape`SELECT MAX(trn_id) max_id FROM transactions WHERE trn_id BETWEEN ${date} AND ${
 				date + 99
 			}`
 		);
@@ -310,9 +339,8 @@ const search = async (params) => {
 };
 
 const deleteTransaction = async (row) => {
-	const { trn_id, amount, from_account, to_account } = row;
-
 	try {
+		const { trn_id, amount, from_account, to_account } = row;
 		await db
 			.transaction()
 			.query(`delete from transactions where trn_id = ?`, [trn_id])
@@ -334,6 +362,55 @@ const deleteTransaction = async (row) => {
 	}
 };
 
+const editTransaction = async (originalRow, editedRow) => {
+	const conn = await createConn();
+
+	try {
+		await conn.query("START TRANSACTION");
+		await deleteTransaction(originalRow);
+
+		const lastBalances = await getLastAccountBalances(
+			originalRow.to_account,
+			originalRow.from_account,
+			originalRow.trn_id
+		);
+
+		let amount = parseFloat(editedRow.amount);
+		let toBalance = lastBalances.toAccount + amount;
+		let fromBalance = lastBalances.fromAccount - amount;
+
+		let id = parseInt(
+			// TODO: uncomment once UI has date format like it used to - 2020-08-29
+			// editedRow.trn_id.toString().replace(/-/g, "").concat("00")
+			editedRow.trn_id.toString()
+		);
+
+		if (id / 100 !== parseInt(originalRow.trn_id / 100)) {
+			id = await getLastId(id);
+		} else {
+			id = originalRow.trn_id;
+		}
+		const result = await insertTransaction({
+			id,
+			userEmail: "brodydingel@gmail.com",
+			toAccount: editedRow.to_account,
+			fromAccount: editedRow.from_account,
+			amount,
+			toBalance,
+			fromBalance,
+			comment: editedRow.comment,
+		});
+
+		return "OK";
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
+};
+
 module.exports = {
 	getLastId: getLastId,
 	insertTransaction: insertTransaction,
@@ -346,6 +423,7 @@ module.exports = {
 	deleteTransaction: deleteTransaction,
 	getTransactionIdentifiers: getTransactionIdentifiers,
 	getAccountsList: getAccountsList,
+	editTransaction: editTransaction,
 };
 
 // old function to rebalance full transaction history

@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const EditableRow = ({
+	index,
 	row,
 	remove,
 	edit,
@@ -20,7 +21,7 @@ const EditableRow = ({
 	};
 
 	const handleSave = () => {
-		save(editedRow, originalRow);
+		save(editedRow, originalRow, index);
 	};
 
 	const handleCancel = () => {

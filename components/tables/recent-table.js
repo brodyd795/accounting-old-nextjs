@@ -57,7 +57,7 @@ const RecentTable = ({ data }) => {
 		setIsEditing(false);
 	};
 
-	const handleSave = (editedRow, originalRow) => {
+	const handleSave = (editedRow, originalRow, index) => {
 		fetch("/api/transactions/edit", {
 			method: "POST",
 			headers: {
@@ -66,8 +66,8 @@ const RecentTable = ({ data }) => {
 			body: JSON.stringify({ editedRow, originalRow }),
 		}).then((res) => {
 			if (res.ok) {
-				const transactionsListCopy = transactionsList.map((row) =>
-					row.trn_id === editedRow.trn_id ? editedRow : row
+				const transactionsListCopy = transactionsList.map((row, copyIndex) =>
+					copyIndex === index ? editedRow : row
 				);
 				setTransactionsList(transactionsListCopy);
 				setIsEditing(false);
@@ -91,7 +91,7 @@ const RecentTable = ({ data }) => {
 				</tr>
 				{transactionsList.map((row, index) => (
 					<EditableRow
-						key={index}
+						index={index}
 						row={row}
 						remove={handleDelete}
 						edit={handleStartEditing}

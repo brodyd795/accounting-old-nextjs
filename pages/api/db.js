@@ -1,17 +1,17 @@
-const mysqlOLD = require("serverless-mysql");
+// const mysqlOLD = require("serverless-mysql");
 const mysql = require("mysql2/promise");
 const escape = require("sql-template-strings");
 require("dotenv").config();
 
 // old;
-const db = mysqlOLD({
-	config: {
-		host: process.env.DB_HOST,
-		database: process.env.DB_NAME,
-		user: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-	},
-});
+// const db = mysqlOLD({
+// 	config: {
+// 		host: process.env.DB_HOST,
+// 		database: process.env.DB_NAME,
+// 		user: process.env.DB_USER,
+// 		password: process.env.DB_PASSWORD,
+// 	},
+// });
 
 const createConn = async () => {
 	const conn = await mysql.createConnection({
@@ -104,13 +104,13 @@ const getLastId = async (date) => {
 		await conn.query("START TRANSACTION");
 
 		if (date) {
-			lastId = await db.query(
+			lastId = await conn.query(
 				escape`SELECT MAX(trn_id) max_id FROM transactions WHERE trn_id BETWEEN ${date} AND ${
 					date + 99
 				}`
 			);
 		} else {
-			lastId = await db.query(`SELECT MAX(trn_id) max_id FROM transactions`);
+			lastId = await conn.query(`SELECT MAX(trn_id) max_id FROM transactions`);
 		}
 		lastId = lastId[0]["max_id"] || date;
 
@@ -460,7 +460,7 @@ const deleteTransaction = async (row) => {
 		await conn.query("START TRANSACTION");
 
 		const { trn_id, amount, from_account, to_account } = row;
-		await db.query(`delete from transactions where trn_id = ?`, [trn_id]);
+		await conn.query(`delete from transactions where trn_id = ?`, [trn_id]);
 		await conn.query(
 			"UPDATE transactions SET to_balance = to_balance - ? WHERE trn_id > ? AND (to_account = ? OR to_account = ?)",
 			[amount, trn_id, to_account, from_account]

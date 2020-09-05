@@ -314,7 +314,7 @@ const getAccountsList = async () => {
 		);
 
 		await conn.query("COMMIT");
-		return accounts;
+		return accounts[0];
 	} catch (error) {
 		console.log("error", error);
 		await conn.query("ROLLBACK");

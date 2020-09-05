@@ -5,7 +5,7 @@ export default async (req, res) => {
 	let results = await db.getAccountTransactions(account);
 
 	if (results.length > 0) {
-		results.map(({ user_email, ...rest }) => ({ ...rest }));
+		results = results.map(({ user_email, ...rest }) => ({ ...rest }));
 		res.status(200).json({ data: results });
 	} else {
 		res.json({ message: `Results for account ${account} not found` });

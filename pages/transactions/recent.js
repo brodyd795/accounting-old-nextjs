@@ -11,10 +11,6 @@ import RecentTable from "../../components/tables/recent-table";
 import PageHeader from "../../components/page-header";
 import Error from "../../components/error";
 
-const TableWrapper = styled.div`
-	overflow-x: scroll;
-`;
-
 const Recent = () => {
 	const { user, loading } = useFetchUser();
 	const { data, error } = useSWR(
@@ -28,11 +24,7 @@ const Recent = () => {
 			<PageHeader text="Recent" />
 			{loading && <Loader />}
 			{!loading && !user && <p>No user</p>}
-			{user && data && (
-				<TableWrapper>
-					<RecentTable data={data} />
-				</TableWrapper>
-			)}
+			{user && data && <RecentTable data={data} />}
 		</Page>
 	);
 };

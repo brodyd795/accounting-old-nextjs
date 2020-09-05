@@ -4,6 +4,10 @@ import fetch from "isomorphic-unfetch";
 
 import EditableRow from "./editable-row";
 
+const TableWrapper = styled.div`
+	overflow-x: scroll;
+`;
+
 const StyledTable = styled.table`
 	border: 1px solid black;
 
@@ -78,31 +82,33 @@ const RecentTable = ({ data }) => {
 	};
 
 	return (
-		<StyledTable>
-			<tbody>
-				<tr key="headings">
-					<th>Id</th>
-					<th>To</th>
-					<th>From</th>
-					<th>Amount</th>
-					<th>To Balance</th>
-					<th>From Balance</th>
-					<th>Comment</th>
-				</tr>
-				{transactionsList.map((row, index) => (
-					<EditableRow
-						index={index}
-						row={row}
-						remove={handleDelete}
-						edit={handleStartEditing}
-						cancel={handleCancel}
-						save={handleSave}
-						isEditing={isEditing}
-						idBeingEdited={idBeingEdited}
-					/>
-				))}
-			</tbody>
-		</StyledTable>
+		<TableWrapper>
+			<StyledTable>
+				<tbody>
+					<tr key="headings">
+						<th>Id</th>
+						<th>To</th>
+						<th>From</th>
+						<th>Amount</th>
+						<th>To Balance</th>
+						<th>From Balance</th>
+						<th>Comment</th>
+					</tr>
+					{transactionsList.map((row, index) => (
+						<EditableRow
+							index={index}
+							row={row}
+							remove={handleDelete}
+							edit={handleStartEditing}
+							cancel={handleCancel}
+							save={handleSave}
+							isEditing={isEditing}
+							idBeingEdited={idBeingEdited}
+						/>
+					))}
+				</tbody>
+			</StyledTable>
+		</TableWrapper>
 	);
 };
 

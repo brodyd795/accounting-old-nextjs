@@ -187,7 +187,7 @@ const getAll = async (isAdmin) => {
 				escape`SELECT * FROM transactions ORDER BY trn_id desc`
 			);
 			await conn.query("COMMIT");
-			return results;
+			return results[0];
 		}
 
 		return { message: "error" };
@@ -210,14 +210,16 @@ const getAllAccountBalances = async (isAdmin) => {
 		let accounts = await conn.query(
 			escape`SELECT acc_name FROM accounts WHERE open = true`
 		);
-		for (let account of accounts) {
+		for (let account of accounts[0]) {
 			const name = account.acc_name;
-			const lastDebit = await conn.query(escape`
+			let lastDebit = await conn.query(escape`
 				SELECT to_balance FROM transactions where to_account=${name} order by trn_id desc limit 1;
 			`);
-			const lastCredit = await conn.query(escape`
+			let lastCredit = await conn.query(escape`
 				  SELECT from_balance FROM transactions where from_account=${name} order by trn_id desc limit 1;
 			`);
+			lastDebit = lastDebit[0];
+			lastCredit = lastCredit[0];
 
 			// has the account had *both* debits and credits?
 			if (lastDebit.length > 0 && lastCredit.length > 0) {
@@ -282,7 +284,10 @@ const summarizeAllAccountBalances = async (balances) => {
 		const cleanCategory =
 			category[0].toUpperCase() + category.replace(/([A-Z])/, " $1").slice(1);
 		const categorySum = String(
-			Object.values(accounts).reduce((a, b) => a + b, 0)
+			Object.values(accounts).reduce(
+				(acc, balance) => acc + parseFloat(balance),
+				0
+			)
 		).replace(/(\.\d\d)\d*/, "$1");
 		cleanData[cleanCategory] = {
 			balance: categorySum,
@@ -343,6 +348,8 @@ const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 		let fromAccountResults = await conn.query(escape`
 		SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${fromAccount} OR from_account = ${fromAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
+		toAccountResults = toAccountResults[0];
+		fromAccountResults = fromAccountResults[0];
 		if (toAccountResults.length > 0) {
 			if (toAccountResults[0].to_account === toAccount) {
 				lastAccountBalances.toAccount = toAccountResults[0].to_balance;
@@ -385,7 +392,7 @@ const getAccountTransactions = async (account) => {
 		);
 
 		await conn.query("COMMIT");
-		return results;
+		return results[0];
 	} catch (error) {
 		console.log("error", error);
 		await conn.query("ROLLBACK");

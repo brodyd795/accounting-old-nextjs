@@ -1,17 +1,6 @@
-// const mysqlOLD = require("serverless-mysql");
 const mysql = require("mysql2/promise");
 const escape = require("sql-template-strings");
 require("dotenv").config();
-
-// old;
-// const db = mysqlOLD({
-// 	config: {
-// 		host: process.env.DB_HOST,
-// 		database: process.env.DB_NAME,
-// 		user: process.env.DB_USER,
-// 		password: process.env.DB_PASSWORD,
-// 	},
-// });
 
 const createConn = async () => {
 	const conn = await mysql.createConnection({

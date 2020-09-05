@@ -1,47 +1,82 @@
-const mysql = require("serverless-mysql");
+const mysql = require("mysql2/promise");
 const escape = require("sql-template-strings");
 require("dotenv").config();
 
-const db = mysql({
-	config: {
+const createConn = async () => {
+	const conn = await mysql.createConnection({
 		host: process.env.DB_HOST,
 		database: process.env.DB_NAME,
 		user: process.env.DB_USER,
 		password: process.env.DB_PASSWORD,
-	},
-});
+	});
+	return conn;
+};
 
 const insertTransaction = async (transaction) => {
-	let {
-		id,
-		userEmail,
-		toAccount,
-		fromAccount,
-		amount,
-		toBalance,
-		fromBalance,
-		comment,
-	} = transaction;
-	await db.query(
-		escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
-	);
-	await db.query(
-		escape`UPDATE transactions SET to_balance = to_balance + ${amount} WHERE trn_id > ${id} AND (to_account = ${toAccount} OR to_account = ${fromAccount})`
-	);
-	await db.query(
-		escape`UPDATE transactions SET from_balance = from_balance - ${amount} WHERE trn_id > ${id} AND (from_account = ${toAccount} OR from_account = ${fromAccount})`
-	);
+	const conn = await createConn();
 
-	await db.quit();
-	return "OK";
+	try {
+		const {
+			id,
+			userEmail,
+			toAccount,
+			fromAccount,
+			amount,
+			toBalance,
+			fromBalance,
+			comment,
+		} = transaction;
+
+		await conn.query("START TRANSACTION");
+		await conn.query(
+			"INSERT INTO transactions VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+			[
+				id,
+				userEmail,
+				fromAccount,
+				toAccount,
+				amount,
+				fromBalance,
+				toBalance,
+				comment,
+			]
+		);
+		await conn.query(
+			"UPDATE transactions SET to_balance = to_balance + ? WHERE trn_id > ? AND (to_account = ? OR to_account = ?)",
+			[amount, id, toAccount, fromAccount]
+		);
+		await conn.query(
+			"UPDATE transactions SET from_balance = from_balance - ? WHERE trn_id > ? AND (from_account = ? OR from_account = ?)",
+			[amount, id, toAccount, fromAccount]
+		);
+		await conn.query("COMMIT");
+		return "OK";
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
 const getTransaction = async (id) => {
-	let results = await db.query(
-		escape`SELECT * FROM first WHERE TransactionId=${id}`
-	);
-	await db.quit();
-	return results;
+	const conn = await createConn();
+
+	try {
+		await conn.query("START TRANSACTION");
+		let results = await conn.query(
+			escape`SELECT * FROM first WHERE TransactionId=${id}`
+		);
+		await conn.query("COMMIT");
+		return results;
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
 /*
@@ -51,109 +86,159 @@ const getTransaction = async (id) => {
  * @return 	Int 		Most recent id
  */
 const getLastId = async (date) => {
+	const conn = await createConn();
 	let lastId;
 
-	if (date) {
-		lastId = await db.query(
-			escape`SELECT MAX(TransactionId) max_id FROM first WHERE TransactionId BETWEEN ${date} AND ${
-				date + 99
-			}`
-		);
-	} else {
-		lastId = await db.query(`SELECT MAX(trn_id) max_id FROM transactions`);
-	}
+	try {
+		await conn.query("START TRANSACTION");
 
-	lastId = lastId[0]["max_id"] || date;
-	await db.quit();
-	return lastId;
+		if (date) {
+			lastId = await conn.query(
+				escape`SELECT MAX(trn_id) max_id FROM transactions WHERE trn_id BETWEEN ${date} AND ${
+					date + 99
+				}`
+			);
+		} else {
+			lastId = await conn.query(`SELECT MAX(trn_id) max_id FROM transactions`);
+		}
+		lastId = lastId[0]["max_id"] || date;
+
+		await conn.query("COMMIT");
+
+		return lastId;
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
 const getTransactionIdentifiers = async () => {
-	const rows = await db.query(`SELECT * FROM transaction_identifiers`);
-	await db.quit();
+	const conn = await createConn();
 
-	const identifiers = {
-		fastFoodLocations: [],
-		gasLocations: [],
-		groceryLocations: [],
-		rentAmount: null,
-		carPaymentAmount: null,
-		salaryAmount: null,
-	};
-	rows.map((row) => {
-		const { trn_type, trn_identifier } = row;
+	try {
+		await conn.query("START TRANSACTION");
+		const rows = await conn.query(`SELECT * FROM transaction_identifiers`);
 
-		switch (trn_type) {
-			case "restaurant":
-				identifiers.fastFoodLocations.push(trn_identifier);
-				break;
-			case "gas":
-				identifiers.gasLocations.push(trn_identifier);
-				break;
-			case "grocery":
-				identifiers.groceryLocations.push(trn_identifier);
-				break;
-			case "rent":
-				identifiers.rentAmount = trn_identifier;
-				break;
-			case "carPayment":
-				identifiers.carPaymentAmount = trn_identifier;
-				break;
-			case "salary":
-				identifiers.salaryAmount = trn_identifier;
-				break;
-		}
-	});
+		const identifiers = {
+			fastFoodLocations: [],
+			gasLocations: [],
+			groceryLocations: [],
+			rentAmount: null,
+			carPaymentAmount: null,
+			salaryAmount: null,
+		};
+		rows.map((row) => {
+			const { trn_type, trn_identifier } = row;
 
-	return identifiers;
+			switch (trn_type) {
+				case "restaurant":
+					identifiers.fastFoodLocations.push(trn_identifier);
+					break;
+				case "gas":
+					identifiers.gasLocations.push(trn_identifier);
+					break;
+				case "grocery":
+					identifiers.groceryLocations.push(trn_identifier);
+					break;
+				case "rent":
+					identifiers.rentAmount = trn_identifier;
+					break;
+				case "carPayment":
+					identifiers.carPaymentAmount = trn_identifier;
+					break;
+				case "salary":
+					identifiers.salaryAmount = trn_identifier;
+					break;
+			}
+		});
+
+		await conn.query("COMMIT");
+		return identifiers;
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
 const getAll = async (isAdmin) => {
-	if (isAdmin) {
-		let results = await db.query(
-			escape`SELECT * FROM transactions ORDER BY trn_id desc`
-		);
-		await db.quit();
-		return results;
+	const conn = await createConn();
+
+	try {
+		if (isAdmin) {
+			await conn.query("START TRANSACTION");
+			let results = await conn.query(
+				escape`SELECT * FROM transactions ORDER BY trn_id desc`
+			);
+			await conn.query("COMMIT");
+			return results[0];
+		}
+
+		return { message: "error" };
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
 	}
-	return { message: "error" };
 };
 
 const getAllAccountBalances = async (isAdmin) => {
-	let balances = {};
-	let accounts = await db.query(
-		escape`SELECT acc_name FROM accounts WHERE open = true`
-	);
-	for (let account of accounts) {
-		const name = account.acc_name;
-		const lastDebit = await db.query(escape`
-			SELECT to_balance FROM transactions where to_account=${name} order by trn_id desc limit 1;
-		`);
-		const lastCredit = await db.query(escape`
-	  		SELECT from_balance FROM transactions where from_account=${name} order by trn_id desc limit 1;
-		`);
-		await db.quit();
+	const conn = await createConn();
 
-		// has the account had *both* debits and credits?
-		if (lastDebit.length > 0 && lastCredit.length > 0) {
-			// if the most recent debit is more recent than the most recent credit
-			if (lastDebit.id > lastCredit.id) {
+	try {
+		await conn.query("START TRANSACTION");
+
+		let balances = {};
+		let accounts = await conn.query(
+			escape`SELECT acc_name FROM accounts WHERE open = true`
+		);
+		for (let account of accounts[0]) {
+			const name = account.acc_name;
+			let lastDebit = await conn.query(escape`
+				SELECT to_balance FROM transactions where to_account=${name} order by trn_id desc limit 1;
+			`);
+			let lastCredit = await conn.query(escape`
+				  SELECT from_balance FROM transactions where from_account=${name} order by trn_id desc limit 1;
+			`);
+			lastDebit = lastDebit[0];
+			lastCredit = lastCredit[0];
+
+			// has the account had *both* debits and credits?
+			if (lastDebit.length > 0 && lastCredit.length > 0) {
+				// if the most recent debit is more recent than the most recent credit
+				if (lastDebit.id > lastCredit.id) {
+					balances[name] = lastDebit[0]["to_balance"];
+				} else {
+					balances[name] = lastCredit[0]["from_balance"];
+				}
+				// has it had any debits?
+			} else if (lastDebit.length > 0) {
 				balances[name] = lastDebit[0]["to_balance"];
-			} else {
+				// has it had any credits?
+			} else if (lastCredit.length > 0) {
 				balances[name] = lastCredit[0]["from_balance"];
+				// it hasn't had any transactions before
+			} else {
+				balances[name] = 0;
 			}
-			// has it had any debits?
-		} else if (lastDebit.length > 0) {
-			balances[name] = lastDebit[0]["to_balance"];
-			// has it had any credits?
-		} else if (lastCredit.length > 0) {
-			balances[name] = lastCredit[0]["from_balance"];
-			// it hasn't had any transactions before
-		} else {
-			balances[name] = 0;
 		}
+		await conn.query("COMMIT");
+
+		return summarizeAllAccountBalances(balances);
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
 	}
-	return summarizeAllAccountBalances(balances);
 };
 
 const summarizeAllAccountBalances = async (balances) => {
@@ -188,7 +273,10 @@ const summarizeAllAccountBalances = async (balances) => {
 		const cleanCategory =
 			category[0].toUpperCase() + category.replace(/([A-Z])/, " $1").slice(1);
 		const categorySum = String(
-			Object.values(accounts).reduce((a, b) => a + b, 0)
+			Object.values(accounts).reduce(
+				(acc, balance) => acc + parseFloat(balance),
+				0
+			)
 		).replace(/(\.\d\d)\d*/, "$1");
 		cleanData[cleanCategory] = {
 			balance: categorySum,
@@ -216,116 +304,224 @@ const summarizeAllAccountBalances = async (balances) => {
 };
 
 const getAccountsList = async () => {
-	let accounts = await db.query(
-		escape`SELECT acc_name FROM accounts WHERE open = true`
-	);
-	await db.quit();
-	return accounts;
+	const conn = await createConn();
+
+	try {
+		await conn.query("START TRANSACTION");
+
+		let accounts = await conn.query(
+			escape`SELECT acc_name FROM accounts WHERE open = true`
+		);
+
+		await conn.query("COMMIT");
+		return accounts;
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
 const getLastAccountBalances = async (toAccount, fromAccount, id) => {
-	let lastAccountBalances = {};
-	let toAccountResults = await db.query(escape`
+	const conn = await createConn();
+
+	try {
+		await conn.query("START TRANSACTION");
+
+		let lastAccountBalances = {};
+		let toAccountResults = await conn.query(escape`
     	SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${toAccount} OR from_account = ${toAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
-	let fromAccountResults = await db.query(escape`
+		let fromAccountResults = await conn.query(escape`
 		SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account = ${fromAccount} OR from_account = ${fromAccount}) AND (trn_id < ${id}) ORDER BY trn_id desc limit 1
 	`);
-	if (toAccountResults.length > 0) {
-		if (toAccountResults[0].to_account === toAccount) {
-			lastAccountBalances.toAccount = toAccountResults[0].to_balance;
+		toAccountResults = toAccountResults[0];
+		fromAccountResults = fromAccountResults[0];
+		if (toAccountResults.length > 0) {
+			if (toAccountResults[0].to_account === toAccount) {
+				lastAccountBalances.toAccount = toAccountResults[0].to_balance;
+			} else {
+				lastAccountBalances.toAccount = toAccountResults[0].from_balance;
+			}
 		} else {
-			lastAccountBalances.toAccount = toAccountResults[0].from_balance;
+			lastAccountBalances.toAccount = 0;
 		}
-	} else {
-		lastAccountBalances.toAccount = 0;
-	}
 
-	if (fromAccountResults.length > 0) {
-		if (fromAccountResults[0].to_account === fromAccount) {
-			lastAccountBalances.fromAccount = fromAccountResults[0].to_balance;
+		if (fromAccountResults.length > 0) {
+			if (fromAccountResults[0].to_account === fromAccount) {
+				lastAccountBalances.fromAccount = fromAccountResults[0].to_balance;
+			} else {
+				lastAccountBalances.fromAccount = fromAccountResults[0].from_balance;
+			}
 		} else {
-			lastAccountBalances.fromAccount = fromAccountResults[0].from_balance;
+			lastAccountBalances.fromAccount = 0;
 		}
-	} else {
-		lastAccountBalances.fromAccount = 0;
-	}
 
-	await db.quit();
-	return lastAccountBalances;
+		await conn.query("COMMIT");
+		return lastAccountBalances;
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
 const getAccountTransactions = async (account) => {
-	let results = await db.query(
-		escape`SELECT * FROM transactions WHERE from_account=${account} OR to_account=${account} ORDER BY trn_id desc`
-	);
-	await db.quit();
-	return results;
+	const conn = await createConn();
+
+	try {
+		await conn.query("START TRANSACTION");
+
+		let results = await conn.query(
+			escape`SELECT * FROM transactions WHERE from_account=${account} OR to_account=${account} ORDER BY trn_id desc`
+		);
+
+		await conn.query("COMMIT");
+		return results[0];
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
 const search = async (params) => {
-	let {
-		toAccount,
-		fromAccount,
-		dateRange,
-		fromAmount,
-		toAmount,
-		keyword,
-	} = params;
+	const conn = await createConn();
 
-	let query = [];
+	try {
+		await conn.query("START TRANSACTION");
 
-	if (toAccount !== "" && toAccount !== null) {
-		query.push(`Debit='${toAccount.value}'`);
-	}
-	if (fromAccount !== "" && fromAccount !== null) {
-		query.push(`Credit='${fromAccount.value}'`);
-	}
-	if (dateRange !== "") {
-		query.push(
-			`TransactionId>=${dateRange.start} AND TransactionId<${dateRange.end}`
-		);
-	}
-	if (fromAmount !== "") {
-		fromAmount = parseInt(fromAmount.replace(/[$.]/g, ""));
-		query.push(`Amount>=${fromAmount}`);
-	}
-	if (toAmount !== "") {
-		toAmount = parseInt(toAmount.replace(/[$.]/g, ""));
-		query.push(`Amount<=${toAmount}`);
-	}
-	if (keyword !== "") {
-		keyword = keyword.toLowerCase();
-		query.push(
-			`Debit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Credit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Description COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%'`
-		);
-	}
+		let {
+			toAccount,
+			fromAccount,
+			dateRange,
+			fromAmount,
+			toAmount,
+			keyword,
+		} = params;
 
-	query = query.join(" AND ");
+		let query = [];
 
-	let results = await db.query("SELECT * FROM first WHERE " + query);
+		if (toAccount !== "" && toAccount !== null) {
+			query.push(`Debit='${toAccount.value}'`);
+		}
+		if (fromAccount !== "" && fromAccount !== null) {
+			query.push(`Credit='${fromAccount.value}'`);
+		}
+		if (dateRange !== "") {
+			query.push(
+				`TransactionId>=${dateRange.start} AND TransactionId<${dateRange.end}`
+			);
+		}
+		if (fromAmount !== "") {
+			fromAmount = parseInt(fromAmount.replace(/[$.]/g, ""));
+			query.push(`Amount>=${fromAmount}`);
+		}
+		if (toAmount !== "") {
+			toAmount = parseInt(toAmount.replace(/[$.]/g, ""));
+			query.push(`Amount<=${toAmount}`);
+		}
+		if (keyword !== "") {
+			keyword = keyword.toLowerCase();
+			query.push(
+				`Debit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Credit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Description COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%'`
+			);
+		}
 
-	await db.quit();
-	return results;
+		query = query.join(" AND ");
+
+		let results = await conn.query("SELECT * FROM first WHERE " + query);
+
+		await conn.query("COMMIT");
+		return results;
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
 };
 
-const deleteTransaction = async (data) => {
-	let { id, amount, debit, credit } = data;
+const deleteTransaction = async (row) => {
+	const conn = await createConn();
+
 	try {
-		let result = await db.query(
-			escape`DELETE FROM first WHERE TransactionId=${id}`
+		await conn.query("START TRANSACTION");
+
+		const { trn_id, amount, from_account, to_account } = row;
+		await conn.query(`delete from transactions where trn_id = ?`, [trn_id]);
+		await conn.query(
+			"UPDATE transactions SET to_balance = to_balance - ? WHERE trn_id > ? AND (to_account = ? OR to_account = ?)",
+			[amount, trn_id, to_account, from_account]
 		);
-		await db.query(
-			escape`UPDATE first SET DebitBalance = DebitBalance - ${amount} WHERE TransactionId > ${id} AND (Debit = ${debit} OR Debit = ${credit})`
+		await conn.query(
+			`UPDATE transactions SET from_balance = from_balance + ? WHERE trn_id > ? AND (from_account = ? OR from_account = ?)`,
+			[amount, trn_id, to_account, from_account]
 		);
-		await db.query(
-			escape`UPDATE first SET CreditBalance = CreditBalance + ${amount} WHERE TransactionId > ${id} AND (Credit = ${debit} OR Credit = ${credit})`
+		await conn.query("COMMIT");
+		return "OK";
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
+	}
+};
+
+const editTransaction = async (originalRow, editedRow) => {
+	const conn = await createConn();
+
+	try {
+		await conn.query("START TRANSACTION");
+		await deleteTransaction(originalRow);
+
+		const lastBalances = await getLastAccountBalances(
+			originalRow.to_account,
+			originalRow.from_account,
+			originalRow.trn_id
 		);
-		await db.quit();
-		return "ok";
-	} catch (err) {
-		await db.quit();
-		return err;
+
+		let amount = parseFloat(editedRow.amount);
+		let toBalance = lastBalances.toAccount + amount;
+		let fromBalance = lastBalances.fromAccount - amount;
+
+		let id = parseInt(
+			// TODO: uncomment once UI has date format like it used to - 2020-08-29
+			// editedRow.trn_id.toString().replace(/-/g, "").concat("00")
+			editedRow.trn_id.toString()
+		);
+
+		if (id / 100 !== parseInt(originalRow.trn_id / 100)) {
+			id = await getLastId(id);
+		} else {
+			id = originalRow.trn_id;
+		}
+		const result = await insertTransaction({
+			id,
+			userEmail: "brodydingel@gmail.com",
+			toAccount: editedRow.to_account,
+			fromAccount: editedRow.from_account,
+			amount,
+			toBalance,
+			fromBalance,
+			comment: editedRow.comment,
+		});
+
+		return "OK";
+	} catch (error) {
+		console.log("error", error);
+		await conn.query("ROLLBACK");
+		return "NOT OK";
+	} finally {
+		await conn.end();
 	}
 };
 
@@ -341,6 +537,7 @@ module.exports = {
 	deleteTransaction: deleteTransaction,
 	getTransactionIdentifiers: getTransactionIdentifiers,
 	getAccountsList: getAccountsList,
+	editTransaction: editTransaction,
 };
 
 // old function to rebalance full transaction history

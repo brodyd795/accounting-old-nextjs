@@ -120,11 +120,13 @@ const Navbar = ({ open, setOpen }) => {
 								<StyledLinkText>{"Accounts"}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
-						<Link href="/recent">
+						<Link href="/transactions/recent">
 							<StyledLinkItem
-								className={router.pathname === "/recent" && "active"}>
+								className={
+									router.pathname === "/transactions/recent" && "active"
+								}>
 								<HistoryIcon />
-								<StyledLinkText>{"Recent"}</StyledLinkText>
+								<StyledLinkText>{"Transactions"}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
 						<Link href="/api/logout">

@@ -15,11 +15,11 @@
 		"imap-simple": "^5.0.0",
 		"isomorphic-unfetch": "^3.0.0",
 		"js-yaml": "^3.13.1",
+		"mysql2": "^2.1.0",
 		"next": "9.4.0",
 		"react": "16.13.1",
 		"react-dom": "16.13.1",
 		"react-select": "^3.1.0",
-		"serverless-mysql": "^1.5.4",
 		"sql-template-strings": "^2.2.2",
 		"styled-components": "5.0.1",
 		"swr": "^0.2.2"

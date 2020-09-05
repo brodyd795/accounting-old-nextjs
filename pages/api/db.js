@@ -480,6 +480,8 @@ const editTransaction = async (originalRow, editedRow) => {
 	const conn = await createConn();
 
 	try {
+		console.log("originalRow", originalRow);
+		console.log("editedRow", editedRow);
 		await conn.query("START TRANSACTION");
 		await deleteTransaction(originalRow);
 
@@ -490,8 +492,11 @@ const editTransaction = async (originalRow, editedRow) => {
 		);
 
 		let amount = parseFloat(editedRow.amount);
-		let toBalance = lastBalances.toAccount + amount;
-		let fromBalance = lastBalances.fromAccount - amount;
+		let toBalance = lastBalances.toAccount + parseFloat(amount);
+		let fromBalance = lastBalances.fromAccount - parseFloat(amount);
+		console.log("amount", amount);
+		console.log("toBalance", toBalance);
+		console.log("fromBalance", fromBalance);
 
 		let id = parseInt(
 			// TODO: uncomment once UI has date format like it used to - 2020-08-29
@@ -514,6 +519,7 @@ const editTransaction = async (originalRow, editedRow) => {
 			fromBalance,
 			comment: editedRow.comment,
 		});
+		await conn.query("COMMIT");
 
 		return "OK";
 	} catch (error) {

@@ -1,15 +1,14 @@
 import fetch from "../../lib/fetch";
 import useSWR from "swr";
-import Link from "next/link";
 import withAuth from "../../components/with-auth";
-import Select from 'react-select';
-import  Router  from 'next/router'
-import styled from 'styled-components'
+import Select from "react-select";
+import { useRouter } from "next/router";
+import styled from "styled-components";
 
 import Loader from "../../components/loader";
 import Page from "../../components/layout/page";
 import PageHeader from "../../components/page-header";
-import Error from '../../components/error'
+import Error from "../../components/error";
 
 const StyledSelect = styled(Select)`
 	width: 300px;
@@ -17,17 +16,18 @@ const StyledSelect = styled(Select)`
 `;
 
 const Accounts = () => {
+	const router = useRouter();
 	const { data, error } = useSWR("/api/accounts", fetch);
 	if (error) return <Error />;
 	const handleChange = (e) => {
-		Router.push("/accounts/[account]", `/accounts/${e.value}`)
-	}
+		router.push("/accounts/[account]", `/accounts/${e.value}`);
+	};
 
 	return (
 		<Page title="Accounts">
 			<PageHeader text="Accounts" />
 			{data ? (
-				<StyledSelect 
+				<StyledSelect
 					options={data}
 					placeholder="Select account..."
 					onChange={handleChange}

@@ -1,6 +1,6 @@
-const db = require("../db");
+const db = require("../../db");
 
-import transformAccountsListForDropdown from "../helpers/accounts-select-data-transform";
+import transformAccountsListForDropdown from "../../helpers/accounts-select-data-transform";
 
 export default async (req, res) => {
 	const data = await db.getAccountsList();

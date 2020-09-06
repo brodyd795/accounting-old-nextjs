@@ -28,7 +28,7 @@ const RecentTable = ({ data }) => {
 			"Are you sure you wish to delete this transaction? This cannot be undone."
 		);
 		if (confirmDelete) {
-			fetch("/api/transactions/delete", {
+			fetch("/api/controllers/transactions/delete", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -62,7 +62,7 @@ const RecentTable = ({ data }) => {
 	};
 
 	const handleSave = (editedRow, originalRow, index) => {
-		fetch("/api/transactions/edit", {
+		fetch("/api/controllers/transactions/edit", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",

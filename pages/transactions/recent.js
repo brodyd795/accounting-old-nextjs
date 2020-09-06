@@ -14,7 +14,7 @@ import Error from "../../components/error";
 const Recent = () => {
 	const { user, loading } = useFetchUser();
 	const { data, error } = useSWR(
-		user ? `/api/transactions/recent?user=${user.email}` : null,
+		user ? `/api/controllers/transactions/recent?user=${user.email}` : null,
 		fetch
 	);
 	if (error) return <Error />;

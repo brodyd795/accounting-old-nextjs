@@ -17,7 +17,7 @@ const StyledSelect = styled(Select)`
 
 const Accounts = () => {
 	const router = useRouter();
-	const { data, error } = useSWR("/api/accounts", fetch);
+	const { data, error } = useSWR("/api/controllers/accounts", fetch);
 	if (error) return <Error />;
 	const handleChange = (e) => {
 		router.push("/accounts/[account]", `/accounts/${e.value}`);

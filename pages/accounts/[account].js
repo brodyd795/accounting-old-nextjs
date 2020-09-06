@@ -12,7 +12,7 @@ const Account = () => {
 	const router = useRouter();
 	const account = router.query.account;
 	const { data, error } = useSWR(
-		() => account && `/api/accounts/${account}`,
+		() => account && `/api/controllers/accounts/${account}`,
 		fetch
 	);
 

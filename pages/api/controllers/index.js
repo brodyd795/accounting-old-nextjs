@@ -1,9 +1,8 @@
-import { checkIsAdmin } from "../services/is-admin-service";
-
-const db = require("../db");
+import { getHomepageData } from "../services/homepage-service";
 
 export default async (req, res) => {
-	const isAdmin = checkIsAdmin(req.query.user);
-	const data = await db.getAllAccountBalances(isAdmin);
+	const user = req.query.user;
+	const data = await getHomepageData(user);
+
 	res.json(data);
 };

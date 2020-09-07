@@ -223,27 +223,6 @@ const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 	}
 };
 
-const getAccountTransactions = async (account) => {
-	const conn = await createConn();
-
-	try {
-		await conn.query("START TRANSACTION");
-
-		let results = await conn.query(
-			escape`SELECT * FROM transactions WHERE from_account=${account} OR to_account=${account} ORDER BY trn_id desc`
-		);
-
-		await conn.query("COMMIT");
-		return results[0];
-	} catch (error) {
-		console.log("error", error);
-		await conn.query("ROLLBACK");
-		return "NOT OK";
-	} finally {
-		await conn.end();
-	}
-};
-
 const search = async (params) => {
 	const conn = await createConn();
 

@@ -1,13 +1,8 @@
-const db = require("../../db");
+import { getAccountPageData } from "../../services/account-page-service";
 
 export default async (req, res) => {
 	const account = req.query.account;
-	let results = await db.getAccountTransactions(account);
+	const results = await getAccountPageData(account);
 
-	if (results.length > 0) {
-		results = results.map(({ user_email, ...rest }) => ({ ...rest }));
-		res.status(200).json({ data: results });
-	} else {
-		res.json({ message: `Results for account ${account} not found` });
-	}
+	res.status(200).json(results);
 };

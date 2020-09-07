@@ -177,27 +177,6 @@ const getAll = async (isAdmin) => {
 	}
 };
 
-const getAccountsList = async () => {
-	const conn = await createConn();
-
-	try {
-		await conn.query("START TRANSACTION");
-
-		let accounts = await conn.query(
-			escape`SELECT acc_name FROM accounts WHERE open = true`
-		);
-
-		await conn.query("COMMIT");
-		return accounts[0];
-	} catch (error) {
-		console.log("error", error);
-		await conn.query("ROLLBACK");
-		return "NOT OK";
-	} finally {
-		await conn.end();
-	}
-};
-
 const getLastAccountBalances = async (toAccount, fromAccount, id) => {
 	const conn = await createConn();
 

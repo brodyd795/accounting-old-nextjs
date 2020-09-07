@@ -1,11 +1,7 @@
-const db = require("../../db");
-
-import transformAccountsListForDropdown from "../../services/accounts-select-data-transform";
+import { getAccountsPageData } from "../../services/accounts-page-service";
 
 export default async (req, res) => {
-	const data = await db.getAccountsList();
-	const accounts = data.map((account) => account.acc_name);
-	const transformedAccountsList = transformAccountsListForDropdown(accounts);
+	const data = await getAccountsPageData();
 
-	res.json(transformedAccountsList);
+	res.json(data);
 };

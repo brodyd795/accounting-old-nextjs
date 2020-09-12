@@ -1,4 +1,4 @@
-const db = require("../../db");
+import { deleteTransactionService } from "../../services/delete-service";
 
 export default async (req, res) => {
 	// TODO
@@ -9,7 +9,7 @@ export default async (req, res) => {
 
 	// res.json(data);
 	try {
-		let result = await db.deleteTransaction(req.body.rowToDelete);
+		const result = await deleteTransactionService(req.body.rowToDelete);
 		if (result === "OK") {
 			res.status(200).json({ result: result });
 		} else {

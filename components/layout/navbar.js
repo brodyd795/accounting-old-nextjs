@@ -129,7 +129,7 @@ const Navbar = ({ open, setOpen }) => {
 								<StyledLinkText>{"Transactions"}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
-						<Link href="/api/logout">
+						<Link href="/api/auth/logout">
 							<StyledLinkItem>
 								<LogoutIcon />
 								<StyledLinkText>{"Logout"}</StyledLinkText>
@@ -138,7 +138,7 @@ const Navbar = ({ open, setOpen }) => {
 					</>
 				)}
 				{!user && (
-					<Link href="/api/login">
+					<Link href="/api/auth/login">
 						<StyledLinkItem>
 							<LoginIcon />
 							<StyledLinkText>{"Login"}</StyledLinkText>

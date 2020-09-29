@@ -1,20 +1,30 @@
-import { createConn } from "./create-connection-repository";
+import mysql from "serverless-mysql";
+import dotenv from "dotenv";
 
-export const transactionWrapper = (wrapped) => {
-	return async function () {
-		console.log("Starting");
-		const conn = await createConn();
-		let result;
-		try {
-			await conn.query("START TRANSACTION");
-			result = await wrapped.apply(this, arguments);
-		} catch (error) {
-			await conn.query("ROLLBACK");
-			result = error;
-		} finally {
-			await conn.end();
-			console.log("Finished");
-			return result === undefined ? "OK" : result;
-		}
-	};
+dotenv.config();
+
+export const conn = mysql({
+	config: {
+		host: process.env.DB_HOST,
+		database: process.env.DB_NAME,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+	},
+});
+
+export const withTransactionWrapper = async (queries, props) => {
+	try {
+		await conn.query("BEGIN");
+
+		const results = await queries(props);
+
+		await conn.query("COMMIT");
+		return results;
+	} catch (err) {
+		console.log("err.message", err.message);
+		await conn.query("ROLLBACK");
+		return "Error!";
+	} finally {
+		await conn.end();
+	}
 };

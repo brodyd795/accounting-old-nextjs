@@ -2,7 +2,7 @@ import escape from "sql-template-strings";
 
 import { withTransactionWrapper, conn } from "./transaction-wrapper-repository";
 
-const deleteTransaction = async (row) => {
+export const deleteTransaction = async (row) => {
 	const { trn_id, amount, from_account, to_account } = row;
 
 	await conn.query(escape`delete from transactions where trn_id = ${trn_id}`);
@@ -16,5 +16,5 @@ const deleteTransaction = async (row) => {
 	return "OK";
 };
 
-export default async (props) =>
+export const wrappedDeleteTransaction = async (props) =>
 	withTransactionWrapper(deleteTransaction, props);

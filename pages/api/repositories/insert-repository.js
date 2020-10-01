@@ -1,8 +1,8 @@
-import { createConn } from "./create-connection-repository";
+import escape from "sql-template-strings";
+
+import { withTransactionWrapper, conn } from "./transaction-wrapper-repository";
 
 export const insertTransaction = async (transaction) => {
-	const conn = await createConn();
-
 	try {
 		const {
 			id,
@@ -15,36 +15,21 @@ export const insertTransaction = async (transaction) => {
 			comment,
 		} = transaction;
 
-		await conn.query("START TRANSACTION");
+		await conn.query(
+			escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
+		);
+		await conn.query(
+			escape`UPDATE transactions SET to_balance = to_balance + ${amount} WHERE trn_id > ${id} AND (to_account = ${toAccount} OR to_account = ${fromAccount})`
+		);
+		await conn.query(
+			escape`UPDATE transactions SET from_balance = from_balance - ${amount} WHERE trn_id > ${id} AND (from_account = ${toAccount} OR from_account = ${fromAccount})`
+		);
 
-		await conn.query(
-			"INSERT INTO transactions VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
-			[
-				id,
-				userEmail,
-				fromAccount,
-				toAccount,
-				amount,
-				fromBalance,
-				toBalance,
-				comment,
-			]
-		);
-		await conn.query(
-			"UPDATE transactions SET to_balance = to_balance + ? WHERE trn_id > ? AND (to_account = ? OR to_account = ?)",
-			[amount, id, toAccount, fromAccount]
-		);
-		await conn.query(
-			"UPDATE transactions SET from_balance = from_balance - ? WHERE trn_id > ? AND (from_account = ? OR from_account = ?)",
-			[amount, id, toAccount, fromAccount]
-		);
-		await conn.query("COMMIT");
 		return "OK";
 	} catch (error) {
-		console.log("error", error);
-		await conn.query("ROLLBACK");
-		return "NOT OK";
-	} finally {
-		await conn.end();
+		throw new Error(error);
 	}
 };
+
+export const wrappedInsertTransaction = async (props) =>
+	withTransactionWrapper(insertTransaction, props);

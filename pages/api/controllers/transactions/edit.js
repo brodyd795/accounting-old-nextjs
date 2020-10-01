@@ -1,4 +1,4 @@
-import { editTransactionService } from "../../services/edit-service";
+import { wrappedEditTransaction } from "../../services/edit-service";
 
 export default async (req, res) => {
 	// TODO
@@ -14,7 +14,7 @@ export default async (req, res) => {
 	try {
 		const { originalRow, editedRow } = req.body;
 
-		const result = await editTransactionService(originalRow, editedRow);
+		const result = await wrappedEditTransaction({ originalRow, editedRow });
 
 		if (result === "OK") {
 			console.log("ok!");

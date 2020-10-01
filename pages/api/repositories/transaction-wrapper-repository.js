@@ -21,9 +21,9 @@ export const withTransactionWrapper = async (queries, props) => {
 		await conn.query("COMMIT");
 		return results;
 	} catch (err) {
-		console.log("err.message", err.message);
 		await conn.query("ROLLBACK");
-		return "Error!";
+
+		return new Error(err);
 	} finally {
 		await conn.end();
 	}

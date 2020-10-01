@@ -74,10 +74,11 @@ const RecentTable = ({ data }) => {
 					copyIndex === index ? editedRow : row
 				);
 				setTransactionsList(transactionsListCopy);
-				setIsEditing(false);
 			} else {
 				console.log(res.status);
+				alert("An error occurred. Please try again.");
 			}
+			setIsEditing(false);
 		});
 	};
 
@@ -87,11 +88,11 @@ const RecentTable = ({ data }) => {
 				<tbody>
 					<tr key="headings">
 						<th>Id</th>
-						<th>To</th>
 						<th>From</th>
+						<th>To</th>
 						<th>Amount</th>
-						<th>To Balance</th>
 						<th>From Balance</th>
+						<th>To Balance</th>
 						<th>Comment</th>
 					</tr>
 					{transactionsList.map((row, index) => (

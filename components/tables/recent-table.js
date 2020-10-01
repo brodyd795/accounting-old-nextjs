@@ -97,6 +97,7 @@ const RecentTable = ({ data }) => {
 					</tr>
 					{transactionsList.map((row, index) => (
 						<EditableRow
+							key={index}
 							index={index}
 							row={row}
 							remove={handleDelete}

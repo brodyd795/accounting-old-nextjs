@@ -11,7 +11,7 @@ import Error from "../components/error";
 const Index = () => {
 	const { user, loading } = useFetchUser();
 	const { data, error } = useSWR(
-		user ? `/api?user=${user.email}` : null,
+		user ? `/api/controllers?user=${user.email}` : null,
 		fetch
 	);
 	if (error) return <Error />;

@@ -39,14 +39,14 @@ const EditableRow = ({
 			</td>
 			<td>
 				<input
-					value={editedRow.to_account}
-					onChange={() => handleEdit("to_account", event)}
+					value={editedRow.from_account}
+					onChange={() => handleEdit("from_account", event)}
 				/>
 			</td>
 			<td>
 				<input
-					value={editedRow.from_account}
-					onChange={() => handleEdit("from_account", event)}
+					value={editedRow.to_account}
+					onChange={() => handleEdit("to_account", event)}
 				/>
 			</td>
 			<td>
@@ -57,14 +57,14 @@ const EditableRow = ({
 			</td>
 			<td>
 				<input
-					value={editedRow.to_balance}
-					onChange={() => handleEdit("to_balance", event)}
+					value={editedRow.from_balance}
+					onChange={() => handleEdit("from_balance", event)}
 				/>
 			</td>
 			<td>
 				<input
-					value={editedRow.from_balance}
-					onChange={() => handleEdit("from_balance", event)}
+					value={editedRow.to_balance}
+					onChange={() => handleEdit("to_balance", event)}
 				/>
 			</td>
 			<td>

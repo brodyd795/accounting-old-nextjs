@@ -28,7 +28,7 @@ const RecentTable = ({ data }) => {
 			"Are you sure you wish to delete this transaction? This cannot be undone."
 		);
 		if (confirmDelete) {
-			fetch("/api/transactions/delete", {
+			fetch("/api/controllers/transactions/delete", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -62,7 +62,7 @@ const RecentTable = ({ data }) => {
 	};
 
 	const handleSave = (editedRow, originalRow, index) => {
-		fetch("/api/transactions/edit", {
+		fetch("/api/controllers/transactions/edit", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -74,10 +74,11 @@ const RecentTable = ({ data }) => {
 					copyIndex === index ? editedRow : row
 				);
 				setTransactionsList(transactionsListCopy);
-				setIsEditing(false);
 			} else {
 				console.log(res.status);
+				alert("An error occurred. Please try again.");
 			}
+			setIsEditing(false);
 		});
 	};
 
@@ -87,15 +88,16 @@ const RecentTable = ({ data }) => {
 				<tbody>
 					<tr key="headings">
 						<th>Id</th>
-						<th>To</th>
 						<th>From</th>
+						<th>To</th>
 						<th>Amount</th>
-						<th>To Balance</th>
 						<th>From Balance</th>
+						<th>To Balance</th>
 						<th>Comment</th>
 					</tr>
 					{transactionsList.map((row, index) => (
 						<EditableRow
+							key={index}
 							index={index}
 							row={row}
 							remove={handleDelete}

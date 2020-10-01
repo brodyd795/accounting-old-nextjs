@@ -1,4 +1,4 @@
-const transformAccountsListForDropdown = (accounts) => {
+export const transformAccountsListForDropdown = (accounts) => {
 	const options = [
 		{ label: "Income", options: [] },
 		{ label: "Expenses", options: [] },
@@ -29,5 +29,3 @@ const transformAccountsListForDropdown = (accounts) => {
 	});
 	return options;
 };
-
-export default transformAccountsListForDropdown;

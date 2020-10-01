@@ -1,4 +1,4 @@
-const db = require("../db");
+import { deleteTransactionService } from "../../services/delete-service";
 
 export default async (req, res) => {
 	// TODO
@@ -7,24 +7,15 @@ export default async (req, res) => {
 	// 	isAdmin = true;
 	// }
 
-	// let data = await db.getAll(isAdmin);
-
 	// res.json(data);
-
 	try {
-		const { originalRow, editedRow } = req.body;
-
-		const result = await db.editTransaction(originalRow, editedRow);
-
+		const result = await deleteTransactionService(req.body.rowToDelete);
 		if (result === "OK") {
-			console.log("ok!");
 			res.status(200).json({ result: result });
 		} else {
-			console.log("not ok!");
 			res.status(400).json({ error: "NOT OK" });
 		}
 	} catch (error) {
-		console.log("error", error);
 		res.status(400).json({ error: error.message });
 	}
 };

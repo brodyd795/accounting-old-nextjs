@@ -6,7 +6,10 @@ dotenv.config();
 export const conn = mysql({
 	config: {
 		host: process.env.DB_HOST,
-		database: process.env.DB_NAME,
+		database:
+			process.env.ENVIRONMENT === 'dev'
+				? `${process.env.DB_NAME}_TEST`
+				: process.env.DB_NAME,
 		user: process.env.DB_USER,
 		password: process.env.DB_PASSWORD
 	}

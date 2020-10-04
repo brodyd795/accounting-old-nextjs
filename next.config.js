@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 module.exports = {
+	// eslint-disable-next-line get-off-my-lawn/prefer-arrow-functions
 	webpack(config) {
 		config.module.rules.push({
 			test: /\.svg$/,

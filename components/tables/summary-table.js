@@ -39,8 +39,8 @@ const SummaryTable = ({data}) => (
 				<th>Account</th>
 				<th>Balance</th>
 			</tr>
-			{Object.entries(data).map(([category, categoryValues], index) => (
-				<React.Fragment key={index}>
+			{Object.entries(data).map(([category, categoryValues]) => (
+				<React.Fragment key={category}>
 					<tr>
 						<td>{category}</td>
 						<td className='balance'>{categoryValues.balance}</td>

@@ -78,6 +78,7 @@ export const getHomepageData = async () => {
 
 	const accounts = await getOpenAccounts();
 
+	// eslint-disable-next-line no-unused-vars
 	for (const account of accounts) {
 		const name = account.acc_name;
 		const {lastDebit, lastCredit} = await getAllAccountBalances(name);

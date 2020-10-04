@@ -8,6 +8,7 @@ class CustomDocument extends Document {
 		const originalRenderPage = ctx.renderPage;
 
 		try {
+			// eslint-disable-next-line no-param-reassign
 			ctx.renderPage = () =>
 				originalRenderPage({
 					enhanceApp: App => props => sheet.collectStyles(<App {...props} />)

@@ -25,14 +25,10 @@ export default InnerComponent => {
 				});
 				ctx.res.end();
 
-				return;
+				return null;
 			}
 
 			return {user: session.user};
-		}
-
-		constructor(props) {
-			super(props);
 		}
 
 		render() {

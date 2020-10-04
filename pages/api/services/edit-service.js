@@ -1,15 +1,15 @@
-import { withTransactionWrapper } from "../repositories/transaction-wrapper-repository";
+import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
+import {deleteTransaction} from '../repositories/delete-repository';
+import {insertTransaction} from '../repositories/insert-repository';
+import {getLastId} from '../repositories/get-last-id-repository';
 
-import { deleteTransaction } from "../repositories/delete-repository";
-import { getLastAccountBalancesService } from "./last-account-balances-service";
-import { insertTransaction } from "../repositories/insert-repository";
-import { getLastId } from "../repositories/get-last-id-repository";
+import {getLastAccountBalancesService} from './last-account-balances-service';
 
-export const editTransactionService = async (props) => {
+export const editTransactionService = async props => {
 	try {
-		const { originalRow, editedRow } = props;
+		const {originalRow, editedRow} = props;
 
-		const deleteResult = await deleteTransaction(originalRow);
+		await deleteTransaction(originalRow);
 
 		const lastBalances = await getLastAccountBalancesService(
 			originalRow.to_account,
@@ -22,13 +22,16 @@ export const editTransactionService = async (props) => {
 		const fromBalance =
 			parseFloat(lastBalances.fromAccount) - parseFloat(amount);
 
-		// TODO: uncomment once UI has date format like it used to - 2020-08-29
-		// let id = parseInt(
-		// editedRow.trn_id.toString().replace(/-/g, "").concat("00")
-		// editedRow.trn_id.toString()
-		// );
+		/*
+		 * TODO: uncomment once UI has date format like it used to - 2020-08-29
+		 * let id = parseInt(
+		 * editedRow.trn_id.toString().replace(/-/g, "").concat("00")
+		 * editedRow.trn_id.toString()
+		 * );
+		 */
 
 		let id;
+
 		// if (id / 100 !== parseInt(originalRow.trn_id / 100)) {
 		if (editedRow.trn_id !== originalRow.trn_id) {
 			id = await getLastId(id);
@@ -36,21 +39,22 @@ export const editTransactionService = async (props) => {
 			id = originalRow.trn_id;
 		}
 
-		const insertResult = await insertTransaction({
+		await insertTransaction({
 			id,
-			userEmail: "brodydingel@gmail.com",
+			userEmail: 'brodydingel@gmail.com',
 			toAccount: editedRow.to_account,
 			fromAccount: editedRow.from_account,
 			amount,
 			toBalance,
 			fromBalance,
-			comment: editedRow.comment,
+			comment: editedRow.comment
 		});
-		return "OK";
-	} catch (e) {
-		throw new Error("Error in edit-service.js");
+
+		return 'OK';
+	} catch (error) {
+		throw new Error('Error in edit-service.js');
 	}
 };
 
-export const wrappedEditTransaction = async (props) =>
+export const wrappedEditTransaction = async props =>
 	withTransactionWrapper(editTransactionService, props);

@@ -1,59 +1,51 @@
-import { createConn } from "./create-connection-repository";
+import escape from 'sql-template-strings';
 
-export const search = async (params) => {
-	const conn = await createConn();
+import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
-	try {
-		await conn.query("START TRANSACTION");
+export const search = async params => {
+	let {fromAmount, toAmount, keyword} = params;
 
-		let {
-			toAccount,
-			fromAccount,
-			dateRange,
-			fromAmount,
-			toAmount,
-			keyword,
-		} = params;
+	const {toAccount, fromAccount, dateRange} = params;
 
-		let query = [];
+	const queries = [];
 
-		if (toAccount !== "" && toAccount !== null) {
-			query.push(`Debit='${toAccount.value}'`);
-		}
-		if (fromAccount !== "" && fromAccount !== null) {
-			query.push(`Credit='${fromAccount.value}'`);
-		}
-		if (dateRange !== "") {
-			query.push(
-				`TransactionId>=${dateRange.start} AND TransactionId<${dateRange.end}`
-			);
-		}
-		if (fromAmount !== "") {
-			fromAmount = parseInt(fromAmount.replace(/[$.]/g, ""));
-			query.push(`Amount>=${fromAmount}`);
-		}
-		if (toAmount !== "") {
-			toAmount = parseInt(toAmount.replace(/[$.]/g, ""));
-			query.push(`Amount<=${toAmount}`);
-		}
-		if (keyword !== "") {
-			keyword = keyword.toLowerCase();
-			query.push(
-				`Debit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Credit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Description COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%'`
-			);
-		}
-
-		query = query.join(" AND ");
-
-		let results = await conn.query("SELECT * FROM first WHERE " + query);
-
-		await conn.query("COMMIT");
-		return results;
-	} catch (error) {
-		console.log("error", error);
-		await conn.query("ROLLBACK");
-		return "NOT OK";
-	} finally {
-		await conn.end();
+	if (toAccount !== '' && toAccount !== null) {
+		queries.push(`Debit='${toAccount.value}'`);
 	}
+
+	if (fromAccount !== '' && fromAccount !== null) {
+		queries.push(`Credit='${fromAccount.value}'`);
+	}
+
+	if (dateRange !== '') {
+		queries.push(
+			`TransactionId>=${dateRange.start} AND TransactionId<${dateRange.end}`
+		);
+	}
+
+	if (fromAmount !== '') {
+		fromAmount = parseInt(fromAmount.replace(/[$.]/g, ''));
+		queries.push(`Amount>=${fromAmount}`);
+	}
+
+	if (toAmount !== '') {
+		toAmount = parseInt(toAmount.replace(/[$.]/g, ''));
+		queries.push(`Amount<=${toAmount}`);
+	}
+
+	if (keyword !== '') {
+		keyword = keyword.toLowerCase();
+		queries.push(
+			escape`Debit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Credit COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%' OR Description COLLATE UTF8_GENERAL_CI LIKE '%${keyword}%'`
+		);
+	}
+
+	const queryString = queries.join(' AND ');
+
+	const results = await conn.query(`SELECT * FROM first WHERE ${queryString}`);
+
+	return results;
 };
+
+export const wrappedSearch = async props =>
+	withTransactionWrapper(search, props);

@@ -1,4 +1,4 @@
-import { getAccountPageData } from "../../services/account-page-service";
+import {getAccountPageData} from '../../services/account-page-service';
 
 export default async (req, res) => {
 	const account = req.query.account;

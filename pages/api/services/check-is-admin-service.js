@@ -1,2 +1,2 @@
-export const checkIsAdmin = (user) =>
-	process.env.ADMIN_EMAILS.includes(user) ? true : false;
+export const checkIsAdmin = user =>
+	Boolean(process.env.ADMIN_EMAILS.includes(user));

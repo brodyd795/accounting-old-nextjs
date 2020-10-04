@@ -1,5 +1,5 @@
-import mysql from "serverless-mysql";
-import dotenv from "dotenv";
+import mysql from 'serverless-mysql';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -8,22 +8,23 @@ export const conn = mysql({
 		host: process.env.DB_HOST,
 		database: process.env.DB_NAME,
 		user: process.env.DB_USER,
-		password: process.env.DB_PASSWORD,
-	},
+		password: process.env.DB_PASSWORD
+	}
 });
 
 export const withTransactionWrapper = async (queries, props) => {
 	try {
-		await conn.query("BEGIN");
+		await conn.query('BEGIN');
 
 		const results = await queries(props);
 
-		await conn.query("COMMIT");
-		return results;
-	} catch (err) {
-		await conn.query("ROLLBACK");
+		await conn.query('COMMIT');
 
-		return new Error(err);
+		return results;
+	} catch (error) {
+		await conn.query('ROLLBACK');
+
+		return new Error(error);
 	} finally {
 		await conn.end();
 	}

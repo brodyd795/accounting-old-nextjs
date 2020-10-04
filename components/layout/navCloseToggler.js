@@ -1,5 +1,7 @@
-import styled from "styled-components";
-import Times from "../../public/svgs/times.svg";
+import React from 'react';
+import styled from 'styled-components';
+
+import Times from '../../public/svgs/times.svg';
 
 const StyledNavCloseToggler = styled.div`
 	text-align: right;
@@ -21,12 +23,12 @@ const StyledNavCloseToggler = styled.div`
 	}
 `;
 
-const NavCloseToggler = ({ setOpen }) => (
+const NavCloseToggler = ({setOpen}) => (
 	<StyledNavCloseToggler
 		onClick={() => {
 			setOpen(false);
 		}}
-		className="noSelect">
+		className='noSelect'>
 		<Times />
 	</StyledNavCloseToggler>
 );

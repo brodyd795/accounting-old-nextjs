@@ -6,7 +6,19 @@
 		"start-local-port-forwarding": "ssh -L 127.0.0.1:3306:localhost:3306 dingel.dev -N",
 		"dev": "next dev",
 		"build": "next build",
-		"start": "next start"
+		"start": "next start",
+		"lint": "eslint --fix . --ext .json --ext .js",
+		"prettier": "prettier --write \"**/*.{js,json,md}\" --ignore-path .gitignore"
+	},
+	"lint-staged": {
+		"*.{js}": [
+			"prettier --write"
+		]
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
 	},
 	"dependencies": {
 		"@auth0/nextjs-auth0": "^0.15.0",
@@ -27,6 +39,11 @@
 	},
 	"devDependencies": {
 		"babel-plugin-inline-react-svg": "^1.1.0",
-		"babel-plugin-styled-components": "^1.8.0"
+		"babel-plugin-styled-components": "^1.8.0",
+		"eslint": "^7.10.0",
+		"eslint-config-get-off-my-lawn": "^5.0.1",
+		"husky": "^4.3.0",
+		"lint-staged": "^10.4.0",
+		"prettier": "^2.1.2"
 	}
 }

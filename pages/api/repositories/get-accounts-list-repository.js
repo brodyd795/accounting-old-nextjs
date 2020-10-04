@@ -1,4 +1,4 @@
-import { withTransactionWrapper, conn } from "./transaction-wrapper-repository";
+import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
 const getAllAccountBalances = async () => {
 	return conn.query(`SELECT acc_name FROM accounts WHERE open = true`);

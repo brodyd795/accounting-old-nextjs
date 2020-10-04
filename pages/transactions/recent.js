@@ -1,7 +1,7 @@
 import React from 'react';
 import useSWR from 'swr';
 
-import fetch from '../../../lib/fetch';
+import fetch from '../../lib/fetch';
 import withAuth from '../../components/with-auth';
 import {useFetchUser} from '../../lib/user';
 import Loader from '../../components/loader';

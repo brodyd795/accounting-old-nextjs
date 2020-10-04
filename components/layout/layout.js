@@ -1,18 +1,23 @@
-import React, { useState } from "react";
-import { UserProvider } from "../../lib/user";
+import React, {useState} from 'react';
 
-import Navbar from "./navbar";
-import Header from "./header";
-import Main from "./main";
+import {UserProvider} from '../../lib/user';
 
-const Layout = ({ user, loading = false, children }) => {
+import Navbar from './navbar';
+import Header from './header';
+import Main from './main';
+
+const Layout = ({user, loading = false, children}) => {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<UserProvider value={{ user, loading }}>
+		<UserProvider
+			value={{
+				user,
+				loading
+			}}>
 			<Navbar open={open} setOpen={setOpen} />
 			<Header setOpen={setOpen} children user={user} />
-			<Main children={children} />
+			<Main>{children}</Main>
 		</UserProvider>
 	);
 };

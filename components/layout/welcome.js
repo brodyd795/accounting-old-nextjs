@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledWelcome = styled.div`
 	background-color: white;
@@ -9,18 +10,18 @@ const StyledWelcome = styled.div`
 	}
 `;
 
-const Welcome = ({ user }) => {
+const Welcome = ({user}) => {
 	const today = new Date();
 	const utcHour = today.getUTCHours();
 	const localHour = utcHour >= 5 ? utcHour - 5 : utcHour - 5 + 24;
 	const userName = user?.given_name;
 	const timeOfDay =
 		localHour < 12
-			? "Good morning"
+			? 'Good morning'
 			: localHour < 18
-			? "Good afternoon"
-			: "Good evening";
-	const greeting = `${timeOfDay}${userName ? `, ${userName}` : ""}!`;
+			? 'Good afternoon'
+			: 'Good evening';
+	const greeting = `${timeOfDay}${userName ? `, ${userName}` : ''}!`;
 
 	return (
 		<StyledWelcome>

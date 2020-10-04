@@ -1,4 +1,4 @@
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 
 dotenv.config();
 
@@ -7,9 +7,9 @@ module.exports = {
 		config.module.rules.push({
 			test: /\.svg$/,
 			issuer: {
-				test: /\.(js|ts)x?$/,
+				test: /\.(js|ts)x?$/
 			},
-			use: ["@svgr/webpack"],
+			use: ['@svgr/webpack']
 		});
 
 		return config;
@@ -21,11 +21,11 @@ module.exports = {
 		AUTH0_CLIENT_SECRET: process.env.AUTH0_CLIENT_SECRET,
 		AUTH0_SCOPE: process.env.AUTH0_SCOPE,
 		REDIRECT_URI:
-			process.env.REDIRECT_URI || "http://localhost:3000/api/auth/callback",
+			process.env.REDIRECT_URI || 'http://localhost:3000/api/auth/callback',
 		POST_LOGOUT_REDIRECT_URI:
-			process.env.POST_LOGOUT_REDIRECT_URI || "http://localhost:3000/",
+			process.env.POST_LOGOUT_REDIRECT_URI || 'http://localhost:3000/',
 		SESSION_COOKIE_SECRET: process.env.SESSION_COOKIE_SECRET,
 		SESSION_COOKIE_LIFETIME: 7200, // 2 hours
-		ADMIN_EMAILS: process.env.ADMIN_EMAILS,
-	},
+		ADMIN_EMAILS: process.env.ADMIN_EMAILS
+	}
 };

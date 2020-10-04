@@ -1,5 +1,5 @@
 import Select from 'react-select';
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 const AccountSelect = styled(Select)`
 	width: 300px;

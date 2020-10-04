@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledLoader = styled.div`
 	// adapted from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_loader

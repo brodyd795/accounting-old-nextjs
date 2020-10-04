@@ -1,6 +1,9 @@
-import styled from "styled-components";
-import Welcome from "./welcome";
-import Bars from "../../public/svgs/bars.svg";
+import React from 'react';
+import styled from 'styled-components';
+
+import Bars from '../../public/svgs/bars.svg';
+
+import Welcome from './welcome';
 
 const StyledHeader = styled.div`
 	position: relative;
@@ -18,9 +21,9 @@ const StyledHeader = styled.div`
 `;
 
 const navbarTogglerStyle = {
-	width: "20px",
-	margin: "5px",
-	cursor: "pointer",
+	width: '20px',
+	margin: '5px',
+	cursor: 'pointer'
 };
 
 const StyledInputWrapper = styled.div`
@@ -44,7 +47,7 @@ const IconWrapper = styled.div`
 	padding-left: 5px;
 `;
 
-const Header = ({ setOpen, children, user }) => {
+const Header = ({setOpen, children, user}) => {
 	return (
 		<StyledHeader>
 			<div>
@@ -54,11 +57,11 @@ const Header = ({ setOpen, children, user }) => {
 						onClick={() => {
 							setOpen(true);
 						}}
-						className="noSelect"
+						className='noSelect'
 					/>
 				</IconWrapper>
 				<StyledInputWrapper>
-					<StyledInput placeholder="Search..." />
+					<StyledInput placeholder='Search...' />
 				</StyledInputWrapper>
 				<Welcome user={user} />
 				{children}

@@ -1,16 +1,16 @@
-import { getLastAccountBalances } from "../repositories/get-last-account-balances-repository";
+import {getLastAccountBalances} from '../repositories/get-last-account-balances-repository';
 
 export const getLastAccountBalancesService = async (
 	toAccount,
 	fromAccount,
 	id
 ) => {
-	let lastAccountBalances = {};
+	const lastAccountBalances = {};
 
-	let { toAccountResults, fromAccountResults } = await getLastAccountBalances({
+	const {toAccountResults, fromAccountResults} = await getLastAccountBalances({
 		toAccount,
 		fromAccount,
-		id,
+		id
 	});
 
 	if (toAccountResults.length > 0) {
@@ -32,5 +32,6 @@ export const getLastAccountBalancesService = async (
 	} else {
 		lastAccountBalances.fromAccount = 0;
 	}
+
 	return lastAccountBalances;
 };

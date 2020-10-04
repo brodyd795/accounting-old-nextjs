@@ -1,16 +1,17 @@
-import React from "react";
-import Link from "next/link";
-import styled from "styled-components";
-import { useRouter } from "next/router";
-import { useUser } from "../../lib/user";
+import React from 'react';
+import Link from 'next/link';
+import styled from 'styled-components';
+import {useRouter} from 'next/router';
 
-import NavCloseToggler from "./navCloseToggler";
-import HomeIcon from "../../public/svgs/home.svg";
-import SearchIcon from "../../public/svgs/search.svg";
-import HistoryIcon from "../../public/svgs/history.svg";
-import AccountIcon from "../../public/svgs/user.svg";
-import LoginIcon from "../../public/svgs/login.svg";
-import LogoutIcon from "../../public/svgs/logout.svg";
+import {useUser} from '../../lib/user';
+import HomeIcon from '../../public/svgs/home.svg';
+import SearchIcon from '../../public/svgs/search.svg';
+import HistoryIcon from '../../public/svgs/history.svg';
+import AccountIcon from '../../public/svgs/user.svg';
+import LoginIcon from '../../public/svgs/login.svg';
+import LogoutIcon from '../../public/svgs/logout.svg';
+
+import NavCloseToggler from './navCloseToggler';
 
 const StyledNavbar = styled.nav`
 	margin: 0;
@@ -22,7 +23,7 @@ const StyledNavbar = styled.nav`
 	text-align: center;
 
 	@media (max-width: 768px) {
-		width: ${(props) => (props.open === true ? "100%" : "0")};
+		width: ${props => (props.open === true ? '100%' : '0')};
 		z-index: 1;
 		overflow-x: hidden;
 		border: none;
@@ -82,66 +83,66 @@ const StyledBrand = styled.div`
 	}
 `;
 
-const Navbar = ({ open, setOpen }) => {
+const Navbar = ({open, setOpen}) => {
 	const router = useRouter();
-	const { user, loading } = useUser();
+	const {user, loading} = useUser();
 
 	return (
-		<StyledNavbar id="nav" open={open}>
+		<StyledNavbar id='nav' open={open}>
 			<NavCloseToggler setOpen={setOpen} />
-			<Link href="/">
+			<Link href='/'>
 				<StyledBrand>Accounting</StyledBrand>
 			</Link>
 			<StyledLinksList>
-				<Link href="/">
-					<StyledLinkItem className={router.pathname === "/" && "active"}>
+				<Link href='/'>
+					<StyledLinkItem className={router.pathname === '/' && 'active'}>
 						<HomeIcon />
-						<StyledLinkText>{"Home"}</StyledLinkText>
+						<StyledLinkText>{'Home'}</StyledLinkText>
 					</StyledLinkItem>
 				</Link>
 				{!loading && user && (
 					<>
-						<Link href="/search">
+						<Link href='/search'>
 							<StyledLinkItem
-								className={router.pathname === "/search" && "active"}>
+								className={router.pathname === '/search' && 'active'}>
 								<SearchIcon />
-								<StyledLinkText>{"Search"}</StyledLinkText>
+								<StyledLinkText>{'Search'}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
-						<Link href="/accounts">
+						<Link href='/accounts'>
 							<StyledLinkItem
 								className={
-									router.pathname === "/accounts" ||
-									router.pathname.includes("/accounts/")
-										? "active"
+									router.pathname === '/accounts' ||
+									router.pathname.includes('/accounts/')
+										? 'active'
 										: null
 								}>
 								<AccountIcon />
-								<StyledLinkText>{"Accounts"}</StyledLinkText>
+								<StyledLinkText>{'Accounts'}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
-						<Link href="/transactions/recent">
+						<Link href='/transactions/recent'>
 							<StyledLinkItem
 								className={
-									router.pathname === "/transactions/recent" && "active"
+									router.pathname === '/transactions/recent' && 'active'
 								}>
 								<HistoryIcon />
-								<StyledLinkText>{"Transactions"}</StyledLinkText>
+								<StyledLinkText>{'Transactions'}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
-						<Link href="/api/auth/logout">
+						<Link href='/api/auth/logout'>
 							<StyledLinkItem>
 								<LogoutIcon />
-								<StyledLinkText>{"Logout"}</StyledLinkText>
+								<StyledLinkText>{'Logout'}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
 					</>
 				)}
 				{!user && (
-					<Link href="/api/auth/login">
+					<Link href='/api/auth/login'>
 						<StyledLinkItem>
 							<LoginIcon />
-							<StyledLinkText>{"Login"}</StyledLinkText>
+							<StyledLinkText>{'Login'}</StyledLinkText>
 						</StyledLinkItem>
 					</Link>
 				)}

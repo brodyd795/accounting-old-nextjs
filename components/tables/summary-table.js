@@ -1,5 +1,6 @@
-import styled from "styled-components";
-import Link from "next/link";
+import React from 'react';
+import styled from 'styled-components';
+import Link from 'next/link';
 
 const StyledTable = styled.table`
 	border: 1px solid #333;
@@ -31,7 +32,7 @@ const StyledTable = styled.table`
 	}
 `;
 
-const SummaryTable = ({ data }) => (
+const SummaryTable = ({data}) => (
 	<StyledTable>
 		<tbody>
 			<tr>
@@ -42,15 +43,15 @@ const SummaryTable = ({ data }) => (
 				<React.Fragment key={index}>
 					<tr>
 						<td>{category}</td>
-						<td className="balance">{categoryValues.balance}</td>
+						<td className='balance'>{categoryValues.balance}</td>
 					</tr>
 					{Object.entries(categoryValues.accounts).map(
 						([account, accountValues]) => (
-							<tr className="account-row" key={account}>
-								<Link href={"/accounts/[account]"} as={`/accounts/${account}`}>
-									<td className="account">{accountValues.name}</td>
+							<tr className='account-row' key={account}>
+								<Link href={'/accounts/[account]'} as={`/accounts/${account}`}>
+									<td className='account'>{accountValues.name}</td>
 								</Link>
-								<td className="balance">{accountValues.balance}</td>
+								<td className='balance'>{accountValues.balance}</td>
 							</tr>
 						)
 					)}

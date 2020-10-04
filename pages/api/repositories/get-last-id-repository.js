@@ -1,8 +1,8 @@
-import escape from "sql-template-strings";
+import escape from 'sql-template-strings';
 
-import { withTransactionWrapper, conn } from "./transaction-wrapper-repository";
+import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
-export const getLastId = async (date) => {
+export const getLastId = async date => {
 	let lastId;
 
 	if (date) {
@@ -14,10 +14,11 @@ export const getLastId = async (date) => {
 	} else {
 		lastId = await conn.query(`SELECT MAX(trn_id) max_id FROM transactions`);
 	}
-	lastId = lastId[0]["max_id"] || date;
+
+	lastId = lastId[0]['max_id'] || date;
 
 	return lastId;
 };
 
-export const wrappedGetLastId = async (props) =>
+export const wrappedGetLastId = async props =>
 	withTransactionWrapper(getLastId, props);

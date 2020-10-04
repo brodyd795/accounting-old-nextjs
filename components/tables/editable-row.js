@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, {useState} from 'react';
 
 const EditableRow = ({
 	index,
@@ -8,15 +8,15 @@ const EditableRow = ({
 	cancel,
 	save,
 	isEditing,
-	idBeingEdited,
+	idBeingEdited
 }) => {
-	const [originalRow, setOriginalRow] = useState(row);
+	const [originalRow] = useState(row);
 	const [editedRow, setEditedRow] = useState(row);
 
 	const handleEdit = (key, e) => {
 		setEditedRow({
 			...editedRow,
-			[key]: e.target.value,
+			[key]: e.target.value
 		});
 	};
 
@@ -34,49 +34,53 @@ const EditableRow = ({
 			<td>
 				<input
 					value={editedRow.trn_id}
-					onChange={() => handleEdit("trn_id", event)}
+					onChange={() => handleEdit('trn_id', event)}
 				/>
 			</td>
 			<td>
 				<input
 					value={editedRow.from_account}
-					onChange={() => handleEdit("from_account", event)}
+					onChange={() => handleEdit('from_account', event)}
 				/>
 			</td>
 			<td>
 				<input
 					value={editedRow.to_account}
-					onChange={() => handleEdit("to_account", event)}
+					onChange={() => handleEdit('to_account', event)}
 				/>
 			</td>
 			<td>
 				<input
 					value={editedRow.amount}
-					onChange={() => handleEdit("amount", event)}
+					onChange={() => handleEdit('amount', event)}
 				/>
 			</td>
 			<td>
 				<input
 					value={editedRow.from_balance}
-					onChange={() => handleEdit("from_balance", event)}
+					onChange={() => handleEdit('from_balance', event)}
 				/>
 			</td>
 			<td>
 				<input
 					value={editedRow.to_balance}
-					onChange={() => handleEdit("to_balance", event)}
+					onChange={() => handleEdit('to_balance', event)}
 				/>
 			</td>
 			<td>
 				<input
 					value={editedRow.comment}
-					onChange={() => handleEdit("comment", event)}
+					onChange={() => handleEdit('comment', event)}
 				/>
 			</td>
 
 			<td>
-				<button onClick={handleCancel}>Cancel</button>
-				<button onClick={handleSave}>Save</button>
+				<button type={'button'} onClick={handleCancel}>
+					Cancel
+				</button>
+				<button type={'button'} onClick={handleSave}>
+					Save
+				</button>
 			</td>
 		</tr>
 	) : (
@@ -85,10 +89,16 @@ const EditableRow = ({
 				<td key={key}>{cell}</td>
 			))}
 			<td>
-				<button disabled={isEditing} onClick={() => edit(row.trn_id)}>
+				<button
+					type={'button'}
+					disabled={isEditing}
+					onClick={() => edit(row.trn_id)}>
 					Edit
 				</button>
-				<button disabled={isEditing} onClick={() => remove(row)}>
+				<button
+					type={'button'}
+					disabled={isEditing}
+					onClick={() => remove(row)}>
 					Delete
 				</button>
 			</td>

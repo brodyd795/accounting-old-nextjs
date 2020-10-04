@@ -1,9 +1,9 @@
-import escape from "sql-template-strings";
+import escape from 'sql-template-strings';
 
-import { withTransactionWrapper, conn } from "./transaction-wrapper-repository";
+import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
-export const deleteTransaction = async (row) => {
-	const { trn_id, amount, from_account, to_account } = row;
+export const deleteTransaction = async row => {
+	const {trn_id, amount, from_account, to_account} = row;
 
 	await conn.query(escape`delete from transactions where trn_id = ${trn_id}`);
 	await conn.query(
@@ -13,8 +13,8 @@ export const deleteTransaction = async (row) => {
 		escape`UPDATE transactions SET from_balance = from_balance + ${amount} WHERE trn_id > ${trn_id} AND (from_account = ${to_account} OR from_account = ${from_account})`
 	);
 
-	return "OK";
+	return 'OK';
 };
 
-export const wrappedDeleteTransaction = async (props) =>
+export const wrappedDeleteTransaction = async props =>
 	withTransactionWrapper(deleteTransaction, props);

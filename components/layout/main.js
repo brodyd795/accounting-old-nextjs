@@ -1,4 +1,5 @@
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const StyledMain = styled.div`
 	margin-left: 5px;
@@ -16,6 +17,6 @@ const StyledMain = styled.div`
 	}
 `;
 
-const Main = ({ children }) => <StyledMain>{children}</StyledMain>;
+const Main = ({children}) => <StyledMain>{children}</StyledMain>;
 
 export default Main;

@@ -47,12 +47,12 @@ const SummaryTable = ({data}) => (
 					</tr>
 					{Object.entries(categoryValues.accounts).map(
 						([account, accountValues]) => (
-							<tr className='account-row' key={account}>
-								<Link href={'/accounts/[account]'} as={`/accounts/${account}`}>
+							<Link href={'/accounts/[account]'} as={`/accounts/${account}`}>
+								<tr className='account-row' key={account}>
 									<td className='account'>{accountValues.name}</td>
-								</Link>
-								<td className='balance'>{accountValues.balance}</td>
-							</tr>
+									<td className='balance'>{accountValues.balance}</td>
+								</tr>
+							</Link>
 						)
 					)}
 				</React.Fragment>

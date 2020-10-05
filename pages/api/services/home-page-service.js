@@ -73,15 +73,15 @@ const summarizeAllAccountBalances = balances => {
 	return cleanData;
 };
 
-export const getHomepageData = async () => {
+export const getHomepageData = async user => {
 	const balances = {};
 
-	const accounts = await getOpenAccounts();
+	const accounts = await getOpenAccounts({user});
 
 	// eslint-disable-next-line no-unused-vars
 	for (const account of accounts) {
 		const name = account.acc_name;
-		const {lastDebit, lastCredit} = await getAllAccountBalances(name);
+		const {lastDebit, lastCredit} = await getAllAccountBalances({name, user});
 
 		// has the account had *both* debits and credits?
 		if (lastDebit.length && lastCredit.length) {

@@ -1,11 +1,7 @@
-import getAll from '../repositories/get-all-transactions-repository';
-
-import {checkIsAdmin} from './check-is-admin-service';
+import {wrappedGetAllAccountBalances} from '../repositories/get-all-transactions-repository';
 
 export const getRecentPageData = async user => {
-	const isAdmin = checkIsAdmin(user);
-
-	const data = await getAll(isAdmin);
+	const data = await wrappedGetAllAccountBalances({user});
 
 	const dataWithoutEmail = data.map(({user_email, ...rest}) => ({...rest}));
 

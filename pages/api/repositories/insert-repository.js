@@ -2,7 +2,9 @@ import escape from 'sql-template-strings';
 
 import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
-export const insertTransaction = async transaction => {
+export const insertTransaction = async props => {
+	const {transaction, user} = props;
+
 	try {
 		const {
 			id,
@@ -15,13 +17,13 @@ export const insertTransaction = async transaction => {
 			comment
 		} = transaction;
 
-		await conn.query(
+		await conn(user).query(
 			escape`INSERT INTO transactions VALUES(${id}, ${userEmail}, ${fromAccount}, ${toAccount}, ${amount}, ${fromBalance}, ${toBalance}, ${comment})`
 		);
-		await conn.query(
+		await conn(user).query(
 			escape`UPDATE transactions SET to_balance = to_balance + ${amount} WHERE trn_id > ${id} AND (to_account = ${toAccount} OR to_account = ${fromAccount})`
 		);
-		await conn.query(
+		await conn(user).query(
 			escape`UPDATE transactions SET from_balance = from_balance - ${amount} WHERE trn_id > ${id} AND (from_account = ${toAccount} OR from_account = ${fromAccount})`
 		);
 

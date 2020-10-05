@@ -10,6 +10,7 @@ import Loader from '../../components/loader';
 import Page from '../../components/layout/page';
 import PageHeader from '../../components/page-header';
 import Error from '../../components/error';
+import {useFetchUser} from '../../lib/user';
 
 const StyledSelect = styled(Select)`
 	width: 300px;
@@ -17,8 +18,12 @@ const StyledSelect = styled(Select)`
 `;
 
 const Accounts = () => {
+	const {user, loading} = useFetchUser();
 	const router = useRouter();
-	const {data, error} = useSWR('/api/controllers/accounts', fetch);
+	const {data, error} = useSWR(
+		user && `/api/controllers/accounts?user=${user.email}`,
+		fetch
+	);
 
 	if (error) return <Error />;
 
@@ -29,14 +34,14 @@ const Accounts = () => {
 	return (
 		<Page title='Accounts'>
 			<PageHeader text='Accounts' />
-			{data ? (
+			{(loading || !data) && <Loader />}
+			{!loading && !user && <p>No user</p>}
+			{user && data && (
 				<StyledSelect
 					options={data}
 					placeholder='Select account...'
 					onChange={handleChange}
 				/>
-			) : (
-				<Loader />
 			)}
 		</Page>
 	);

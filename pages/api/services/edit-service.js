@@ -7,20 +7,20 @@ import {getLastAccountBalancesService} from './last-account-balances-service';
 
 export const editTransactionService = async props => {
 	try {
-		const {originalRow, editedRow} = props;
+		const {originalRow, editedRow, user} = props;
 
-		await deleteTransaction(originalRow);
+		await deleteTransaction({rowToDelete: originalRow, user});
 
-		const lastBalances = await getLastAccountBalancesService(
-			originalRow.to_account,
-			originalRow.from_account,
-			originalRow.trn_id
-		);
+		const lastBalances = await getLastAccountBalancesService({
+			toAccount: originalRow.to_account,
+			fromAccount: originalRow.from_account,
+			id: originalRow.trn_id,
+			user
+		});
 
-		const amount = parseFloat(editedRow.amount);
-		const toBalance = parseFloat(lastBalances.toAccount) + parseFloat(amount);
-		const fromBalance =
-			parseFloat(lastBalances.fromAccount) - parseFloat(amount);
+		const amount = editedRow.amount;
+		const toBalance = parseFloat(lastBalances.toAccount) + amount;
+		const fromBalance = parseFloat(lastBalances.fromAccount) - amount;
 
 		/*
 		 * TODO: uncomment once UI has date format like it used to - 2020-08-29
@@ -34,20 +34,23 @@ export const editTransactionService = async props => {
 
 		// if (id / 100 !== parseInt(originalRow.trn_id / 100)) {
 		if (editedRow.trn_id !== originalRow.trn_id) {
-			id = await getLastId(id);
+			id = await getLastId({id, user});
 		} else {
 			id = originalRow.trn_id;
 		}
 
 		await insertTransaction({
-			id,
-			userEmail: 'brodydingel@gmail.com',
-			toAccount: editedRow.to_account,
-			fromAccount: editedRow.from_account,
-			amount,
-			toBalance,
-			fromBalance,
-			comment: editedRow.comment
+			transaction: {
+				id,
+				userEmail: 'brodydingel@gmail.com',
+				toAccount: editedRow.to_account,
+				fromAccount: editedRow.from_account,
+				amount,
+				toBalance,
+				fromBalance,
+				comment: editedRow.comment
+			},
+			user
 		});
 
 		return 'OK';

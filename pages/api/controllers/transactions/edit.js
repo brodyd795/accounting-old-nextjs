@@ -3,10 +3,12 @@ import {wrappedEditTransaction} from '../../services/edit-service';
 export default async (req, res) => {
 	try {
 		const {originalRow, editedRow} = req.body;
+		const user = req.query.user;
 
 		const result = await wrappedEditTransaction({
 			originalRow,
-			editedRow
+			editedRow,
+			user
 		});
 
 		if (result === 'OK') {

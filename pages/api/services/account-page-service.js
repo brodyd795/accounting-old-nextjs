@@ -1,7 +1,7 @@
 import getAccountTransactions from '../repositories/get-account-transactions-repository';
 
-export const getAccountPageData = async account => {
-	const results = await getAccountTransactions(account);
+export const getAccountPageData = async (account, user) => {
+	const results = await getAccountTransactions({account, user});
 
 	if (results.length) {
 		const resultsWithoutEmail = results.map(({user_email, ...rest}) => ({

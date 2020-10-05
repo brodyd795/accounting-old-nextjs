@@ -13,7 +13,7 @@ import Error from '../../components/error';
 const Recent = () => {
 	const {user, loading} = useFetchUser();
 	const {data, error} = useSWR(
-		user ? `/api/controllers/transactions/recent?user=${user.email}` : null,
+		user && `/api/controllers/transactions/recent?user=${user.email}`,
 		fetch
 	);
 
@@ -22,7 +22,7 @@ const Recent = () => {
 	return (
 		<Page title='Recent'>
 			<PageHeader text='Recent' />
-			{loading && <Loader />}
+			{(loading || !data) && <Loader />}
 			{!loading && !user && <p>No user</p>}
 			{user && data && <RecentTable data={data} />}
 		</Page>

@@ -69,7 +69,7 @@ const parseEmail = async body => {
 		rentAmount,
 		carPaymentAmount,
 		salaryAmount
-	} = await db.getTransactionIdentifiers();
+	} = await db.getTransactionIdentifiers({user: 'brody.dingel@gmail.com'});
 
 	if (body.includes('charged')) {
 		// transactions on credit card

@@ -1,7 +1,9 @@
 import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
-const getOpenAccounts = async () => {
-	return conn.query(`SELECT acc_name FROM accounts WHERE open = true`);
+const getOpenAccounts = async props => {
+	const {user} = props;
+
+	return conn(user).query(`SELECT acc_name FROM accounts WHERE open = true`);
 };
 
-export default async () => withTransactionWrapper(getOpenAccounts);
+export default async props => withTransactionWrapper(getOpenAccounts, props);

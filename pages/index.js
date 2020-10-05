@@ -21,8 +21,8 @@ const Index = () => {
 	return (
 		<Page title='Home' loading={loading} user={user}>
 			<PageHeader text='Home' />
-			{loading && <Loader />}
 			{!loading && !user && <p>No user</p>}
+			{user && (loading || !data) && <Loader />}
 			{user && data && <SummaryTable data={data} />}
 		</Page>
 	);

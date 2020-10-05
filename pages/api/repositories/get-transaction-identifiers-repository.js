@@ -1,7 +1,9 @@
 import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
-export const getTransactionIdentifiers = async () => {
-	const rows = await conn.query(`SELECT * FROM transaction_identifiers`);
+export const getTransactionIdentifiers = async props => {
+	const {user} = props;
+
+	const rows = await conn(user).query(`SELECT * FROM transaction_identifiers`);
 
 	const identifiers = {
 		fastFoodLocations: [],

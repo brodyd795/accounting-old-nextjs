@@ -42,7 +42,9 @@ export const search = async params => {
 
 	const queryString = queries.join(' AND ');
 
-	const results = await conn.query(`SELECT * FROM first WHERE ${queryString}`);
+	const results = await conn().query(
+		`SELECT * FROM first WHERE ${queryString}`
+	);
 
 	return results;
 };

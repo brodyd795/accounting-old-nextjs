@@ -1,4 +1,4 @@
 import {wrappedDeleteTransaction} from '../repositories/delete-repository';
 
-export const deleteTransactionService = async rowToDelete =>
-	wrappedDeleteTransaction(rowToDelete);
+export const deleteTransactionService = async (rowToDelete, user) =>
+	wrappedDeleteTransaction({rowToDelete, user});

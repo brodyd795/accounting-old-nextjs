@@ -1,8 +1,10 @@
 import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
 
-const getAllAccountBalances = async () => {
-	return conn.query(`SELECT * FROM transactions ORDER BY trn_id desc`);
+const getAllAccountBalances = async props => {
+	const {user} = props;
+
+	return conn(user).query(`SELECT * FROM transactions ORDER BY trn_id desc`);
 };
 
-export default async props =>
+export const wrappedGetAllAccountBalances = async props =>
 	withTransactionWrapper(getAllAccountBalances, props);

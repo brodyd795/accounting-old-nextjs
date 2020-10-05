@@ -4,6 +4,8 @@ import fetch from 'isomorphic-unfetch';
 
 import EditableRow from './editable-row';
 
+import {useFetchUser} from '../../lib/user';
+
 const TableWrapper = styled.div`
 	overflow-x: scroll;
 `;
@@ -19,6 +21,7 @@ const StyledTable = styled.table`
 `;
 
 const RecentTable = ({data}) => {
+	const {user, loading} = useFetchUser();
 	const [isEditing, setIsEditing] = useState(null);
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
 	const [transactionsList, setTransactionsList] = useState(data);
@@ -29,7 +32,7 @@ const RecentTable = ({data}) => {
 		);
 
 		if (confirmDelete) {
-			fetch('/api/controllers/transactions/delete', {
+			fetch(`/api/controllers/transactions/delete?user=${user.email}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -65,7 +68,7 @@ const RecentTable = ({data}) => {
 	};
 
 	const handleSave = (editedRow, originalRow, index) => {
-		fetch('/api/controllers/transactions/edit', {
+		fetch(`/api/controllers/transactions/edit?user=${user.email}`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

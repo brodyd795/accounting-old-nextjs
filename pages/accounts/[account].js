@@ -9,12 +9,16 @@ import Page from '../../components/layout/page';
 import PageHeader from '../../components/page-header';
 import RecentTable from '../../components/tables/recent-table';
 import Error from '../../components/error';
+import {useFetchUser} from '../../lib/user';
 
 const Account = () => {
+	const {user, loading} = useFetchUser();
 	const router = useRouter();
 	const account = router.query.account;
 	const {data, error} = useSWR(
-		() => account && `/api/controllers/accounts/${account}`,
+		user &&
+			account &&
+			`/api/controllers/accounts/${account}?user=${user.email}`,
 		fetch
 	);
 
@@ -23,15 +27,15 @@ const Account = () => {
 	return (
 		<Page title={account}>
 			<PageHeader text={account} />
-			{data ? (
-				data.message ? (
+			{(loading || !data) && <Loader />}
+			{!loading && !user && <p>No user</p>}
+			{user &&
+				data &&
+				(data.message ? (
 					JSON.stringify(data.message)
 				) : (
 					<RecentTable data={data.data} />
-				)
-			) : (
-				<Loader />
-			)}
+				))}
 		</Page>
 	);
 };

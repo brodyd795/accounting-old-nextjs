@@ -3,14 +3,20 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+let connection;
+
 export const conn = user => {
+	if (connection !== undefined) {
+		return connection;
+	}
+
 	let database = Boolean(process.env.ADMIN_EMAILS.includes(user))
 		? process.env.DB_NAME
 		: `${process.env.DB_NAME}_DEMO`;
 
 	database = process.env.ENVIRONMENT !== 'dev' ? `${database}_TEST` : database;
 
-	return mysql({
+	connection = mysql({
 		config: {
 			host: process.env.DB_HOST,
 			database: database,
@@ -18,6 +24,8 @@ export const conn = user => {
 			password: process.env.DB_PASSWORD
 		}
 	});
+
+	return connection;
 };
 
 export const withTransactionWrapper = async (queries, props) => {

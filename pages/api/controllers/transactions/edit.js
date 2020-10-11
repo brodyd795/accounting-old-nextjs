@@ -5,14 +5,16 @@ export default async (req, res) => {
 		const {originalRow, editedRow} = req.body;
 		const user = req.query.user;
 
-		const result = await wrappedEditTransaction({
+		const data = await wrappedEditTransaction({
 			originalRow,
 			editedRow,
 			user
 		});
 
-		if (result === 'OK') {
-			res.status(200).json({result});
+		if (data) {
+			const dataWithoutEmail = data.map(({user_email, ...rest}) => ({...rest}));
+
+			res.status(200).json(dataWithoutEmail);
 		} else {
 			res.status(400).json({
 				error: 'NOT OK'

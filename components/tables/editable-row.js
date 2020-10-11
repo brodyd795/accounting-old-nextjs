@@ -85,8 +85,8 @@ const EditableRow = ({
 		</tr>
 	) : (
 		<tr>
-			{Object.values(row).map(cell => (
-				<td key={cell}>{cell}</td>
+			{Object.values(row).map((cell, index) => (
+				<td key={`${cell}${index}`}>{cell}</td>
 			))}
 			<td>
 				<button

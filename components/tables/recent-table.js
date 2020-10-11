@@ -67,29 +67,36 @@ const RecentTable = ({data}) => {
 		setIsEditing(false);
 	};
 
-	const handleSave = (editedRow, originalRow, index) => {
-		fetch(`/api/controllers/transactions/edit?user=${user.email}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				editedRow,
-				originalRow
-			})
-		}).then(res => {
-			if (res.ok) {
-				const transactionsListCopy = transactionsList.map((row, copyIndex) =>
-					copyIndex === index ? editedRow : row
-				);
+	const handleSave = async (editedRow, originalRow, index) => {
+		const res = await fetch(
+			`/api/controllers/transactions/edit?user=${user.email}`,
+			{
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					editedRow,
+					originalRow
+				})
+			}
+		);
+		const json = await res.json();
 
-				setTransactionsList(transactionsListCopy);
-			} else {
-				alert('An error occurred. Please try again.');
+		if (json) {
+			let count = 0;
+			const transactionsListCopy = transactionsList;
+			while (count <= index) {
+				transactionsListCopy[count] = json[count];
+				count++;
 			}
 
-			setIsEditing(false);
-		});
+			setTransactionsList(transactionsListCopy);
+		} else {
+			alert('An error occurred. Please try again.');
+		}
+
+		setIsEditing(false);
 	};
 
 	return (

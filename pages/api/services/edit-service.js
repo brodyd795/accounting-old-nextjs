@@ -4,6 +4,7 @@ import {insertTransaction} from '../repositories/insert-repository';
 import {getLastId} from '../repositories/get-last-id-repository';
 
 import {getLastAccountBalancesService} from './last-account-balances-service';
+import {getUpdatedTransactions} from '../repositories/get-updated-transactions-repository';
 
 export const editTransactionService = async props => {
 	try {
@@ -53,7 +54,12 @@ export const editTransactionService = async props => {
 			user
 		});
 
-		return 'OK';
+		const results = await getUpdatedTransactions({
+			id,
+			user
+		});
+
+		return results;
 	} catch (error) {
 		throw new Error('Error in edit-service.js');
 	}

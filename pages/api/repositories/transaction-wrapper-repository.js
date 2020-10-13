@@ -14,7 +14,7 @@ export const conn = user => {
 		? process.env.DB_NAME
 		: `${process.env.DB_NAME}_DEMO`;
 
-	database = process.env.ENVIRONMENT !== 'dev' ? `${database}_TEST` : database;
+	database = process.env.ENVIRONMENT === 'dev' ? `${database}_TEST` : database;
 
 	connection = mysql({
 		config: {

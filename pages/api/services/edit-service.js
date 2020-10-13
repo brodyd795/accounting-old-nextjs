@@ -20,8 +20,8 @@ export const editTransactionService = async props => {
 		});
 
 		const amount = editedRow.amount;
-		const toBalance = parseFloat(lastBalances.toAccount) + amount;
-		const fromBalance = parseFloat(lastBalances.fromAccount) - amount;
+		const toBalance = lastBalances.toAccount + amount;
+		const fromBalance = lastBalances.fromAccount - amount;
 
 		/*
 		 * TODO: uncomment once UI has date format like it used to - 2020-08-29

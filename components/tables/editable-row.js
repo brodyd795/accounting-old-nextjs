@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {toCents, toDollars} from '../../lib/dollar-cents-helpers';
 
 const EditableRow = ({
 	index,
@@ -11,7 +12,12 @@ const EditableRow = ({
 	idBeingEdited
 }) => {
 	const [originalRow] = useState(row);
-	const [editedRow, setEditedRow] = useState(row);
+	const [editedRow, setEditedRow] = useState({
+		...row,
+		amount: toDollars(row.amount),
+		from_balance: toDollars(row.from_balance),
+		to_balance: toDollars(row.to_balance)
+	});
 
 	const handleEdit = (key, e) => {
 		setEditedRow({
@@ -21,7 +27,14 @@ const EditableRow = ({
 	};
 
 	const handleSave = () => {
-		save(editedRow, originalRow, index);
+		const editedRowInCents = {
+			...editedRow,
+			amount: toCents(editedRow.amount),
+			from_balance: toCents(editedRow.from_balance),
+			to_balance: toCents(editedRow.to_balance)
+		};
+
+		save(editedRowInCents, originalRow, index);
 	};
 
 	const handleCancel = () => {
@@ -51,19 +64,19 @@ const EditableRow = ({
 			</td>
 			<td>
 				<input
-					value={editedRow.amount}
+					value={toDollars(editedRow.amount)}
 					onChange={() => handleEdit('amount', event)}
 				/>
 			</td>
 			<td>
 				<input
-					value={editedRow.from_balance}
+					value={toDollars(editedRow.from_balance)}
 					onChange={() => handleEdit('from_balance', event)}
 				/>
 			</td>
 			<td>
 				<input
-					value={editedRow.to_balance}
+					value={toDollars(editedRow.to_balance)}
 					onChange={() => handleEdit('to_balance', event)}
 				/>
 			</td>
@@ -85,9 +98,13 @@ const EditableRow = ({
 		</tr>
 	) : (
 		<tr>
-			{Object.values(row).map((cell, index) => (
-				<td key={`${cell}${index}`}>{cell}</td>
-			))}
+			<td key={`${index}-id`}>{row.trn_id}</td>
+			<td key={`${index}-from-account`}>{row.from_account}</td>
+			<td key={`${index}-to-account`}>{row.to_account}</td>
+			<td key={`${index}-amount`}>{toDollars(row.amount)}</td>
+			<td key={`${index}-from-balance`}>{toDollars(row.from_balance)}</td>
+			<td key={`${index}-to-balance`}>{toDollars(row.to_balance)}</td>
+			<td key={`${index}-comment`}>{row.comment}</td>
 			<td>
 				<button
 					type={'button'}

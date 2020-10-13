@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import {toDollars} from '../../lib/dollar-cents-helpers';
 
 const StyledTable = styled.table`
 	border: 1px solid #333;
@@ -43,14 +44,16 @@ const SummaryTable = ({data}) => (
 				<React.Fragment key={category}>
 					<tr>
 						<td>{category}</td>
-						<td className='balance'>{categoryValues.balance}</td>
+						<td className='balance'>{toDollars(categoryValues.balance)}</td>
 					</tr>
 					{Object.entries(categoryValues.accounts).map(
 						([account, accountValues]) => (
 							<Link href={'/accounts/[account]'} as={`/accounts/${account}`}>
 								<tr className='account-row' key={account}>
 									<td className='account'>{accountValues.name}</td>
-									<td className='balance'>{accountValues.balance}</td>
+									<td className='balance'>
+										{toDollars(accountValues.balance)}
+									</td>
 								</tr>
 							</Link>
 						)

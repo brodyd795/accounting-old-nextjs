@@ -11,7 +11,7 @@ export const getLastAccountBalancesService = async props => {
 		user
 	});
 
-	if (toAccountResults.length > 0) {
+	if (toAccountResults.length) {
 		if (toAccountResults[0].to_account === toAccount) {
 			lastAccountBalances.toAccount = toAccountResults[0].to_balance;
 		} else {
@@ -21,7 +21,7 @@ export const getLastAccountBalancesService = async props => {
 		lastAccountBalances.toAccount = 0;
 	}
 
-	if (fromAccountResults.length > 0) {
+	if (fromAccountResults.length) {
 		if (fromAccountResults[0].to_account === fromAccount) {
 			lastAccountBalances.fromAccount = fromAccountResults[0].to_balance;
 		} else {

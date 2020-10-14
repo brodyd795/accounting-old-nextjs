@@ -24,7 +24,9 @@ const RecentTable = ({data}) => {
 	const {user, loading} = useFetchUser();
 	const [isEditing, setIsEditing] = useState(null);
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
-	const [transactionsList, setTransactionsList] = useState(data);
+	const [transactionsList, setTransactionsList] = useState(
+		data.recentTransactions
+	);
 
 	const handleDelete = rowToDelete => {
 		const confirmDelete = confirm(
@@ -104,7 +106,7 @@ const RecentTable = ({data}) => {
 			<StyledTable>
 				<tbody>
 					<tr key='headings'>
-						<th>Id</th>
+						<th>Date</th>
 						<th>From</th>
 						<th>To</th>
 						<th>Amount</th>
@@ -123,6 +125,7 @@ const RecentTable = ({data}) => {
 							save={handleSave}
 							isEditing={isEditing}
 							idBeingEdited={idBeingEdited}
+							accounts={data.accounts}
 						/>
 					))}
 				</tbody>

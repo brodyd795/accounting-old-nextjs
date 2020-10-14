@@ -1,5 +1,42 @@
 import React, {useState} from 'react';
+import styled from 'styled-components';
+import Select from 'react-select';
+import DatePicker from 'react-datepicker';
+
 import {toCents, toDollars} from '../../lib/dollar-cents-helpers';
+
+const StyledSelect = styled(Select)`
+	width: 200px;
+	color: black;
+	text-align: left;
+`;
+
+const selectStyles = {
+	control: base => ({
+		...base,
+		minHeight: 10
+	}),
+	dropdownIndicator: base => ({
+		...base,
+		padding: 4
+	}),
+	clearIndicator: base => ({
+		...base,
+		padding: 4
+	}),
+	multiValue: base => ({
+		...base
+	}),
+	valueContainer: base => ({
+		...base,
+		padding: '0px 6px'
+	}),
+	input: base => ({
+		...base,
+		margin: 0,
+		padding: 0
+	})
+};
 
 const EditableRow = ({
 	index,
@@ -9,8 +46,25 @@ const EditableRow = ({
 	cancel,
 	save,
 	isEditing,
-	idBeingEdited
+	idBeingEdited,
+	accounts
 }) => {
+	const toAccount = accounts
+		.find(category => category.label[0] === row.to_account[0])
+		.options.find(option => option.value === row.to_account);
+
+	const fromAccount = accounts
+		.find(category => category.label[0] === row.from_account[0])
+		.options.find(option => option.value === row.from_account);
+
+	const year = parseInt(String(row.trn_id).replace(/(^\d{4})\d+/, '$1'));
+	const month =
+		parseInt(String(row.trn_id).replace(/^\d{4}(\d{2})\d+/, '$1')) - 1;
+	const day = parseInt(
+		String(row.trn_id).replace(/^\d{4}\d{2}(\d{2})\d+/, '$1')
+	);
+	const date = new Date(year, month, day);
+
 	const [originalRow] = useState(row);
 	const [editedRow, setEditedRow] = useState({
 		...row,
@@ -18,6 +72,21 @@ const EditableRow = ({
 		from_balance: toDollars(row.from_balance),
 		to_balance: toDollars(row.to_balance)
 	});
+
+	const handleDateEdit = date => {
+		setEditedRow({
+			...editedRow,
+			trn_id: date
+		});
+	};
+
+	const handleToAccountEdit = e => {
+		console.log('e.value', e.value);
+	};
+
+	const handleFromAccountEdit = e => {
+		console.log('e.value', e.value);
+	};
 
 	const handleEdit = (key, e) => {
 		setEditedRow({
@@ -34,7 +103,7 @@ const EditableRow = ({
 			to_balance: toCents(editedRow.to_balance)
 		};
 
-		save(editedRowInCents, originalRow, index);
+		// save(editedRowInCents, originalRow, index);
 	};
 
 	const handleCancel = () => {
@@ -45,21 +114,26 @@ const EditableRow = ({
 	return isEditing && idBeingEdited === row.trn_id ? (
 		<tr>
 			<td>
-				<input
-					value={editedRow.trn_id}
-					onChange={() => handleEdit('trn_id', event)}
+				<DatePicker
+					selected={date}
+					maxDate={new Date().setDate(new Date().getDate() + 1)}
+					onChange={() => handleDateEdit(date)}
 				/>
 			</td>
 			<td>
-				<input
-					value={editedRow.from_account}
-					onChange={() => handleEdit('from_account', event)}
+				<StyledSelect
+					options={accounts}
+					onChange={handleFromAccountEdit}
+					styles={selectStyles}
+					defaultValue={fromAccount}
 				/>
 			</td>
 			<td>
-				<input
-					value={editedRow.to_account}
-					onChange={() => handleEdit('to_account', event)}
+				<StyledSelect
+					options={accounts}
+					onChange={handleToAccountEdit}
+					styles={selectStyles}
+					defaultValue={toAccount}
 				/>
 			</td>
 			<td>
@@ -98,7 +172,9 @@ const EditableRow = ({
 		</tr>
 	) : (
 		<tr>
-			<td key={`${index}-id`}>{row.trn_id}</td>
+			<td key={`${index}-id`}>
+				{String(row.trn_id).replace(/(\d{4})(\d{2})(\d{2})\d{2}/, '$2/$3/$1')}
+			</td>
 			<td key={`${index}-from-account`}>{row.from_account}</td>
 			<td key={`${index}-to-account`}>{row.to_account}</td>
 			<td key={`${index}-amount`}>{toDollars(row.amount)}</td>

@@ -27,6 +27,7 @@ const RecentTable = ({data}) => {
 	const [transactionsList, setTransactionsList] = useState(
 		data.recentTransactions
 	);
+	const [showBalances, setShowBalances] = useState(false);
 
 	const handleDelete = rowToDelete => {
 		const confirmDelete = confirm(
@@ -101,6 +102,8 @@ const RecentTable = ({data}) => {
 		setIsEditing(false);
 	};
 
+	const toggleShowBalances = () => setShowBalances(!showBalances);
+
 	return (
 		<TableWrapper>
 			<StyledTable>
@@ -110,8 +113,12 @@ const RecentTable = ({data}) => {
 						<th>From</th>
 						<th>To</th>
 						<th>Amount</th>
-						<th>From Balance</th>
-						<th>To Balance</th>
+						{showBalances && (
+							<>
+								<th>From Balance</th>
+								<th>To Balance</th>
+							</>
+						)}
 						<th>Comment</th>
 					</tr>
 					{transactionsList.map((row, index) => (
@@ -126,10 +133,12 @@ const RecentTable = ({data}) => {
 							isEditing={isEditing}
 							idBeingEdited={idBeingEdited}
 							accounts={data.accounts}
+							showBalances={showBalances}
 						/>
 					))}
 				</tbody>
 			</StyledTable>
+			<button onClick={toggleShowBalances}>Show balances</button>
 		</TableWrapper>
 	);
 };

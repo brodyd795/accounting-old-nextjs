@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import styled from 'styled-components';
 import Select from 'react-select';
 import DatePicker from 'react-datepicker';
+import NumberFormat from 'react-number-format';
 
 import {toCents, toDollars} from '../../lib/dollar-cents-helpers';
 
@@ -47,7 +48,8 @@ const EditableRow = ({
 	save,
 	isEditing,
 	idBeingEdited,
-	accounts
+	accounts,
+	showBalances
 }) => {
 	const toAccount = accounts
 		.find(category => category.label[0] === row.to_account[0])
@@ -68,6 +70,7 @@ const EditableRow = ({
 	const [originalRow] = useState(row);
 	const [editedRow, setEditedRow] = useState({
 		...row,
+		trn_id: date,
 		amount: toDollars(row.amount),
 		from_balance: toDollars(row.from_balance),
 		to_balance: toDollars(row.to_balance)
@@ -81,29 +84,61 @@ const EditableRow = ({
 	};
 
 	const handleToAccountEdit = e => {
-		console.log('e.value', e.value);
+		setEditedRow({
+			...editedRow,
+			to_account: e.value
+		});
 	};
 
 	const handleFromAccountEdit = e => {
-		console.log('e.value', e.value);
-	};
-
-	const handleEdit = (key, e) => {
 		setEditedRow({
 			...editedRow,
-			[key]: e.target.value
+			from_account: e.value
+		});
+	};
+
+	const handleAmountEdit = e => {
+		setEditedRow({
+			...editedRow,
+			amount: e.target.value.replace(/\D/g, '')
+		});
+	};
+
+	const handleFromBalanceEdit = e => {
+		setEditedRow({
+			...editedRow,
+			from_balance: e.target.value.replace(/\D/g, '')
+		});
+	};
+
+	const handleToBalanceEdit = e => {
+		setEditedRow({
+			...editedRow,
+			to_balance: e.target.value.replace(/\D/g, '')
 		});
 	};
 
 	const handleSave = () => {
+		const newDate = editedRow.trn_id
+			.toISOString()
+			.replace(/^(\d{4})-(\d{2})-(\d{2}).+/, '$1$2$3');
+
 		const editedRowInCents = {
 			...editedRow,
+			trn_id: newDate,
 			amount: toCents(editedRow.amount),
 			from_balance: toCents(editedRow.from_balance),
 			to_balance: toCents(editedRow.to_balance)
 		};
 
 		// save(editedRowInCents, originalRow, index);
+	};
+
+	const handleCommentEdit = e => {
+		setEditedRow({
+			...editedRow,
+			comment: e.target.value
+		});
 	};
 
 	const handleCancel = () => {
@@ -115,9 +150,9 @@ const EditableRow = ({
 		<tr>
 			<td>
 				<DatePicker
-					selected={date}
+					selected={editedRow.trn_id}
 					maxDate={new Date().setDate(new Date().getDate() + 1)}
-					onChange={() => handleDateEdit(date)}
+					onChange={date => handleDateEdit(date)}
 				/>
 			</td>
 			<td>
@@ -137,28 +172,44 @@ const EditableRow = ({
 				/>
 			</td>
 			<td>
-				<input
-					value={toDollars(editedRow.amount)}
-					onChange={() => handleEdit('amount', event)}
+				<NumberFormat
+					value={editedRow.amount}
+					thousandSeparator={','}
+					decimalSeparator={'.'}
+					prefix={'$'}
+					onBlur={handleAmountEdit}
+					allowNegative={false}
+					decimalScale={2}
 				/>
 			</td>
+			{showBalances && (
+				<>
+					<td>
+						<NumberFormat
+							value={editedRow.from_balance}
+							thousandSeparator={','}
+							decimalSeparator={'.'}
+							prefix={'$'}
+							onBlur={handleFromBalanceEdit}
+							allowNegative={false}
+							decimalScale={2}
+						/>
+					</td>
+					<td>
+						<NumberFormat
+							value={editedRow.to_balance}
+							thousandSeparator={','}
+							decimalSeparator={'.'}
+							prefix={'$'}
+							onBlur={handleToBalanceEdit}
+							allowNegative={false}
+							decimalScale={2}
+						/>
+					</td>
+				</>
+			)}
 			<td>
-				<input
-					value={toDollars(editedRow.from_balance)}
-					onChange={() => handleEdit('from_balance', event)}
-				/>
-			</td>
-			<td>
-				<input
-					value={toDollars(editedRow.to_balance)}
-					onChange={() => handleEdit('to_balance', event)}
-				/>
-			</td>
-			<td>
-				<input
-					value={editedRow.comment}
-					onChange={() => handleEdit('comment', event)}
-				/>
+				<input value={editedRow.comment} onChange={handleCommentEdit} />
 			</td>
 
 			<td>
@@ -178,8 +229,12 @@ const EditableRow = ({
 			<td key={`${index}-from-account`}>{row.from_account}</td>
 			<td key={`${index}-to-account`}>{row.to_account}</td>
 			<td key={`${index}-amount`}>{toDollars(row.amount)}</td>
-			<td key={`${index}-from-balance`}>{toDollars(row.from_balance)}</td>
-			<td key={`${index}-to-balance`}>{toDollars(row.to_balance)}</td>
+			{showBalances && (
+				<>
+					<td key={`${index}-from-balance`}>{toDollars(row.from_balance)}</td>
+					<td key={`${index}-to-balance`}>{toDollars(row.to_balance)}</td>
+				</>
+			)}
 			<td key={`${index}-comment`}>{row.comment}</td>
 			<td>
 				<button

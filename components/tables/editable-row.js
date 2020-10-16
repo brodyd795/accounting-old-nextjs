@@ -40,13 +40,13 @@ const EditableRow = ({
 
 	const [originalRow] = useState(row);
 	const [editedRow, setEditedRow] = useState({
-		...row,
+		trn_id: date,
 		from_account: fromAccount,
 		to_account: toAccount,
-		trn_id: date,
 		amount: toDollars(row.amount),
 		from_balance: toDollars(row.from_balance),
-		to_balance: toDollars(row.to_balance)
+		to_balance: toDollars(row.to_balance),
+		comment: row.comment
 	});
 
 	const handleSave = () => {
@@ -118,10 +118,10 @@ const EditableRow = ({
 
 			<td>
 				<button type={'button'} onClick={handleCancel}>
-					Cancel
+					{'Cancel'}
 				</button>
 				<button type={'button'} onClick={handleSave}>
-					Save
+					{'Save'}
 				</button>
 			</td>
 		</tr>
@@ -145,13 +145,13 @@ const EditableRow = ({
 					type={'button'}
 					disabled={isEditing}
 					onClick={() => edit(row.trn_id)}>
-					Edit
+					{'Edit'}
 				</button>
 				<button
 					type={'button'}
 					disabled={isEditing}
 					onClick={() => remove(row)}>
-					Delete
+					{'Delete'}
 				</button>
 			</td>
 		</tr>

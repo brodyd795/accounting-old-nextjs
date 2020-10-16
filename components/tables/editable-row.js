@@ -1,43 +1,14 @@
 import React, {useState} from 'react';
-import styled from 'styled-components';
-import Select from 'react-select';
-import DatePicker from 'react-datepicker';
-import NumberFormat from 'react-number-format';
+
+import DateSelector from './date-selector';
+import ToAccountSelector from './to-account-selector';
+import FromAccountSelector from './from-account-selector';
+import AmountSelector from './amount-selector';
+import FromBalanceSelector from './from-balance-selector';
+import ToBalanceSelector from './to-balance-selector';
+import CommentSelector from './comment-selector';
 
 import {toCents, toDollars} from '../../lib/dollar-cents-helpers';
-
-const StyledSelect = styled(Select)`
-	width: 200px;
-	color: black;
-	text-align: left;
-`;
-
-const selectStyles = {
-	control: base => ({
-		...base,
-		minHeight: 10
-	}),
-	dropdownIndicator: base => ({
-		...base,
-		padding: 4
-	}),
-	clearIndicator: base => ({
-		...base,
-		padding: 4
-	}),
-	multiValue: base => ({
-		...base
-	}),
-	valueContainer: base => ({
-		...base,
-		padding: '0px 6px'
-	}),
-	input: base => ({
-		...base,
-		margin: 0,
-		padding: 0
-	})
-};
 
 const EditableRow = ({
 	index,
@@ -51,14 +22,6 @@ const EditableRow = ({
 	accounts,
 	showBalances
 }) => {
-	const toAccount = accounts
-		.find(category => category.label[0] === row.to_account[0])
-		.options.find(option => option.value === row.to_account);
-
-	const fromAccount = accounts
-		.find(category => category.label[0] === row.from_account[0])
-		.options.find(option => option.value === row.from_account);
-
 	const year = parseInt(String(row.trn_id).replace(/(^\d{4})\d+/, '$1'));
 	const month =
 		parseInt(String(row.trn_id).replace(/^\d{4}(\d{2})\d+/, '$1')) - 1;
@@ -67,56 +30,24 @@ const EditableRow = ({
 	);
 	const date = new Date(year, month, day);
 
+	const fromAccount = accounts
+		.find(category => category.label[0] === row.from_account[0])
+		.options.find(option => option.value === row.from_account);
+
+	const toAccount = accounts
+		.find(category => category.label[0] === row.to_account[0])
+		.options.find(option => option.value === row.to_account);
+
 	const [originalRow] = useState(row);
 	const [editedRow, setEditedRow] = useState({
 		...row,
+		from_account: fromAccount,
+		to_account: toAccount,
 		trn_id: date,
 		amount: toDollars(row.amount),
 		from_balance: toDollars(row.from_balance),
 		to_balance: toDollars(row.to_balance)
 	});
-
-	const handleDateEdit = date => {
-		setEditedRow({
-			...editedRow,
-			trn_id: date
-		});
-	};
-
-	const handleToAccountEdit = e => {
-		setEditedRow({
-			...editedRow,
-			to_account: e.value
-		});
-	};
-
-	const handleFromAccountEdit = e => {
-		setEditedRow({
-			...editedRow,
-			from_account: e.value
-		});
-	};
-
-	const handleAmountEdit = e => {
-		setEditedRow({
-			...editedRow,
-			amount: e.target.value.replace(/\D/g, '')
-		});
-	};
-
-	const handleFromBalanceEdit = e => {
-		setEditedRow({
-			...editedRow,
-			from_balance: e.target.value.replace(/\D/g, '')
-		});
-	};
-
-	const handleToBalanceEdit = e => {
-		setEditedRow({
-			...editedRow,
-			to_balance: e.target.value.replace(/\D/g, '')
-		});
-	};
 
 	const handleSave = () => {
 		const newDate = editedRow.trn_id
@@ -130,15 +61,9 @@ const EditableRow = ({
 			from_balance: toCents(editedRow.from_balance),
 			to_balance: toCents(editedRow.to_balance)
 		};
+		console.log('editedRowInCents', editedRowInCents);
 
 		// save(editedRowInCents, originalRow, index);
-	};
-
-	const handleCommentEdit = e => {
-		setEditedRow({
-			...editedRow,
-			comment: e.target.value
-		});
 	};
 
 	const handleCancel = () => {
@@ -149,67 +74,46 @@ const EditableRow = ({
 	return isEditing && idBeingEdited === row.trn_id ? (
 		<tr>
 			<td>
-				<DatePicker
-					selected={editedRow.trn_id}
-					maxDate={new Date().setDate(new Date().getDate() + 1)}
-					onChange={date => handleDateEdit(date)}
+				<DateSelector setEditedRow={setEditedRow} editedRow={editedRow} />
+			</td>
+			<td>
+				<FromAccountSelector
+					accounts={accounts}
+					setEditedRow={setEditedRow}
+					editedRow={editedRow}
 				/>
 			</td>
 			<td>
-				<StyledSelect
-					options={accounts}
-					onChange={handleFromAccountEdit}
-					styles={selectStyles}
-					defaultValue={fromAccount}
+				<ToAccountSelector
+					accounts={accounts}
+					setEditedRow={setEditedRow}
+					editedRow={editedRow}
 				/>
 			</td>
 			<td>
-				<StyledSelect
-					options={accounts}
-					onChange={handleToAccountEdit}
-					styles={selectStyles}
-					defaultValue={toAccount}
-				/>
-			</td>
-			<td>
-				<NumberFormat
-					value={editedRow.amount}
-					thousandSeparator={','}
-					decimalSeparator={'.'}
-					prefix={'$'}
-					onBlur={handleAmountEdit}
-					allowNegative={false}
-					decimalScale={2}
-				/>
+				<AmountSelector value={editedRow.amount} setEditedRow={setEditedRow} />
 			</td>
 			{showBalances && (
 				<>
 					<td>
-						<NumberFormat
-							value={editedRow.from_balance}
-							thousandSeparator={','}
-							decimalSeparator={'.'}
-							prefix={'$'}
-							onBlur={handleFromBalanceEdit}
-							allowNegative={false}
-							decimalScale={2}
+						<FromBalanceSelector
+							setEditedRow={setEditedRow}
+							from_balance={editedRow.from_balance}
 						/>
 					</td>
 					<td>
-						<NumberFormat
-							value={editedRow.to_balance}
-							thousandSeparator={','}
-							decimalSeparator={'.'}
-							prefix={'$'}
-							onBlur={handleToBalanceEdit}
-							allowNegative={false}
-							decimalScale={2}
+						<ToBalanceSelector
+							setEditedRow={setEditedRow}
+							to_balance={editedRow.to_balance}
 						/>
 					</td>
 				</>
 			)}
 			<td>
-				<input value={editedRow.comment} onChange={handleCommentEdit} />
+				<CommentSelector
+					setEditedRow={setEditedRow}
+					comment={editedRow.comment}
+				/>
 			</td>
 
 			<td>

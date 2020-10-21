@@ -1,40 +1,10 @@
 import React from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
 import {toDollars} from '../../lib/dollar-cents-helpers';
-
-const StyledTable = styled.table`
-	border: 1px solid #333;
-	margin-bottom: 50px;
-
-	th,
-	td {
-		padding: 5px;
-		// border: 1px solid #333;
-	}
-
-	tr:nth-child(even) {
-		background-color: white;
-		color: #333;
-	}
-
-	.account-row {
-		cursor: pointer;
-	}
-
-	.account {
-		padding-left: 30px;
-		padding-right: 10px;
-	}
-
-	.balance {
-		padding-left: 30px;
-		padding-right: 30px;
-	}
-`;
+import {StyledSummaryTable} from './styles';
 
 const SummaryTable = ({data}) => (
-	<StyledTable>
+	<StyledSummaryTable>
 		<tbody>
 			<tr>
 				<th>Account</th>
@@ -61,7 +31,7 @@ const SummaryTable = ({data}) => (
 				</React.Fragment>
 			))}
 		</tbody>
-	</StyledTable>
+	</StyledSummaryTable>
 );
 
 export default SummaryTable;

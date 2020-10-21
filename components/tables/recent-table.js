@@ -1,27 +1,14 @@
 import React, {useState} from 'react';
-import styled from 'styled-components';
 import fetch from 'isomorphic-unfetch';
 
 import EditableRow from './editable-row';
 
 import {useFetchUser} from '../../lib/user';
+import {StyledRecentTable, StyledRecentTableWrapper} from './styles';
 
-const TableWrapper = styled.div`
-	overflow-x: scroll;
-`;
-
-const StyledTable = styled.table`
-	border: 1px solid black;
-
-	th,
-	td {
-		padding: 5px;
-		text-align: center;
-	}
-`;
-
-const RecentTable = ({data}) => {
+const RecentTable = ({data, type, account = null}) => {
 	const {user, loading} = useFetchUser();
+
 	const [isEditing, setIsEditing] = useState(null);
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
 	const [transactionsList, setTransactionsList] = useState(
@@ -70,7 +57,7 @@ const RecentTable = ({data}) => {
 		setIsEditing(false);
 	};
 
-	const handleSave = async (editedRow, originalRow, index) => {
+	const handleSave = async (editedRowInCents, originalRow) => {
 		const res = await fetch(
 			`/api/controllers/transactions/edit?user=${user.email}`,
 			{
@@ -79,22 +66,19 @@ const RecentTable = ({data}) => {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					editedRow,
-					originalRow
+					editedRow: editedRowInCents,
+					originalRow,
+					pageDetails: {
+						type,
+						account
+					}
 				})
 			}
 		);
 		const json = await res.json();
 
 		if (json) {
-			let count = 0;
-			const transactionsListCopy = transactionsList;
-			while (count <= index) {
-				transactionsListCopy[count] = json[count];
-				count++;
-			}
-
-			setTransactionsList(transactionsListCopy);
+			setTransactionsList(json);
 		} else {
 			alert('An error occurred. Please try again.');
 		}
@@ -105,10 +89,11 @@ const RecentTable = ({data}) => {
 	const toggleShowBalances = () => setShowBalances(!showBalances);
 
 	return (
-		<TableWrapper>
-			<StyledTable>
-				<tbody>
-					<tr key='headings'>
+		<StyledRecentTableWrapper>
+			<button onClick={toggleShowBalances}>Show balances</button>
+			<StyledRecentTable>
+				<thead>
+					<tr>
 						<th>Date</th>
 						<th>From</th>
 						<th>To</th>
@@ -120,7 +105,10 @@ const RecentTable = ({data}) => {
 							</>
 						)}
 						<th>Comment</th>
+						<th></th>
 					</tr>
+				</thead>
+				<tbody>
 					{transactionsList.map((row, index) => (
 						<EditableRow
 							key={row.trn_id}
@@ -137,9 +125,8 @@ const RecentTable = ({data}) => {
 						/>
 					))}
 				</tbody>
-			</StyledTable>
-			<button onClick={toggleShowBalances}>Show balances</button>
-		</TableWrapper>
+			</StyledRecentTable>
+		</StyledRecentTableWrapper>
 	);
 };
 

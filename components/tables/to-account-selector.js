@@ -1,13 +1,4 @@
-import Select from 'react-select';
-import styled from 'styled-components';
-
-import selectStyles from './account-select-styles';
-
-const StyledSelect = styled(Select)`
-	width: 200px;
-	color: black;
-	text-align: left;
-`;
+import {selectStyles, StyledSelect} from './styles';
 
 const ToAccountSelector = props => {
 	const {accounts, setEditedRow, editedRow} = props;
@@ -22,7 +13,6 @@ const ToAccountSelector = props => {
 			}));
 		}
 	};
-
 	return (
 		<StyledSelect
 			options={accounts}

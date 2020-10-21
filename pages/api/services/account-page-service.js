@@ -1,6 +1,7 @@
 import getAccountTransactions from '../repositories/get-account-transactions-repository';
+import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
-export const getAccountPageData = async (account, user) => {
+const getAccountPageData = async ({account, user}) => {
 	const results = await getAccountTransactions({account, user});
 
 	if (results.length) {
@@ -8,8 +9,10 @@ export const getAccountPageData = async (account, user) => {
 			...rest
 		}));
 
-		return {data: resultsWithoutEmail};
+		return resultsWithoutEmail;
 	}
 
 	return {message: `Results for account ${account} not found`};
 };
+
+export default async props => withTransactionWrapper(getAccountPageData, props);

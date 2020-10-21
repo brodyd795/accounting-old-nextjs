@@ -1,17 +1,18 @@
-import NumberFormat from 'react-number-format';
+import {StyledNumberFormat} from './styles';
 
 const FromBalanceSelector = props => {
 	const {setEditedRow, from_balance} = props;
 
 	const handleFromBalanceEdit = e => {
+		const from_balance = e.target.value;
 		setEditedRow(editedRow => ({
 			...editedRow,
-			from_balance: e.target.value.replace(/\D/g, '')
+			from_balance
 		}));
 	};
 
 	return (
-		<NumberFormat
+		<StyledNumberFormat
 			value={from_balance}
 			thousandSeparator={','}
 			decimalSeparator={'.'}

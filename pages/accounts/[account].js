@@ -31,10 +31,10 @@ const Account = () => {
 			{!loading && !user && <p>No user</p>}
 			{user &&
 				data &&
-				(data.message ? (
-					JSON.stringify(data.message)
+				(data.recentTransactions.message ? (
+					JSON.stringify(data.recentTransactions.message)
 				) : (
-					<RecentTable data={data.data} />
+					<RecentTable data={data} type={'account'} account={account} />
 				))}
 		</Page>
 	);

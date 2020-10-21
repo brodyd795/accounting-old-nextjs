@@ -1,17 +1,17 @@
 import escape from 'sql-template-strings';
 
-import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
+import {conn} from './transaction-wrapper-repository';
 
-export const getLastId = async props => {
+export default async props => {
 	const {date, user} = props;
 
 	let lastId;
 
 	if (date) {
 		lastId = await conn(user).query(
-			escape`SELECT MAX(trn_id) max_id FROM transactions WHERE trn_id BETWEEN ${date} AND ${
-				date + 99
-			}`
+			escape`SELECT MAX(trn_id) max_id FROM transactions WHERE trn_id BETWEEN ${parseInt(
+				date
+			)} AND ${parseInt(date) + 99}`
 		);
 	} else {
 		lastId = await conn(user).query(
@@ -19,10 +19,9 @@ export const getLastId = async props => {
 		);
 	}
 
-	lastId = lastId[0]['max_id'] || date;
+	if (lastId[0]['max_id']) {
+		return lastId[0]['max_id'] + 1;
+	}
 
-	return lastId;
+	return parseInt(date);
 };
-
-export const wrappedGetLastId = async props =>
-	withTransactionWrapper(getLastId, props);

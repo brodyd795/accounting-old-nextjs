@@ -1,5 +1,6 @@
 import getAllAccountBalances from '../repositories/get-all-account-balances-repository';
 import getOpenAccounts from '../repositories/get-open-accounts-repository';
+import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
 const summarizeAllAccountBalances = balances => {
 	const categories = {
@@ -60,7 +61,7 @@ const summarizeAllAccountBalances = balances => {
 	return cleanData;
 };
 
-export const getHomepageData = async user => {
+const getHomepageData = async ({user}) => {
 	const balances = {};
 
 	const accounts = await getOpenAccounts({user});
@@ -92,3 +93,5 @@ export const getHomepageData = async user => {
 
 	return summarizeAllAccountBalances(balances);
 };
+
+export default async props => withTransactionWrapper(getHomepageData, props);

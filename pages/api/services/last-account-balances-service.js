@@ -1,6 +1,7 @@
-import {getLastAccountBalances} from '../repositories/get-last-account-balances-repository';
+import getLastAccountBalances from '../repositories/get-last-account-balances-repository';
+import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
-export const getLastAccountBalancesService = async props => {
+const getLastAccountBalancesService = async props => {
 	const {toAccount, fromAccount, id, user} = props;
 	const lastAccountBalances = {};
 
@@ -33,3 +34,6 @@ export const getLastAccountBalancesService = async props => {
 
 	return lastAccountBalances;
 };
+
+export default async props =>
+	withTransactionWrapper(getLastAccountBalancesService, props);

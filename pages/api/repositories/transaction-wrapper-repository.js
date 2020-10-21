@@ -3,14 +3,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-let connection;
+let connection,
+	isMidTransaction = false;
 
 export const conn = user => {
 	if (connection !== undefined) {
 		return connection;
 	}
 
-	let database = Boolean(process.env.ADMIN_EMAILS.includes(user))
+	let database = process.env.ADMIN_EMAILS.split(' ').includes(user)
 		? process.env.DB_NAME
 		: `${process.env.DB_NAME}_DEMO`;
 
@@ -29,22 +30,28 @@ export const conn = user => {
 };
 
 export const withTransactionWrapper = async (queries, props) => {
-	const {user} = props;
+	if (!isMidTransaction) {
+		isMidTransaction = true;
 
-	try {
-		await conn(user).query('BEGIN');
+		const {user} = props;
 
-		const results = await queries(props);
+		try {
+			await conn(user).query('BEGIN');
 
-		await conn(user).query('COMMIT');
+			const results = await queries(props);
 
-		return results;
-	} catch (error) {
-		await conn(user).query('ROLLBACK');
-		console.log('error', error);
+			await conn(user).query('COMMIT');
 
-		return new Error(error);
-	} finally {
-		await conn(user).end();
+			return results;
+		} catch (error) {
+			await conn(user).query('ROLLBACK');
+
+			return new Error(error);
+		} finally {
+			await conn(user).end();
+			isMidTransaction = false;
+		}
 	}
+
+	return queries(props);
 };

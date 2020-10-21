@@ -1,17 +1,18 @@
-import NumberFormat from 'react-number-format';
+import {StyledNumberFormat} from './styles';
 
 const AmountSelector = props => {
 	const {value, setEditedRow} = props;
 
 	const handleAmountEdit = e => {
+		const amount = e.target.value;
 		setEditedRow(editedRow => ({
 			...editedRow,
-			amount: e.target.value.replace(/\D/g, '')
+			amount
 		}));
 	};
 
 	return (
-		<NumberFormat
+		<StyledNumberFormat
 			value={value}
 			thousandSeparator={','}
 			decimalSeparator={'.'}

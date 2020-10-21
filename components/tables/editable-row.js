@@ -55,19 +55,19 @@ const EditableRow = ({
 			.replace(/^(\d{4})-(\d{2})-(\d{2}).+/, '$1$2$3');
 
 		const editedRowInCents = {
-			...editedRow,
 			trn_id: newDate,
-			amount: toCents(editedRow.amount),
-			from_balance: toCents(editedRow.from_balance),
-			to_balance: toCents(editedRow.to_balance)
+			from_account: editedRow.from_account.value,
+			to_account: editedRow.to_account.value,
+			amount: toCents(editedRow.amount.replace(/[$,]/g, '')),
+			from_balance: toCents(editedRow.from_balance.replace(/[$,]/g, '')),
+			to_balance: toCents(editedRow.to_balance.replace(/[$,]/g, '')),
+			comment: editedRow.comment
 		};
-		console.log('editedRowInCents', editedRowInCents);
 
-		// save(editedRowInCents, originalRow, index);
+		save(editedRowInCents, originalRow);
 	};
 
 	const handleCancel = () => {
-		setEditedRow(originalRow);
 		cancel(originalRow);
 	};
 
@@ -117,11 +117,11 @@ const EditableRow = ({
 			</td>
 
 			<td>
-				<button type={'button'} onClick={handleCancel}>
-					{'Cancel'}
-				</button>
 				<button type={'button'} onClick={handleSave}>
 					{'Save'}
+				</button>
+				<button type={'button'} onClick={handleCancel}>
+					{'Cancel'}
 				</button>
 			</td>
 		</tr>
@@ -130,8 +130,12 @@ const EditableRow = ({
 			<td key={`${index}-id`}>
 				{String(row.trn_id).replace(/(\d{4})(\d{2})(\d{2})\d{2}/, '$2/$3/$1')}
 			</td>
-			<td key={`${index}-from-account`}>{row.from_account}</td>
-			<td key={`${index}-to-account`}>{row.to_account}</td>
+			<td key={`${index}-from-account`}>
+				{row.from_account.slice(2).replace(/_/g, ' ')}
+			</td>
+			<td key={`${index}-to-account`}>
+				{row.to_account.slice(2).replace(/_/g, ' ')}
+			</td>
 			<td key={`${index}-amount`}>{toDollars(row.amount)}</td>
 			{showBalances && (
 				<>

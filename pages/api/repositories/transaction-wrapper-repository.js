@@ -20,7 +20,7 @@ export const conn = user => {
 	connection = mysql({
 		config: {
 			host: process.env.DB_HOST,
-			database: database,
+			database,
 			user: process.env.DB_USER,
 			password: process.env.DB_PASSWORD
 		}

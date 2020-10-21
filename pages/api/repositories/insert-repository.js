@@ -3,7 +3,7 @@ import escape from 'sql-template-strings';
 import {conn} from './transaction-wrapper-repository';
 
 export default async props => {
-	const {transaction, user, tempTable = false} = props;
+	const {transaction, user} = props;
 
 	const {
 		id,

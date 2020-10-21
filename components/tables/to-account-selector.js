@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {selectStyles, StyledSelect} from './styles';
 
 const ToAccountSelector = props => {
@@ -7,12 +9,13 @@ const ToAccountSelector = props => {
 		if (e.value === editedRow.from_account.value) {
 			alert("The 'from' and 'to' accounts must be different.");
 		} else {
-			setEditedRow(editedRow => ({
+			setEditedRow({
 				...editedRow,
 				to_account: e
-			}));
+			});
 		}
 	};
+
 	return (
 		<StyledSelect
 			options={accounts}

@@ -6,7 +6,10 @@ export default async (req, res) => {
 	const user = req.query.user;
 
 	const results = await Promise.all([
-		getAccountPageData({account, user}),
+		getAccountPageData({
+			account,
+			user
+		}),
 		getAccountsPageData({user})
 	]);
 

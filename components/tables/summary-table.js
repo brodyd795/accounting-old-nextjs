@@ -1,6 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
+
 import {toDollars} from '../../lib/dollar-cents-helpers';
+
 import {StyledSummaryTable} from './styles';
 
 const SummaryTable = ({data}) => (

@@ -1,5 +1,7 @@
 import React, {useState} from 'react';
 
+import {toCents, toDollars} from '../../lib/dollar-cents-helpers';
+
 import DateSelector from './date-selector';
 import ToAccountSelector from './to-account-selector';
 import FromAccountSelector from './from-account-selector';
@@ -7,8 +9,6 @@ import AmountSelector from './amount-selector';
 import FromBalanceSelector from './from-balance-selector';
 import ToBalanceSelector from './to-balance-selector';
 import CommentSelector from './comment-selector';
-
-import {toCents, toDollars} from '../../lib/dollar-cents-helpers';
 
 const EditableRow = ({
 	index,
@@ -98,13 +98,13 @@ const EditableRow = ({
 					<td>
 						<FromBalanceSelector
 							setEditedRow={setEditedRow}
-							from_balance={editedRow.from_balance}
+							value={editedRow.from_balance}
 						/>
 					</td>
 					<td>
 						<ToBalanceSelector
 							setEditedRow={setEditedRow}
-							to_balance={editedRow.to_balance}
+							value={editedRow.to_balance}
 						/>
 					</td>
 				</>
@@ -112,7 +112,7 @@ const EditableRow = ({
 			<td>
 				<CommentSelector
 					setEditedRow={setEditedRow}
-					comment={editedRow.comment}
+					value={editedRow.comment}
 				/>
 			</td>
 

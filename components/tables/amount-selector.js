@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {StyledNumberFormat} from './styles';
 
 const AmountSelector = props => {
@@ -5,6 +7,7 @@ const AmountSelector = props => {
 
 	const handleAmountEdit = e => {
 		const amount = e.target.value;
+
 		setEditedRow(editedRow => ({
 			...editedRow,
 			amount

@@ -1,6 +1,6 @@
 import React from 'react';
-
 import fetch from 'isomorphic-unfetch';
+
 import withAuth from '../components/with-auth';
 import {useFetchUser} from '../lib/user';
 import Loader from '../components/loader';
@@ -12,6 +12,7 @@ const AdminSettings = () => {
 
 	const handleRebalance = async () => {
 		const res = await fetch(`/api/controllers/rebalance?user=${user.email}`);
+
 		if (res.status === 200) {
 			alert('Success!');
 		} else {
@@ -24,7 +25,11 @@ const AdminSettings = () => {
 			<PageHeader text='Admin Settings' />
 			{loading && <Loader />}
 			{!loading && !user && <p>No user</p>}
-			{user && <button onClick={handleRebalance}>Rebalance</button>}
+			{user && (
+				<button type={'button'} onClick={handleRebalance}>
+					Rebalance
+				</button>
+			)}
 		</Page>
 	);
 };

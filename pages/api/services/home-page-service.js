@@ -43,6 +43,7 @@ const summarizeAllAccountBalances = balances => {
 		const categorySum = String(
 			Object.values(accounts).reduce((acc, balance) => acc + balance, 0)
 		);
+
 		cleanData[cleanCategory] = {
 			balance: categorySum,
 			accounts: {}
@@ -69,7 +70,10 @@ const getHomepageData = async ({user}) => {
 	// eslint-disable-next-line no-unused-vars
 	for (const account of accounts) {
 		const name = account.acc_name;
-		const {lastDebit, lastCredit} = await getAllAccountBalances({name, user});
+		const {lastDebit, lastCredit} = await getAllAccountBalances({
+			name,
+			user
+		});
 
 		// has the account had *both* debits and credits?
 		if (lastDebit.length && lastCredit.length) {

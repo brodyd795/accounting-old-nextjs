@@ -5,30 +5,10 @@ import {
 	insertTransaction
 } from '../repositories/rebalance-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
+
 import getLastAccountBalancesService from './last-account-balances-service';
 
-const rebalanceService = async props => {
-	const {user} = props;
-
-	const allTransactions = await selectAll(props);
-
-	await createTempTable({user});
-
-	await processTransactions(allTransactions, user);
-
-	await renameTablesAndDropOldTable({user});
-
-	return;
-};
-
-const processTransactions = async (allTransactions, user) => {
-	for (let transaction of allTransactions) {
-		await processTransaction(transaction, user);
-	}
-};
-
 const processTransaction = async (transaction, user) => {
-	console.log('transaction', transaction);
 	const lastBalances = await getLastAccountBalancesService({
 		toAccount: transaction.to_account,
 		fromAccount: transaction.from_account,
@@ -48,11 +28,31 @@ const processTransaction = async (transaction, user) => {
 		fromBalance,
 		comment: transaction.comment
 	};
-	console.log('newTransaction', newTransaction);
+
 	await insertTransaction({
 		transaction: newTransaction,
 		user
 	});
+};
+
+const processTransactions = async (allTransactions, user) => {
+	for (const transaction of allTransactions) {
+		await processTransaction(transaction, user);
+	}
+};
+
+const rebalanceService = async props => {
+	const {user} = props;
+
+	const allTransactions = await selectAll(props);
+
+	await createTempTable({user});
+
+	await processTransactions(allTransactions, user);
+
+	await renameTablesAndDropOldTable({user});
+
+	return;
 };
 
 export default async props => withTransactionWrapper(rebalanceService, props);

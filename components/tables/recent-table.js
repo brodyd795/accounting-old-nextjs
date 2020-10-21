@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import fetch from 'isomorphic-unfetch';
 
-import EditableRow from './editable-row';
-
 import {useFetchUser} from '../../lib/user';
+
+import EditableRow from './editable-row';
 import {StyledRecentTable, StyledRecentTableWrapper} from './styles';
 
 const RecentTable = ({data, type, account = null}) => {
-	const {user, loading} = useFetchUser();
+	const {user} = useFetchUser();
 
 	const [isEditing, setIsEditing] = useState(null);
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
@@ -90,7 +90,9 @@ const RecentTable = ({data, type, account = null}) => {
 
 	return (
 		<StyledRecentTableWrapper>
-			<button onClick={toggleShowBalances}>Show balances</button>
+			<button type={'button'} onClick={toggleShowBalances}>
+				Show balances
+			</button>
 			<StyledRecentTable>
 				<thead>
 					<tr>
@@ -105,7 +107,7 @@ const RecentTable = ({data, type, account = null}) => {
 							</>
 						)}
 						<th>Comment</th>
-						<th></th>
+						<th />
 					</tr>
 				</thead>
 				<tbody>

@@ -1,10 +1,13 @@
+import React from 'react';
+
 import {StyledNumberFormat} from './styles';
 
 const ToBalanceSelector = props => {
-	const {setEditedRow, to_balance} = props;
+	const {setEditedRow, value} = props;
 
 	const handleToBalanceEdit = e => {
 		const to_balance = e.target.value;
+
 		setEditedRow(editedRow => ({
 			...editedRow,
 			to_balance
@@ -13,7 +16,7 @@ const ToBalanceSelector = props => {
 
 	return (
 		<StyledNumberFormat
-			value={to_balance}
+			value={value}
 			thousandSeparator={','}
 			decimalSeparator={'.'}
 			prefix={'$'}

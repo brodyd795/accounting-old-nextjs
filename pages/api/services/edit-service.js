@@ -10,7 +10,10 @@ import getAccountTransactions from './account-page-service';
 const editTransaction = async props => {
 	const {originalRow, editedRow, user, pageDetails} = props;
 
-	await deleteTransaction({rowToDelete: originalRow, user});
+	await deleteTransaction({
+		rowToDelete: originalRow,
+		user
+	});
 
 	const lastBalances = await getLastAccountBalancesService({
 		toAccount: originalRow.to_account,
@@ -29,7 +32,10 @@ const editTransaction = async props => {
 	const originalDate = originalRow.trn_id.toString().slice(0, 8);
 
 	if (editedDate !== originalDate) {
-		id = await getLastId({date: `${editedDate}00`, user});
+		id = await getLastId({
+			date: `${editedDate}00`,
+			user
+		});
 	} else {
 		id = originalRow.trn_id;
 	}
@@ -52,8 +58,13 @@ const editTransaction = async props => {
 		case 'recent':
 			return getRecentTransactions(user);
 		case 'account':
-			return getAccountTransactions({account: pageDetails.account, user});
+			return getAccountTransactions({
+				account: pageDetails.account,
+				user
+			});
 	}
+
+	return;
 };
 
 export default async props => withTransactionWrapper(editTransaction, props);

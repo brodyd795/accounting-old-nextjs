@@ -1,5 +1,7 @@
+import React from 'react';
+
 const CommentSelector = props => {
-	const {setEditedRow, comment} = props;
+	const {setEditedRow, value} = props;
 
 	const handleCommentEdit = e => {
 		const comment = e.target.value;
@@ -10,7 +12,7 @@ const CommentSelector = props => {
 		}));
 	};
 
-	return <input value={comment} onChange={handleCommentEdit} />;
+	return <input value={value} onChange={handleCommentEdit} />;
 };
 
 export default CommentSelector;

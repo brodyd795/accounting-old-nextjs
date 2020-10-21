@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {StyledDatePicker} from './styles';
 
 const DateSelector = props => {

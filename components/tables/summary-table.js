@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 
-import {toDollars} from '../../lib/dollar-cents-helpers';
+import {toDollars} from '../../lib/currency-helpers';
 
 import {StyledSummaryTable} from './styles';
 

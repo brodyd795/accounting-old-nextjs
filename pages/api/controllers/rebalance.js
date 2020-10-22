@@ -1,10 +1,11 @@
+import {isAdmin} from '../services/is-admin-service';
 import rebalanceService from '../services/rebalance-service';
 
 export default async (req, res) => {
 	try {
 		const user = req.query.user;
 
-		if (process.env.ADMIN_EMAILS.split(' ').includes(user)) {
+		if (isAdmin(user)) {
 			await rebalanceService({user});
 
 			res.status(200).end();

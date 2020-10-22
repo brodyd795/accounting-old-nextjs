@@ -22,6 +22,9 @@ const Account = () => {
 		fetch
 	);
 
+	const noAccountTransactionsMessage =
+		data && JSON.stringify(data.recentTransactions.message);
+
 	if (error) return <Error />;
 
 	return (
@@ -31,8 +34,8 @@ const Account = () => {
 			{!loading && !user && <p>No user</p>}
 			{user &&
 				data &&
-				(data.recentTransactions.message ? (
-					JSON.stringify(data.recentTransactions.message)
+				(noAccountTransactionsMessage ? (
+					noAccountTransactionsMessage
 				) : (
 					<RecentTable data={data} type={'account'} account={account} />
 				))}

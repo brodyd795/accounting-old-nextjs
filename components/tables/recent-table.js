@@ -75,10 +75,10 @@ const RecentTable = ({data, type, account = null}) => {
 				})
 			}
 		);
-		const json = await res.json();
+		const newData = await res.json();
 
-		if (json) {
-			setTransactionsList(json);
+		if (newData) {
+			setTransactionsList(newData);
 		} else {
 			alert('An error occurred. Please try again.');
 		}
@@ -95,7 +95,7 @@ const RecentTable = ({data, type, account = null}) => {
 			</button>
 			<StyledRecentTable>
 				<thead>
-					<tr>
+					<tr key={'headings'}>
 						<th>Date</th>
 						<th>From</th>
 						<th>To</th>

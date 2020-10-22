@@ -1,6 +1,8 @@
 import mysql from 'serverless-mysql';
 import dotenv from 'dotenv';
 
+import {isAdmin} from '../services/is-admin-service';
+
 dotenv.config();
 
 let connection,
@@ -11,7 +13,7 @@ export const conn = user => {
 		return connection;
 	}
 
-	let database = process.env.ADMIN_EMAILS.split(' ').includes(user)
+	let database = isAdmin(user)
 		? process.env.DB_NAME
 		: `${process.env.DB_NAME}_DEMO`;
 

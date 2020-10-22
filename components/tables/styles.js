@@ -70,7 +70,6 @@ export const StyledSummaryTable = styled.table`
 	th,
 	td {
 		padding: 5px;
-		// border: 1px solid #333;
 	}
 
 	tr:nth-child(even) {

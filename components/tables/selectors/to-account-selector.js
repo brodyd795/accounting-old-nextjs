@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {selectStyles, StyledSelect} from './styles';
+import {selectStyles, StyledSelect} from '../styles';
 
 const ToAccountSelector = props => {
 	const {accounts, setEditedRow, editedRow} = props;

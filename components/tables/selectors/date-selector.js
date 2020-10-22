@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {StyledDatePicker} from './styles';
+import {getMaxDate} from '../../../lib/date-helpers';
+import {StyledDatePicker} from '../styles';
 
 const DateSelector = props => {
 	const {editedRow, setEditedRow} = props;
@@ -15,7 +16,7 @@ const DateSelector = props => {
 	return (
 		<StyledDatePicker
 			selected={editedRow.trn_id}
-			maxDate={new Date().setDate(new Date().getDate() + 1)}
+			maxDate={getMaxDate()}
 			onChange={date => handleDateEdit(date)}
 		/>
 	);

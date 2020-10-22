@@ -1,18 +1,21 @@
-import {wrappedEditTransaction} from '../../services/edit-service';
+import editTransaction from '../../services/edit-service';
 
 export default async (req, res) => {
 	try {
-		const {originalRow, editedRow} = req.body;
+		const {originalRow, editedRow, pageDetails} = req.body;
 		const user = req.query.user;
 
-		const result = await wrappedEditTransaction({
+		const data = await editTransaction({
 			originalRow,
 			editedRow,
-			user
+			user,
+			pageDetails
 		});
 
-		if (result === 'OK') {
-			res.status(200).json({result});
+		if (data) {
+			const dataWithoutEmail = data.map(({user_email, ...rest}) => ({...rest}));
+
+			res.status(200).json(dataWithoutEmail);
 		} else {
 			res.status(400).json({
 				error: 'NOT OK'

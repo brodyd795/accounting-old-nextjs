@@ -1,4 +1,7 @@
-import {wrappedDeleteTransaction} from '../repositories/delete-repository';
+import deleteTransaction from '../repositories/delete-repository';
+import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
-export const deleteTransactionService = async (rowToDelete, user) =>
-	wrappedDeleteTransaction({rowToDelete, user});
+const deleteTransactionService = async props => deleteTransaction(props);
+
+export default async props =>
+	withTransactionWrapper(deleteTransactionService, props);

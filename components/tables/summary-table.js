@@ -1,39 +1,12 @@
 import React from 'react';
-import styled from 'styled-components';
 import Link from 'next/link';
 
-const StyledTable = styled.table`
-	border: 1px solid #333;
-	margin-bottom: 50px;
+import {toDollars} from '../../lib/currency-helpers';
 
-	th,
-	td {
-		padding: 5px;
-		// border: 1px solid #333;
-	}
-
-	tr:nth-child(even) {
-		background-color: white;
-		color: #333;
-	}
-
-	.account-row {
-		cursor: pointer;
-	}
-
-	.account {
-		padding-left: 30px;
-		padding-right: 10px;
-	}
-
-	.balance {
-		padding-left: 30px;
-		padding-right: 30px;
-	}
-`;
+import {StyledSummaryTable} from './styles';
 
 const SummaryTable = ({data}) => (
-	<StyledTable>
+	<StyledSummaryTable>
 		<tbody>
 			<tr>
 				<th>Account</th>
@@ -43,14 +16,16 @@ const SummaryTable = ({data}) => (
 				<React.Fragment key={category}>
 					<tr>
 						<td>{category}</td>
-						<td className='balance'>{categoryValues.balance}</td>
+						<td className='balance'>{toDollars(categoryValues.balance)}</td>
 					</tr>
 					{Object.entries(categoryValues.accounts).map(
 						([account, accountValues]) => (
 							<Link href={'/accounts/[account]'} as={`/accounts/${account}`}>
 								<tr className='account-row' key={account}>
 									<td className='account'>{accountValues.name}</td>
-									<td className='balance'>{accountValues.balance}</td>
+									<td className='balance'>
+										{toDollars(accountValues.balance)}
+									</td>
 								</tr>
 							</Link>
 						)
@@ -58,7 +33,7 @@ const SummaryTable = ({data}) => (
 				</React.Fragment>
 			))}
 		</tbody>
-	</StyledTable>
+	</StyledSummaryTable>
 );
 
 export default SummaryTable;

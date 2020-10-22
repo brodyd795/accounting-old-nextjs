@@ -1,5 +1,6 @@
 import getAllAccountBalances from '../repositories/get-all-account-balances-repository';
 import getOpenAccounts from '../repositories/get-open-accounts-repository';
+import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
 const summarizeAllAccountBalances = balances => {
 	const categories = {
@@ -40,11 +41,8 @@ const summarizeAllAccountBalances = balances => {
 		const cleanCategory =
 			category[0].toUpperCase() + category.replace(/([A-Z])/, ' $1').slice(1);
 		const categorySum = String(
-			Object.values(accounts).reduce(
-				(acc, balance) => acc + parseFloat(balance),
-				0
-			)
-		).replace(/(\.\d\d)\d*/, '$1');
+			Object.values(accounts).reduce((acc, balance) => acc + balance, 0)
+		);
 
 		cleanData[cleanCategory] = {
 			balance: categorySum,
@@ -53,19 +51,10 @@ const summarizeAllAccountBalances = balances => {
 
 		Object.entries(accounts).map(([account, balance]) => {
 			const cleanAccount = account.slice(2).replace(/_/g, ' ');
-			let cleanBalance = String(balance);
-
-			if (cleanBalance === '0') {
-				// do nothing
-			} else if (/\.\d$/.test(cleanBalance)) {
-				cleanBalance = cleanBalance.concat('0');
-			} else if (/^[^.]$/.test(cleanBalance)) {
-				cleanBalance = cleanBalance.concat('.00');
-			}
 
 			cleanData[cleanCategory]['accounts'][account] = {
 				name: cleanAccount,
-				balance: cleanBalance
+				balance
 			};
 		});
 	});
@@ -73,7 +62,7 @@ const summarizeAllAccountBalances = balances => {
 	return cleanData;
 };
 
-export const getHomepageData = async user => {
+const getHomepageData = async ({user}) => {
 	const balances = {};
 
 	const accounts = await getOpenAccounts({user});
@@ -81,7 +70,10 @@ export const getHomepageData = async user => {
 	// eslint-disable-next-line no-unused-vars
 	for (const account of accounts) {
 		const name = account.acc_name;
-		const {lastDebit, lastCredit} = await getAllAccountBalances({name, user});
+		const {lastDebit, lastCredit} = await getAllAccountBalances({
+			name,
+			user
+		});
 
 		// has the account had *both* debits and credits?
 		if (lastDebit.length && lastCredit.length) {
@@ -92,10 +84,10 @@ export const getHomepageData = async user => {
 				balances[name] = lastCredit[0]['from_balance'];
 			}
 			// if it's had any debits
-		} else if (lastDebit.length > 0) {
+		} else if (lastDebit.length) {
 			balances[name] = lastDebit[0]['to_balance'];
 			// if it's had any credits
-		} else if (lastCredit.length > 0) {
+		} else if (lastCredit.length) {
 			balances[name] = lastCredit[0]['from_balance'];
 			// it hasn't had any transactions before
 		} else {
@@ -105,3 +97,5 @@ export const getHomepageData = async user => {
 
 	return summarizeAllAccountBalances(balances);
 };
+
+export default async props => withTransactionWrapper(getHomepageData, props);

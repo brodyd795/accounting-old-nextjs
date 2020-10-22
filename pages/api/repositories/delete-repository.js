@@ -1,8 +1,8 @@
 import escape from 'sql-template-strings';
 
-import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
+import {conn} from './transaction-wrapper-repository';
 
-export const deleteTransaction = async props => {
+export default async props => {
 	const {rowToDelete, user} = props;
 	const {trn_id, amount, from_account, to_account} = rowToDelete;
 
@@ -18,6 +18,3 @@ export const deleteTransaction = async props => {
 
 	return 'OK';
 };
-
-export const wrappedDeleteTransaction = async props =>
-	withTransactionWrapper(deleteTransaction, props);

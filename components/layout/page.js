@@ -16,6 +16,10 @@ const Page = ({children, title = 'Accounting'}) => {
 				<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 				<meta httpEquiv='X-UA-Compatible' content='IE=edge' />
 				<link rel='shortcut icon' href='/favicon.ico' />
+				<link
+					rel='stylesheet'
+					href='https://cdnjs.cloudflare.com/ajax/libs/react-datepicker/2.14.1/react-datepicker.min.css'
+				/>
 				<title>{title}</title>
 			</Head>
 			<GlobalStyle />

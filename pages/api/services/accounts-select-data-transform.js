@@ -1,4 +1,4 @@
-export const transformAccountsListForDropdown = accounts => {
+export default accounts => {
 	const options = [
 		{
 			label: 'Income',
@@ -23,7 +23,7 @@ export const transformAccountsListForDropdown = accounts => {
 	];
 
 	accounts.map(account => {
-		const account_ui = account.slice(2);
+		const account_ui = account.slice(2).replace(/_/g, ' ');
 
 		switch (account[0]) {
 			case 'I':

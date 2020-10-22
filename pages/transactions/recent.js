@@ -24,7 +24,7 @@ const Recent = () => {
 			<PageHeader text='Recent' />
 			{(loading || !data) && <Loader />}
 			{!loading && !user && <p>No user</p>}
-			{user && data && <RecentTable data={data} />}
+			{user && data && <RecentTable data={data} type={'recent'} />}
 		</Page>
 	);
 };

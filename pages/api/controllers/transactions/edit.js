@@ -1,14 +1,15 @@
-import {wrappedEditTransaction} from '../../services/edit-service';
+import editTransaction from '../../services/edit-service';
 
 export default async (req, res) => {
 	try {
-		const {originalRow, editedRow} = req.body;
+		const {originalRow, editedRow, pageDetails} = req.body;
 		const user = req.query.user;
 
-		const data = await wrappedEditTransaction({
+		const data = await editTransaction({
 			originalRow,
 			editedRow,
-			user
+			user,
+			pageDetails
 		});
 
 		if (data) {

@@ -1,8 +1,8 @@
 import escape from 'sql-template-strings';
 
-import {withTransactionWrapper, conn} from './transaction-wrapper-repository';
+import {conn} from './transaction-wrapper-repository';
 
-const getAllAccountBalances = async props => {
+export default async props => {
 	const {user, name} = props;
 
 	const lastDebit = await conn(user).query(
@@ -17,6 +17,3 @@ const getAllAccountBalances = async props => {
 		lastCredit
 	};
 };
-
-export default async props =>
-	withTransactionWrapper(getAllAccountBalances, props);

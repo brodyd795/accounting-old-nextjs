@@ -1,5 +1,6 @@
 import getAllAccountBalances from '../repositories/get-all-account-balances-repository';
 import getOpenAccounts from '../repositories/get-open-accounts-repository';
+import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
 const summarizeAllAccountBalances = balances => {
 	const categories = {
@@ -60,7 +61,7 @@ const summarizeAllAccountBalances = balances => {
 	return cleanData;
 };
 
-export const getHomepageData = async user => {
+const getHomepageData = async ({user}) => {
 	const balances = {};
 
 	const accounts = await getOpenAccounts({user});
@@ -68,7 +69,10 @@ export const getHomepageData = async user => {
 	// eslint-disable-next-line no-unused-vars
 	for (const account of accounts) {
 		const name = account.acc_name;
-		const {lastDebit, lastCredit} = await getAllAccountBalances({name, user});
+		const {lastDebit, lastCredit} = await getAllAccountBalances({
+			name,
+			user
+		});
 
 		// has the account had *both* debits and credits?
 		if (lastDebit.length && lastCredit.length) {
@@ -92,3 +96,5 @@ export const getHomepageData = async user => {
 
 	return summarizeAllAccountBalances(balances);
 };
+
+export default async props => withTransactionWrapper(getHomepageData, props);

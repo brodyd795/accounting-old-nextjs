@@ -1,9 +1,12 @@
-import {deleteTransactionService} from '../../services/delete-service';
+import deleteTransaction from '../../services/delete-service';
 
 export default async (req, res) => {
 	try {
 		const user = req.query.user;
-		const result = await deleteTransactionService(req.body.rowToDelete, user);
+		const result = await deleteTransaction({
+			rowToDelete: req.body.rowToDelete,
+			user
+		});
 
 		if (result === 'OK') {
 			res.status(200).json({result});

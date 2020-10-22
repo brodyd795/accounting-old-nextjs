@@ -1,30 +1,20 @@
 import React, {useState} from 'react';
-import styled from 'styled-components';
 import fetch from 'isomorphic-unfetch';
-
-import EditableRow from './editable-row';
 
 import {useFetchUser} from '../../lib/user';
 
-const TableWrapper = styled.div`
-	overflow-x: scroll;
-`;
+import EditableRow from './editable-row';
+import {StyledRecentTable, StyledRecentTableWrapper} from './styles';
 
-const StyledTable = styled.table`
-	border: 1px solid black;
+const RecentTable = ({data, type, account = null}) => {
+	const {user} = useFetchUser();
 
-	th,
-	td {
-		padding: 5px;
-		text-align: center;
-	}
-`;
-
-const RecentTable = ({data}) => {
-	const {user, loading} = useFetchUser();
 	const [isEditing, setIsEditing] = useState(null);
 	const [idBeingEdited, setIdBeingEdited] = useState(null);
-	const [transactionsList, setTransactionsList] = useState(data);
+	const [transactionsList, setTransactionsList] = useState(
+		data.recentTransactions
+	);
+	const [showBalances, setShowBalances] = useState(false);
 
 	const handleDelete = rowToDelete => {
 		const confirmDelete = confirm(
@@ -67,7 +57,7 @@ const RecentTable = ({data}) => {
 		setIsEditing(false);
 	};
 
-	const handleSave = async (editedRow, originalRow, index) => {
+	const handleSave = async (editedRowInCents, originalRow) => {
 		const res = await fetch(
 			`/api/controllers/transactions/edit?user=${user.email}`,
 			{
@@ -76,22 +66,19 @@ const RecentTable = ({data}) => {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					editedRow,
-					originalRow
+					editedRow: editedRowInCents,
+					originalRow,
+					pageDetails: {
+						type,
+						account
+					}
 				})
 			}
 		);
-		const json = await res.json();
+		const newData = await res.json();
 
-		if (json) {
-			let count = 0;
-			const transactionsListCopy = transactionsList;
-			while (count <= index) {
-				transactionsListCopy[count] = json[count];
-				count++;
-			}
-
-			setTransactionsList(transactionsListCopy);
+		if (newData) {
+			setTransactionsList(newData);
 		} else {
 			alert('An error occurred. Please try again.');
 		}
@@ -99,19 +86,31 @@ const RecentTable = ({data}) => {
 		setIsEditing(false);
 	};
 
+	const toggleShowBalances = () => setShowBalances(!showBalances);
+
 	return (
-		<TableWrapper>
-			<StyledTable>
-				<tbody>
-					<tr key='headings'>
-						<th>Id</th>
+		<StyledRecentTableWrapper>
+			<button type={'button'} onClick={toggleShowBalances}>
+				Show balances
+			</button>
+			<StyledRecentTable>
+				<thead>
+					<tr key={'headings'}>
+						<th>Date</th>
 						<th>From</th>
 						<th>To</th>
 						<th>Amount</th>
-						<th>From Balance</th>
-						<th>To Balance</th>
+						{showBalances && (
+							<>
+								<th>From Balance</th>
+								<th>To Balance</th>
+							</>
+						)}
 						<th>Comment</th>
+						<th />
 					</tr>
+				</thead>
+				<tbody>
 					{transactionsList.map((row, index) => (
 						<EditableRow
 							key={row.trn_id}
@@ -123,11 +122,13 @@ const RecentTable = ({data}) => {
 							save={handleSave}
 							isEditing={isEditing}
 							idBeingEdited={idBeingEdited}
+							accounts={data.accounts}
+							showBalances={showBalances}
 						/>
 					))}
 				</tbody>
-			</StyledTable>
-		</TableWrapper>
+			</StyledRecentTable>
+		</StyledRecentTableWrapper>
 	);
 };
 

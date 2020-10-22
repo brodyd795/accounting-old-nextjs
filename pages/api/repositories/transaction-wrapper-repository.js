@@ -1,16 +1,19 @@
 import mysql from 'serverless-mysql';
 import dotenv from 'dotenv';
 
+import {isAdmin} from '../services/is-admin-service';
+
 dotenv.config();
 
-let connection;
+let connection,
+	isMidTransaction = false;
 
 export const conn = user => {
 	if (connection !== undefined) {
 		return connection;
 	}
 
-	let database = Boolean(process.env.ADMIN_EMAILS.includes(user))
+	let database = isAdmin(user)
 		? process.env.DB_NAME
 		: `${process.env.DB_NAME}_DEMO`;
 
@@ -19,7 +22,7 @@ export const conn = user => {
 	connection = mysql({
 		config: {
 			host: process.env.DB_HOST,
-			database: database,
+			database,
 			user: process.env.DB_USER,
 			password: process.env.DB_PASSWORD
 		}
@@ -29,22 +32,28 @@ export const conn = user => {
 };
 
 export const withTransactionWrapper = async (queries, props) => {
-	const {user} = props;
+	if (!isMidTransaction) {
+		isMidTransaction = true;
 
-	try {
-		await conn(user).query('BEGIN');
+		const {user} = props;
 
-		const results = await queries(props);
+		try {
+			await conn(user).query('BEGIN');
 
-		await conn(user).query('COMMIT');
+			const results = await queries(props);
 
-		return results;
-	} catch (error) {
-		await conn(user).query('ROLLBACK');
-		console.log('error', error);
+			await conn(user).query('COMMIT');
 
-		return new Error(error);
-	} finally {
-		await conn(user).end();
+			return results;
+		} catch (error) {
+			await conn(user).query('ROLLBACK');
+
+			return new Error(error);
+		} finally {
+			await conn(user).end();
+			isMidTransaction = false;
+		}
 	}
+
+	return queries(props);
 };

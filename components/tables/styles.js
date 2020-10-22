@@ -88,7 +88,8 @@ export const StyledSummaryTable = styled.table`
 	}
 
 	.balance {
-		padding-left: 30px;
-		padding-right: 30px;
+		padding-left: 20px;
+		padding-right: 10px;
+		text-align: right;
 	}
 `;

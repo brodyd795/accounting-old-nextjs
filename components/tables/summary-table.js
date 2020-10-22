@@ -1,39 +1,40 @@
 import React from 'react';
-import Link from 'next/link';
-
-import {toDollars} from '../../lib/currency-helpers';
+import styled from 'styled-components';
 
 import {StyledSummaryTable} from './styles';
+import SummaryTableSection from './summary-table-section';
+
+const StyledRow = styled.div`
+	display: flex;
+`;
 
 const SummaryTable = ({data}) => (
-	<StyledSummaryTable>
-		<tbody>
-			<tr>
-				<th>Account</th>
-				<th>Balance</th>
-			</tr>
-			{Object.entries(data).map(([category, categoryValues]) => (
-				<React.Fragment key={category}>
-					<tr>
-						<td>{category}</td>
-						<td className='balance'>{toDollars(categoryValues.balance)}</td>
-					</tr>
-					{Object.entries(categoryValues.accounts).map(
-						([account, accountValues]) => (
-							<Link href={'/accounts/[account]'} as={`/accounts/${account}`}>
-								<tr className='account-row' key={account}>
-									<td className='account'>{accountValues.name}</td>
-									<td className='balance'>
-										{toDollars(accountValues.balance)}
-									</td>
-								</tr>
-							</Link>
-						)
-					)}
-				</React.Fragment>
-			))}
-		</tbody>
-	</StyledSummaryTable>
+	<StyledRow>
+		<StyledSummaryTable>
+			<tbody>
+				<tr>
+					<th>Account</th>
+					<th>Balance</th>
+				</tr>
+				<SummaryTableSection text={'Assets'} data={data.assets} />
+				<SummaryTableSection text={'Liabilities'} data={data.liabilities} />
+				<SummaryTableSection
+					text={'Virtual Savings'}
+					data={data.virtualSavings}
+				/>
+			</tbody>
+		</StyledSummaryTable>
+		<StyledSummaryTable>
+			<tbody>
+				<tr>
+					<th>Account</th>
+					<th>Balance</th>
+				</tr>
+				<SummaryTableSection text={'Income'} data={data.income} />
+				<SummaryTableSection text={'Expenses'} data={data.expenses} />
+			</tbody>
+		</StyledSummaryTable>
+	</StyledRow>
 );
 
 export default SummaryTable;

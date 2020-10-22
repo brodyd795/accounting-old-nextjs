@@ -66,6 +66,7 @@ export const StyledRecentTable = styled.table`
 export const StyledSummaryTable = styled.table`
 	border: 1px solid #333;
 	margin-bottom: 50px;
+	margin-right: 10px;
 
 	th,
 	td {

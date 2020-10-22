@@ -38,12 +38,10 @@ const summarizeAllAccountBalances = balances => {
 	});
 
 	Object.entries(categories).map(([category, accounts]) => {
-		const cleanCategory =
-			category[0].toUpperCase() + category.replace(/([A-Z])/, ' $1').slice(1);
 		const categorySum = String(
 			Object.values(accounts).reduce((acc, balance) => acc + balance, 0)
 		);
-		cleanData[cleanCategory] = {
+		cleanData[category] = {
 			balance: categorySum,
 			accounts: {}
 		};
@@ -51,7 +49,7 @@ const summarizeAllAccountBalances = balances => {
 		Object.entries(accounts).map(([account, balance]) => {
 			const cleanAccount = account.slice(2).replace(/_/g, ' ');
 
-			cleanData[cleanCategory]['accounts'][account] = {
+			cleanData[category]['accounts'][account] = {
 				name: cleanAccount,
 				balance
 			};

@@ -15,6 +15,7 @@ const Index = () => {
 		user ? `/api/controllers?user=${user.email}` : null,
 		fetch
 	);
+	console.log('data', data);
 
 	if (error) return <Error />;
 

@@ -20,13 +20,17 @@ const EditableRowEditingMode = ({
 }) => {
 	const date = trnIdToNewDate(row.trn_id);
 
-	const fromAccount = accounts
-		.find(category => category.label[0] === row.from_account[0])
-		.options.find(option => option.value === row.from_account);
+	const fromAccount = row.from_account
+		? accounts
+				.find(category => category.label[0] === row.from_account[0])
+				.options.find(option => option.value === row.from_account)
+		: null;
 
-	const toAccount = accounts
-		.find(category => category.label[0] === row.to_account[0])
-		.options.find(option => option.value === row.to_account);
+	const toAccount = row.to_account
+		? accounts
+				.find(category => category.label[0] === row.to_account[0])
+				.options.find(option => option.value === row.to_account)
+		: null;
 
 	const [originalRow] = useState(row);
 	const [editedRow, setEditedRow] = useState({

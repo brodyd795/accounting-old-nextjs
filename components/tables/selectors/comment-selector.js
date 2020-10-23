@@ -12,7 +12,14 @@ const CommentSelector = props => {
 		}));
 	};
 
-	return <input value={value} onChange={handleCommentEdit} />;
+	return (
+		<input
+			value={value}
+			onChange={handleCommentEdit}
+			placeholder={'Enter description...'}
+			required
+		/>
+	);
 };
 
 export default CommentSelector;

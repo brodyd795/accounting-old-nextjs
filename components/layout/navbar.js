@@ -8,6 +8,7 @@ import HomeIcon from '../../public/svgs/home.svg';
 import SearchIcon from '../../public/svgs/search.svg';
 import HistoryIcon from '../../public/svgs/history.svg';
 import AccountIcon from '../../public/svgs/user.svg';
+import PlusIcon from '../../public/svgs/plus.svg';
 import LoginIcon from '../../public/svgs/login.svg';
 import LogoutIcon from '../../public/svgs/logout.svg';
 
@@ -60,9 +61,9 @@ const StyledLinksList = styled.ul`
 
 const StyledLinkItem = styled.li`
 	cursor: pointer;
-	padding: 10px 5px;
+	padding: 10px 0px 10px 30px;
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	align-items: flex-end;
 
 	:hover {
@@ -127,7 +128,14 @@ const Navbar = ({open, setOpen}) => {
 									router.pathname === '/transactions/recent' && 'active'
 								}>
 								<HistoryIcon />
-								<StyledLinkText>{'Transactions'}</StyledLinkText>
+								<StyledLinkText>{'Recent'}</StyledLinkText>
+							</StyledLinkItem>
+						</Link>
+						<Link href='/transactions/new'>
+							<StyledLinkItem
+								className={router.pathname === '/transactions/new' && 'active'}>
+								<PlusIcon />
+								<StyledLinkText>{'New'}</StyledLinkText>
 							</StyledLinkItem>
 						</Link>
 						<Link href='/api/auth/logout'>

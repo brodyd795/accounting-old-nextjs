@@ -6,7 +6,7 @@ const ToAccountSelector = props => {
 	const {accounts, setEditedRow, editedRow} = props;
 
 	const handleToAccountEdit = e => {
-		if (e.value === editedRow.from_account.value) {
+		if (e.value === editedRow.from_account?.value) {
 			alert("The 'from' and 'to' accounts must be different.");
 		} else {
 			setEditedRow({

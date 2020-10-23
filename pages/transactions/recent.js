@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import useSWR from 'swr';
 import DatePicker from 'react-datepicker';
+import styled from 'styled-components';
 
 import fetch from '../../lib/fetch';
 import withAuth from '../../components/with-auth';
@@ -11,6 +12,12 @@ import RecentTable from '../../components/tables/recent-table';
 import PageHeader from '../../components/page-header';
 import Error from '../../components/error';
 import {getMaxDate} from '../../lib/date-helpers';
+import EditableRowEditingMode from '../../components/tables/editable-row-editing-mode';
+import Link from 'next/link';
+
+const StyledAddNewButton = styled.button`
+	display: block;
+`;
 
 const Recent = () => {
 	const [selectedMonth, setSelectedMonth] = useState(new Date());
@@ -30,6 +37,9 @@ const Recent = () => {
 			{!loading && !user && <p>No user</p>}
 			{user && data && (
 				<>
+					<Link href='/transactions/new'>
+						<StyledAddNewButton>{'Add new'}</StyledAddNewButton>
+					</Link>
 					<DatePicker
 						selected={selectedMonth}
 						onChange={date => setSelectedMonth(date)}

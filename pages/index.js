@@ -9,6 +9,7 @@ import Page from '../components/layout/page';
 import SummaryTable from '../components/tables/summary-table';
 import PageHeader from '../components/page-header';
 import Error from '../components/error';
+import {getMaxDate} from '../lib/date-helpers';
 
 const Index = () => {
 	const [selectedMonth, setSelectedMonth] = useState(new Date());
@@ -32,6 +33,7 @@ const Index = () => {
 						onChange={date => setSelectedMonth(date)}
 						dateFormat={'MMMM yyyy'}
 						showMonthYearPicker
+						maxDate={getMaxDate()}
 					/>
 					<SummaryTable data={data} />
 				</>

@@ -59,7 +59,16 @@ const summarizeAllAccountBalances = balances => {
 	return cleanData;
 };
 
-const getHomepageData = async ({user}) => {
+const getHomepageData = async ({user, date}) => {
+	const month = date.getMonth() + 1;
+
+	const year = date.getFullYear();
+	const minDate = parseInt(`${year}${month < 10 ? '0' : ''}${month}0000`);
+	const dateRange = {
+		min: minDate,
+		max: minDate + 9999
+	};
+
 	const balances = {};
 
 	const accounts = await getOpenAccounts({user});
@@ -69,6 +78,7 @@ const getHomepageData = async ({user}) => {
 		const name = account.acc_name;
 		const {lastDebit, lastCredit} = await getAllAccountBalances({
 			name,
+			dateRange,
 			user
 		});
 

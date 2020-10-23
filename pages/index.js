@@ -11,12 +11,12 @@ import PageHeader from '../components/page-header';
 import Error from '../components/error';
 
 const Index = () => {
+	const [selectedMonth, setSelectedMonth] = useState(new Date());
 	const {user, loading} = useFetchUser();
 	const {data, error} = useSWR(
-		user ? `/api/controllers?user=${user.email}` : null,
+		user ? `/api/controllers?user=${user.email}&date=${selectedMonth}` : null,
 		fetch
 	);
-	const [selectedMonth, setSelectedMonth] = useState(new Date());
 
 	if (error) return <Error />;
 

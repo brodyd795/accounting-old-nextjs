@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 import useSWR from 'swr';
+import DatePicker from 'react-datepicker';
 
 import fetch from '../lib/fetch';
 import {useFetchUser} from '../lib/user';
@@ -15,6 +16,7 @@ const Index = () => {
 		user ? `/api/controllers?user=${user.email}` : null,
 		fetch
 	);
+	const [selectedMonth, setSelectedMonth] = useState(new Date());
 
 	if (error) return <Error />;
 
@@ -23,7 +25,17 @@ const Index = () => {
 			<PageHeader text='Home' />
 			{!loading && !user && <p>No user</p>}
 			{user && (loading || !data) && <Loader />}
-			{user && data && <SummaryTable data={data} />}
+			{user && data && (
+				<>
+					<DatePicker
+						selected={selectedMonth}
+						onChange={date => setSelectedMonth(date)}
+						dateFormat={'MMMM yyyy'}
+						showMonthYearPicker
+					/>
+					<SummaryTable data={data} />
+				</>
+			)}
 		</Page>
 	);
 };

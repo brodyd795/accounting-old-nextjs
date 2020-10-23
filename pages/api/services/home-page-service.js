@@ -1,3 +1,4 @@
+import {getDateRange} from '../helpers/get-date-range';
 import getAllAccountBalances from '../repositories/get-all-account-balances-repository';
 import getOpenAccounts from '../repositories/get-open-accounts-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
@@ -60,14 +61,7 @@ const summarizeAllAccountBalances = balances => {
 };
 
 const getHomepageData = async ({user, date}) => {
-	const month = date.getMonth() + 1;
-
-	const year = date.getFullYear();
-	const minDate = parseInt(`${year}${month < 10 ? '0' : ''}${month}0000`);
-	const dateRange = {
-		min: minDate,
-		max: minDate + 9999
-	};
+	const dateRange = getDateRange(date);
 
 	const balances = {};
 

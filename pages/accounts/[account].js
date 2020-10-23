@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import useSWR from 'swr';
 import {useRouter} from 'next/router';
+import DatePicker from 'react-datepicker';
 
 import fetch from '../../lib/fetch';
 import withAuth from '../../components/with-auth';
@@ -10,20 +11,23 @@ import PageHeader from '../../components/page-header';
 import RecentTable from '../../components/tables/recent-table';
 import Error from '../../components/error';
 import {useFetchUser} from '../../lib/user';
+import {getMaxDate} from '../../lib/date-helpers';
 
 const Account = () => {
+	const [selectedMonth, setSelectedMonth] = useState(new Date());
 	const {user, loading} = useFetchUser();
 	const router = useRouter();
 	const account = router.query.account;
 	const {data, error} = useSWR(
 		user &&
 			account &&
-			`/api/controllers/accounts/${account}?user=${user.email}`,
+			`/api/controllers/accounts/${account}?user=${user.email}&date=${selectedMonth}`,
 		fetch
 	);
 
-	const noAccountTransactionsMessage =
-		data && JSON.stringify(data.recentTransactions.message);
+	const noAccountTransactionsMessage = data && (
+		<p>{JSON.stringify(data.recentTransactions.message)}</p>
+	);
 
 	if (error) return <Error />;
 
@@ -32,13 +36,22 @@ const Account = () => {
 			<PageHeader text={account} />
 			{(loading || !data) && <Loader />}
 			{!loading && !user && <p>No user</p>}
-			{user &&
-				data &&
-				(noAccountTransactionsMessage ? (
-					noAccountTransactionsMessage
-				) : (
-					<RecentTable data={data} type={'account'} account={account} />
-				))}
+			{user && data && (
+				<>
+					<DatePicker
+						selected={selectedMonth}
+						onChange={date => setSelectedMonth(date)}
+						dateFormat={'MMMM yyyy'}
+						showMonthYearPicker
+						maxDate={getMaxDate()}
+					/>
+					{data.recentTransactions.message ? (
+						noAccountTransactionsMessage
+					) : (
+						<RecentTable data={data} type={'account'} account={account} />
+					)}
+				</>
+			)}
 		</Page>
 	);
 };

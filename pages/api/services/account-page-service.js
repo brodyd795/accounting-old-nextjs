@@ -1,8 +1,12 @@
+import {getDateRange} from '../helpers/get-date-range';
 import getAccountTransactions from '../repositories/get-account-transactions-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
-const getAccountPageData = async ({account, user}) => {
-	const results = await getAccountTransactions({account, user});
+const getAccountPageData = async ({account, user, date}) => {
+	const dateRange = getDateRange(date);
+
+	const results = await getAccountTransactions({account, user, dateRange});
+	console.log('results', results);
 
 	if (results.length) {
 		const resultsWithoutEmail = results.map(({user_email, ...rest}) => ({

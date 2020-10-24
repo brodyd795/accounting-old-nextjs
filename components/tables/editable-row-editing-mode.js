@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
 import {toCents, toDollars} from '../../lib/currency-helpers';
-import {trnIdToNewDate} from '../../lib/date-helpers';
+import {dateToTrnId, trnIdToNewDate} from '../../lib/date-helpers';
 
 import DateSelector from './selectors/date-selector';
 import ToAccountSelector from './selectors/to-account-selector';
@@ -44,9 +44,7 @@ const EditableRowEditingMode = ({
 	});
 
 	const handleSave = () => {
-		const newDate = editedRow.trn_id
-			.toISOString()
-			.replace(/^(\d{4})-(\d{2})-(\d{2}).+/, '$1$2$3');
+		const newDate = dateToTrnId(editedRow.trn_id);
 
 		const editedRowInCents = {
 			trn_id: newDate,

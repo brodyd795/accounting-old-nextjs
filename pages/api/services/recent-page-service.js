@@ -1,4 +1,4 @@
-import {getDateRange} from '../helpers/get-date-range';
+import {getDateRange} from '../helpers/date-helpers';
 import wrappedGetAllAccountBalances from '../repositories/get-all-transactions-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 

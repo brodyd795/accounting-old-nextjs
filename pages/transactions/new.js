@@ -10,10 +10,12 @@ import CommentSelector from '../../components/tables/selectors/comment-selector'
 import DateSelector from '../../components/tables/selectors/date-selector';
 import FromAccountSelector from '../../components/tables/selectors/from-account-selector';
 import ToAccountSelector from '../../components/tables/selectors/to-account-selector';
-import {trnIdToNewDate} from '../../lib/date-helpers';
+import {dateToTrnId, trnIdToNewDate} from '../../lib/date-helpers';
+import {toCents} from '../../lib/currency-helpers';
 import {useFetchUser} from '../../lib/user';
 import withAuth from '../../components/with-auth';
-import fetch from '../../lib/fetch';
+import fetcher from '../../lib/fetch';
+import fetch from 'isomorphic-unfetch';
 
 const StyledSelectorWrapper = styled.div`
 	margin-bottom: 10px;
@@ -28,7 +30,7 @@ const NewTransaction = () => {
 	const {user, loading} = useFetchUser();
 	const {data, error} = useSWR(
 		user && `/api/controllers/accounts?user=${user.email}`,
-		fetch
+		fetcher
 	);
 
 	const today = new Date();
@@ -38,34 +40,52 @@ const NewTransaction = () => {
 	const id = parseInt(`${year}${month < 10 ? '0' : ''}${month}${day}00`);
 	const date = trnIdToNewDate(id);
 
-	const [newTransaction, setNewTransaction] = useState({
+	const newFormData = {
 		trn_id: date,
-		from_account: '',
-		to_account: '',
+		from_account: null,
+		to_account: null,
 		amount: 0,
-		from_balance: 0,
-		to_balance: 0,
 		comment: ''
-	});
+	};
 
-	const handleSubmit = async () => {
-		// const res = await fetch(
-		// 	`/api/controllers/transactions/edit?user=${user.email}`,
-		// 	{
-		// 		method: 'POST',
-		// 		headers: {
-		// 			'Content-Type': 'application/json'
-		// 		},
-		// 		body: JSON.stringify({
-		// 			editedRow: editedRowInCents,
-		// 			originalRow,
-		// 			pageDetails: {
-		// 				type,
-		// 				account
-		// 			}
-		// 		})
-		// 	}
-		// );
+	const [newTransaction, setNewTransaction] = useState(newFormData);
+
+	const handleSubmit = async e => {
+		e.preventDefault();
+
+		if (
+			!newTransaction.trn_id ||
+			!newTransaction.amount ||
+			!newTransaction.to_account ||
+			!newTransaction.from_account
+		) {
+			alert('Please fill out all fields to continue');
+		} else {
+			const res = await fetch(
+				`/api/controllers/transactions/new?user=${user.email}`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						newTransaction: {
+							id: dateToTrnId(newTransaction.trn_id),
+							toAccount: newTransaction.to_account.value,
+							fromAccount: newTransaction.from_account.value,
+							amount: toCents(newTransaction.amount),
+							comment: newTransaction.comment
+						}
+					})
+				}
+			);
+			if (res.status === 200) {
+				alert('Success!');
+				setNewTransaction(newFormData);
+			} else {
+				alert('An error occurred. Please try again.');
+			}
+		}
 	};
 
 	return (
@@ -113,7 +133,9 @@ const NewTransaction = () => {
 						/>
 					</StyledSelectorWrapper>
 					<button type={'submit'}>{'Save'}</button>
-					<button type={'button'} onClick={() => console.log('cancel')}>
+					<button
+						type={'button'}
+						onClick={() => setNewTransaction(newFormData)}>
 						{'Cancel'}
 					</button>
 				</form>

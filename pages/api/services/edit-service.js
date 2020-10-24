@@ -6,6 +6,7 @@ import getLastId from '../repositories/get-last-id-repository';
 import getLastAccountBalancesService from './last-account-balances-service';
 import getRecentTransactions from './recent-page-service';
 import getAccountTransactions from './account-page-service';
+import {trnIdToNewDate} from '../helpers/date-helpers';
 
 const editTransaction = async props => {
 	const {originalRow, editedRow, user, pageDetails} = props;
@@ -56,11 +57,14 @@ const editTransaction = async props => {
 
 	switch (pageDetails.type) {
 		case 'recent':
-			return getRecentTransactions(user);
+			const date = trnIdToNewDate(id);
+
+			return getRecentTransactions({user, date});
 		case 'account':
 			return getAccountTransactions({
 				account: pageDetails.account,
-				user
+				user,
+				date: id
 			});
 	}
 

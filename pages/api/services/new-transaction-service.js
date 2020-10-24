@@ -9,15 +9,15 @@ const editTransaction = async props => {
 
 	const trn_id = `${id}00`;
 
-	const {
-		toAccount: toBalance,
-		fromAccount: fromBalance
-	} = await getLastAccountBalancesService({
+	const lastBalances = await getLastAccountBalancesService({
 		toAccount,
 		fromAccount,
 		id: trn_id,
 		user
 	});
+
+	const toBalance = lastBalances.toAccount + amount;
+	const fromBalance = lastBalances.fromAccount - amount;
 
 	const transactionToInsert = {
 		id: trn_id,

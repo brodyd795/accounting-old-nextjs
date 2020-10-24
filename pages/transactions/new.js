@@ -16,6 +16,7 @@ import {useFetchUser} from '../../lib/user';
 import withAuth from '../../components/with-auth';
 import fetcher from '../../lib/fetch';
 import fetch from 'isomorphic-unfetch';
+import LoginView from '../../components/login-view';
 
 const StyledSelectorWrapper = styled.div`
 	margin-bottom: 10px;
@@ -92,7 +93,7 @@ const NewTransaction = () => {
 		<Page title='New Transaction'>
 			<PageHeader text='New Transaction' />
 			{(loading || !data) && <Loader />}
-			{!loading && !user && <p>No user</p>}
+			{!loading && !user && <LoginView />}
 			{user && data && (
 				<form onSubmit={handleSubmit}>
 					<StyledSelectorWrapper>

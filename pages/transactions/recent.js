@@ -14,6 +14,7 @@ import Error from '../../components/error';
 import {getMaxDate} from '../../lib/date-helpers';
 import EditableRowEditingMode from '../../components/tables/editable-row-editing-mode';
 import Link from 'next/link';
+import LoginView from '../../components/login-view';
 
 const StyledAddNewButton = styled.button`
 	display: block;
@@ -34,7 +35,7 @@ const Recent = () => {
 		<Page title='Recent'>
 			<PageHeader text='Recent' />
 			{(loading || !data) && <Loader />}
-			{!loading && !user && <p>No user</p>}
+			{!loading && !user && <LoginView />}
 			{user && data && (
 				<>
 					<Link href='/transactions/new'>

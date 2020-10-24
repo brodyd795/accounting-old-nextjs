@@ -11,6 +11,7 @@ import Page from '../../components/layout/page';
 import PageHeader from '../../components/page-header';
 import Error from '../../components/error';
 import {useFetchUser} from '../../lib/user';
+import LoginView from '../../components/login-view';
 
 const StyledSelect = styled(Select)`
 	width: 300px;
@@ -35,7 +36,7 @@ const Accounts = () => {
 		<Page title='Accounts'>
 			<PageHeader text='Accounts' />
 			{(loading || !data) && <Loader />}
-			{!loading && !user && <p>No user</p>}
+			{!loading && !user && <LoginView />}
 			{user && data && (
 				<StyledSelect
 					options={data}

@@ -12,6 +12,7 @@ import RecentTable from '../../components/tables/recent-table';
 import Error from '../../components/error';
 import {useFetchUser} from '../../lib/user';
 import {getMaxDate} from '../../lib/date-helpers';
+import LoginView from '../../components/login-view';
 
 const Account = () => {
 	const [selectedMonth, setSelectedMonth] = useState(new Date());
@@ -35,7 +36,7 @@ const Account = () => {
 		<Page title={account}>
 			<PageHeader text={account} />
 			{(loading || !data) && <Loader />}
-			{!loading && !user && <p>No user</p>}
+			{!loading && !user && <LoginView />}
 			{user && data && (
 				<>
 					<DatePicker

@@ -6,6 +6,7 @@ import {useFetchUser} from '../lib/user';
 import Loader from '../components/loader';
 import Page from '../components/layout/page';
 import PageHeader from '../components/page-header';
+import LoginView from '../components/login-view';
 
 const AdminSettings = () => {
 	const {user, loading} = useFetchUser();
@@ -24,7 +25,7 @@ const AdminSettings = () => {
 		<Page title='Admin Settings'>
 			<PageHeader text='Admin Settings' />
 			{loading && <Loader />}
-			{!loading && !user && <p>No user</p>}
+			{!loading && !user && <LoginView />}
 			{user && (
 				<button type={'button'} onClick={handleRebalance}>
 					Rebalance

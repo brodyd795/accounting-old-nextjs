@@ -10,6 +10,7 @@ import SummaryTable from '../components/tables/summary-table';
 import PageHeader from '../components/page-header';
 import Error from '../components/error';
 import {getMaxDate} from '../lib/date-helpers';
+import LoginView from '../components/login-view';
 
 const Index = () => {
 	const [selectedMonth, setSelectedMonth] = useState(new Date());
@@ -24,7 +25,7 @@ const Index = () => {
 	return (
 		<Page title='Home' loading={loading} user={user}>
 			<PageHeader text='Home' />
-			{!loading && !user && <p>No user</p>}
+			{!loading && !user && <LoginView />}
 			{user && (loading || !data) && <Loader />}
 			{user && data && (
 				<>

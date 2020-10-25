@@ -36,7 +36,8 @@ const Index = () => {
 						showMonthYearPicker
 						maxDate={getMaxDate()}
 					/>
-					<SummaryTable data={data} />
+					<p>{`Last month's income: ${data.lastMonthsIncome}`}</p>
+					<SummaryTable data={data.balances} />
 				</>
 			)}
 		</Page>

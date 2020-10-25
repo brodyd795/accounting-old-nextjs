@@ -16,3 +16,10 @@ export const trnIdToNewDate = id => {
 
 	return new Date(year, month, day);
 };
+
+export const getLastMonth = date => {
+	const year = date.getFullYear();
+	const monthInt = date.getMonth();
+
+	return monthInt < 10 ? `${year}0${monthInt}` : `${year}${monthInt}`;
+};

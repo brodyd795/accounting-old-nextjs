@@ -1,5 +1,6 @@
-import {getDateRange} from '../helpers/date-helpers';
+import {getDateRange, getLastMonth} from '../helpers/date-helpers';
 import getAllAccountBalances from '../repositories/get-all-account-balances-repository';
+import getLastMonthsIncome from '../repositories/get-last-months-income';
 import getOpenAccounts from '../repositories/get-open-accounts-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
@@ -62,6 +63,12 @@ const summarizeAllAccountBalances = balances => {
 
 const getHomepageData = async ({user, date}) => {
 	const dateRange = getDateRange(date);
+	const lastMonth = getLastMonth(date);
+
+	const lastIncomeRow = await getLastMonthsIncome({lastMonth, user});
+	const lastMonthsIncome = lastIncomeRow[0].to_account.startsWith('I')
+		? lastIncomeRow[0].to_balance
+		: lastIncomeRow[0].from_balance;
 
 	const balances = {};
 
@@ -96,7 +103,10 @@ const getHomepageData = async ({user, date}) => {
 		}
 	}
 
-	return summarizeAllAccountBalances(balances);
+	return {
+		balances: summarizeAllAccountBalances(balances),
+		lastMonthsIncome
+	};
 };
 
 export default async props => withTransactionWrapper(getHomepageData, props);

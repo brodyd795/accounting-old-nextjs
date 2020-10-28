@@ -15,6 +15,7 @@ const EditableRow = ({
 	accounts,
 	showBalances
 }) => {
+	console.log('row.trn_id', row.trn_id)
 	return isEditing && idBeingEdited === row.trn_id ? (
 		<EditableRowEditingMode
 			accounts={accounts}

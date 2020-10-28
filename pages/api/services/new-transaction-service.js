@@ -2,25 +2,30 @@ import getLastAccountBalancesService from './last-account-balances-service';
 
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 import insertTransaction from '../repositories/insert-repository';
+import getLastId from '../repositories/get-last-id-repository';
 
 const editTransaction = async props => {
 	const {newTransaction, user} = props;
 	const {toAccount, fromAccount, id, comment, amount} = newTransaction;
 
-	const trn_id = `${id}00`;
+	const newId = await getLastId({
+		date: `${id}00`,
+		user
+	})
 
 	const lastBalances = await getLastAccountBalancesService({
 		toAccount,
 		fromAccount,
-		id: trn_id,
+		id: newId,
 		user
 	});
+	console.log('lastBalances', lastBalances)
 
 	const toBalance = lastBalances.toAccount + amount;
 	const fromBalance = lastBalances.fromAccount - amount;
 
 	const transactionToInsert = {
-		id: trn_id,
+		id: newId,
 		userEmail: 'brodydingel@gmail.com',
 		toAccount,
 		fromAccount,
@@ -29,6 +34,7 @@ const editTransaction = async props => {
 		fromBalance,
 		comment
 	};
+	console.log('transactionToInsert', transactionToInsert)
 
 	await insertTransaction({
 		transaction: transactionToInsert,

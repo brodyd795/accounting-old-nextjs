@@ -3,6 +3,7 @@ import addNewTransaction from '../../services/new-transaction-service';
 export default async (req, res) => {
 	try {
 		const {newTransaction} = req.body;
+		console.log('newTransaction in controller', newTransaction)
 		const user = req.query.user;
 
 		await addNewTransaction({

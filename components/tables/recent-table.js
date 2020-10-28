@@ -14,6 +14,7 @@ const RecentTable = ({data, type, account = null}) => {
 	const [transactionsList, setTransactionsList] = useState(
 		data.recentTransactions
 	);
+	console.log('transactionsList', transactionsList)
 	const [showBalances, setShowBalances] = useState(false);
 
 	const handleDelete = rowToDelete => {

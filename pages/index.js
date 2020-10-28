@@ -13,6 +13,10 @@ import Error from '../components/error';
 import {getMaxDate} from '../lib/date-helpers';
 import LoginView from '../components/login-view';
 
+const StyledDatePicker = styled(DatePicker)`
+	margin-bottom: 10px;
+`;
+
 const StyledFullBar = styled.div`
 	max-width: 500px;
 	background-color: black;
@@ -66,7 +70,7 @@ const Index = () => {
 					<StyledFullBar>
 						<StyledFilledPart percent={progress > 100 ? 100 : progress} myColor={perc2color(progress > 100 ? 100 : progress)}></StyledFilledPart>
 					</StyledFullBar>
-					<DatePicker
+					<StyledDatePicker
 						selected={selectedMonth}
 						onChange={date => setSelectedMonth(date)}
 						dateFormat={'MMMM yyyy'}

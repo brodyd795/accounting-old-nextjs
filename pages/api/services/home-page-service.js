@@ -65,10 +65,17 @@ const getHomepageData = async ({user, date}) => {
 	const dateRange = getDateRange(date);
 	const lastMonth = getLastMonth(date);
 
+	let lastMonthsIncome;
+
 	const lastIncomeRow = await getLastMonthsIncome({lastMonth, user});
-	const lastMonthsIncome = lastIncomeRow[0].to_account.startsWith('I')
-		? lastIncomeRow[0].to_balance
-		: lastIncomeRow[0].from_balance;
+
+	if (lastIncomeRow.length) {
+		lastMonthsIncome = lastIncomeRow[0].to_account.startsWith('I')
+			? lastIncomeRow[0].to_balance
+			: lastIncomeRow[0].from_balance;
+	} else {
+		lastMonthsIncome = 0;
+	}
 
 	const balances = {};
 

@@ -17,7 +17,7 @@ export const conn = user => {
 		? process.env.DB_NAME
 		: `${process.env.DB_NAME}_DEMO`;
 
-	database = process.env.VERCEL_GITHUB_COMMIT_REF !== 'dev' ? `${database}_TEST` : database;
+	database = process.env.VERCEL_GITHUB_COMMIT_REF === 'dev' ? `${database}_TEST` : database;
 
 	connection = mysql({
 		config: {

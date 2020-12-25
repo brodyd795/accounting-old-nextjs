@@ -17,7 +17,7 @@ export const conn = user => {
 		? process.env.DB_NAME
 		: `${process.env.DB_NAME}_DEMO`;
 
-	database = process.env.ENVIRONMENT === 'dev' ? `${database}_TEST` : database;
+	database = process.env.VERCEL_GITHUB_COMMIT_REF === 'master' ? database : `${database}_TEST`;
 
 	connection = mysql({
 		config: {
@@ -47,6 +47,7 @@ export const withTransactionWrapper = async (queries, props) => {
 			return results;
 		} catch (error) {
 			await conn(user).query('ROLLBACK');
+			console.log('error', error)
 
 			return new Error(error);
 		} finally {

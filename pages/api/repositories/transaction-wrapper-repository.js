@@ -8,23 +8,19 @@ dotenv.config();
 let connection,
 	isMidTransaction = false;
 
-export const conn = user => {
+export const conn = () => {
 	if (connection !== undefined) {
 		return connection;
 	}
 
-	let database = isAdmin(user)
-		? process.env.DB_NAME
-		: `${process.env.DB_NAME}_DEMO`;
-
-	database = process.env.VERCEL_GITHUB_COMMIT_REF === 'master' ? database : `${database}_TEST`;
+	const databaseBaseName = process.env.DB_NAME;
 
 	connection = mysql({
 		config: {
+			database: process.env.ENVIRONMENT === 'dev' ? `${databaseBaseName}_DEV` : databaseBaseName,
 			host: process.env.DB_HOST,
-			database,
-			user: process.env.DB_USER,
-			password: process.env.DB_PASSWORD
+			password: process.env.DB_PASSWORD,
+			user: process.env.DB_USER
 		}
 	});
 
@@ -35,23 +31,21 @@ export const withTransactionWrapper = async (queries, props) => {
 	if (!isMidTransaction) {
 		isMidTransaction = true;
 
-		const {user} = props;
-
 		try {
-			await conn(user).query('BEGIN');
+			await conn().query('BEGIN');
 
 			const results = await queries(props);
 
-			await conn(user).query('COMMIT');
+			await conn().query('COMMIT');
 
 			return results;
 		} catch (error) {
-			await conn(user).query('ROLLBACK');
+			await conn().query('ROLLBACK');
 			console.log('error', error)
 
 			return new Error(error);
 		} finally {
-			await conn(user).end();
+			await conn().end();
 			isMidTransaction = false;
 		}
 	}

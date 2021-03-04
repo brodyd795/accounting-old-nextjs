@@ -8,8 +8,23 @@ export default async props => {
 	const lastPossibleId = `${lastMonth}9999`;
 
 	const lastIncomeRow = await conn(user).query(
-		escape`SELECT to_account, from_account, to_balance, from_balance FROM transactions WHERE (to_account LIKE 'I_%' OR from_account LIKE 'I_%') AND (trn_id < ${lastPossibleId}) ORDER BY trn_id desc limit 1`
+		escape`
+			SELECT
+				balance
+			FROM
+				balances
+			INNER JOIN
+				accounts
+			ON
+				balances.accountId = accounts.accountId
+			WHERE
+				balances.date = '2021-03-01'
+			AND
+				accounts.category = 'Income'
+			
+			`
 	);
+	console.log('lastIncomeRow', lastIncomeRow);
 
 	return lastIncomeRow;
 };

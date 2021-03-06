@@ -1,4 +1,4 @@
-import getAccountsList from '../repositories/get-accounts-list-repository';
+import {getAccountsList} from '../repositories/get-accounts-list-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
 import transformAccountsListForDropdown from './accounts-select-data-transform';

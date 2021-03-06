@@ -2,12 +2,8 @@ import escape from 'sql-template-strings';
 
 import {conn} from './transaction-wrapper-repository';
 
-export default async props => {
-	const {lastMonth, user} = props;
-
-	const lastPossibleId = `${lastMonth}9999`;
-
-	const lastIncomeRow = await conn(user).query(
+export default async ({lastMonth}) =>
+	conn().query(
 		escape`
 			SELECT
 				balance
@@ -18,13 +14,7 @@ export default async props => {
 			ON
 				balances.accountId = accounts.accountId
 			WHERE
-				balances.date = '2021-03-01'
+				balances.date = ${lastMonth}
 			AND
 				accounts.category = 'Income'
-			
-			`
-	);
-	console.log('lastIncomeRow', lastIncomeRow);
-
-	return lastIncomeRow;
-};
+		`);

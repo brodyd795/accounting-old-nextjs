@@ -23,6 +23,7 @@
 	"dependencies": {
 		"@auth0/nextjs-auth0": "^0.15.0",
 		"@svgr/webpack": "^5.4.0",
+		"date-fns": "^2.18.0",
 		"dotenv": "^8.2.0",
 		"imap-simple": "^5.0.0",
 		"isomorphic-unfetch": "^3.0.0",

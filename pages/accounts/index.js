@@ -22,7 +22,7 @@ const Accounts = () => {
 	const {user, loading} = useFetchUser();
 	const router = useRouter();
 	const {data, error} = useSWR(
-		user && `/api/controllers/accounts?user=${user.email}`,
+		user && `/api/controllers/accounts`,
 		fetch
 	);
 

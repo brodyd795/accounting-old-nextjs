@@ -1,14 +1,21 @@
 import {getAccountsList} from '../repositories/get-accounts-list-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
+import {transactionCategories} from '../../../enums/transaction-categories';
 
-import transformAccountsListForDropdown from './accounts-select-data-transform';
+const getAccountsPageData = async () => {
+	const accounts = await getAccountsList();
 
-const getAccountsPageData = async user => {
-	const data = await getAccountsList(user);
+	const options = Object.values(transactionCategories).map((category) => ({
+		label: category,
+		options: accounts
+			.filter((account) => account.category === category)
+			.map((account) => ({
+				label: account.accountName.replace(/_/g, " "),
+				value: account.accountName
+			}))
+	}));
 
-	const accounts = data.map(account => account.acc_name);
-
-	return transformAccountsListForDropdown(accounts);
+	return options;
 };
 
 export default async props =>

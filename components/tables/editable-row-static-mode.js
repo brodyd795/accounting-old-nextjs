@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {cleanAccountId} from '../../lib/account-helpers';
 import {toDollars} from '../../lib/currency-helpers';
-import {trnIdToHyphenatedDate} from '../../lib/date-helpers';
 
 const EditableRowStaticMode = ({
 	index,
@@ -14,14 +12,14 @@ const EditableRowStaticMode = ({
 }) => {
 	return (
 		<tr>
-			<td key={`${index}-id`}>{trnIdToHyphenatedDate(row.trn_id)}</td>
-			<td key={`${index}-from-account`}>{cleanAccountId(row.from_account)}</td>
-			<td key={`${index}-to-account`}>{cleanAccountId(row.to_account)}</td>
+			<td key={`${index}-id`}>{row.date}</td>
+			<td key={`${index}-from-account`}>{row.fromAccountName}</td>
+			<td key={`${index}-to-account`}>{row.toAccountName}</td>
 			<td key={`${index}-amount`}>{toDollars(row.amount)}</td>
 			{showBalances && (
 				<>
-					<td key={`${index}-from-balance`}>{toDollars(row.from_balance)}</td>
-					<td key={`${index}-to-balance`}>{toDollars(row.to_balance)}</td>
+					<td key={`${index}-from-balance`}>{toDollars(row.fromBalance)}</td>
+					<td key={`${index}-to-balance`}>{toDollars(row.toBalance)}</td>
 				</>
 			)}
 			<td key={`${index}-comment`}>{row.comment}</td>
@@ -29,7 +27,7 @@ const EditableRowStaticMode = ({
 				<button
 					type={'button'}
 					disabled={isEditing}
-					onClick={() => edit(row.trn_id)}>
+					onClick={() => edit(row)}>
 					{'Edit'}
 				</button>
 				<button

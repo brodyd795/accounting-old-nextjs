@@ -2,20 +2,11 @@ import {getDateRange} from '../helpers/date-helpers';
 import getAccountTransactions from '../repositories/get-account-transactions-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
 
-const getAccountPageData = async ({account, user, date}) => {
+const getAccountPageData = async ({account, date}) => {
 	const dateRange = getDateRange(date);
+	const results = await getAccountTransactions({account, dateRange});
 
-	const results = await getAccountTransactions({account, user, dateRange});
-
-	if (results.length) {
-		const resultsWithoutEmail = results.map(({user_email, ...rest}) => ({
-			...rest
-		}));
-
-		return resultsWithoutEmail;
-	}
-
-	return {message: `Results for account ${account} not found`};
+	return results.length ? results : {message: `No results found for account ${account}`};
 };
 
 export default async props => withTransactionWrapper(getAccountPageData, props);

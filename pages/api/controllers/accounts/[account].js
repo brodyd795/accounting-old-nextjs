@@ -3,22 +3,18 @@ import getAccountsPageData from '../../services/accounts-page-service';
 
 export default async (req, res) => {
 	const account = req.query.account;
-	const user = req.query.user;
 	const date = new Date(req.query.date);
 
-	const results = await Promise.all([
+	const [recentTransactions, accounts] = await Promise.all([
 		getAccountPageData({
 			account,
-			user,
 			date
 		}),
-		getAccountsPageData({user})
+		getAccountsPageData()
 	]);
 
-	const data = {
-		recentTransactions: results[0],
-		accounts: results[1]
-	};
-
-	res.status(200).json(data);
+	res.status(200).json({
+		recentTransactions,
+		accounts
+	});
 };

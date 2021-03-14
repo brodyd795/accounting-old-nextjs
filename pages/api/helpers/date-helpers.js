@@ -1,15 +1,9 @@
 import {startOfMonth, addMonths} from 'date-fns';
 
-export const getDateRange = date => {
-	const month = date.getMonth() + 1;
-	const year = date.getFullYear();
-	const minDate = parseInt(`${year}${month < 10 ? '0' : ''}${month}0000`);
-	const dateRange = {
-		min: minDate,
-		max: minDate + 9999
-	};
-	return dateRange;
-};
+export const getDateRange = date => ({
+	startDate: getStartOfSelectedMonth(date),
+	endDate: getStartOfNextMonth(date)
+});
 
 export const trnIdToNewDate = id => {
 	const year = parseInt(String(id).replace(/(^\d{4})\d+/, '$1'));

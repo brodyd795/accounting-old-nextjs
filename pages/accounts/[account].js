@@ -22,7 +22,7 @@ const Account = () => {
 	const {data, error} = useSWR(
 		user &&
 			account &&
-			`/api/controllers/accounts/${account}?user=${user.email}&date=${selectedMonth}`,
+			`/api/controllers/accounts/${account}?date=${selectedMonth}`,
 		fetch
 	);
 

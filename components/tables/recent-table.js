@@ -1,29 +1,24 @@
 import React, {useState} from 'react';
 import fetch from 'isomorphic-unfetch';
 
-import {useFetchUser} from '../../lib/user';
-
 import EditableRow from './editable-row';
 import {StyledRecentTable, StyledRecentTableWrapper} from './styles';
 
-const RecentTable = ({data, type, account = null}) => {
-	const {user} = useFetchUser();
+import TransactionEditModal from '../modals/transaction-edit-modal';
 
-	const [isEditing, setIsEditing] = useState(null);
-	const [idBeingEdited, setIdBeingEdited] = useState(null);
-	const [transactionsList, setTransactionsList] = useState(
-		data.recentTransactions
-	);
-	console.log('transactionsList', transactionsList)
+const RecentTable = ({data, type, account = null}) => {
+	const [isEditing, setIsEditing] = useState(false);
+	const [transactionBeingEdited, setTransactionBeingEdited] = useState(null);
+	const [transactionsList, setTransactionsList] = useState(data.recentTransactions);
 	const [showBalances, setShowBalances] = useState(false);
 
-	const handleDelete = rowToDelete => {
-		const confirmDelete = confirm(
-			'Are you sure you wish to delete this transaction? This cannot be undone.'
-		);
+	console.log({data, type, account})
 
+	const handleDelete = rowToDelete => {
+		const confirmDelete = confirm('Are you sure you wish to delete this transaction? This cannot be undone.');
+	
 		if (confirmDelete) {
-			fetch(`/api/controllers/transactions/delete?user=${user.email}`, {
+			fetch(`/api/controllers/transactions/delete`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -31,10 +26,8 @@ const RecentTable = ({data, type, account = null}) => {
 				body: JSON.stringify({rowToDelete})
 			}).then(res => {
 				if (res.ok) {
-					const transactionsListCopy = transactionsList.filter(
-						row => row.trn_id !== rowToDelete.trn_id
-					);
-
+					const transactionsListCopy = transactionsList.filter(row => row.trn_id !== rowToDelete.trn_id);
+	
 					setTransactionsList(transactionsListCopy);
 					alert('Success!');
 				} else {
@@ -44,9 +37,10 @@ const RecentTable = ({data, type, account = null}) => {
 		}
 	};
 
-	const handleStartEditing = id => {
+	const handleStartEditing = row => {
+		console.log('row', row)
 		setIsEditing(true);
-		setIdBeingEdited(id);
+		setTransactionBeingEdited(row);
 	};
 
 	const handleCancel = cancelledRow => {
@@ -60,7 +54,7 @@ const RecentTable = ({data, type, account = null}) => {
 
 	const handleSave = async (editedRowInCents, originalRow) => {
 		const res = await fetch(
-			`/api/controllers/transactions/edit?user=${user.email}`,
+			`/api/controllers/transactions/edit`,
 			{
 				method: 'POST',
 				headers: {
@@ -97,24 +91,24 @@ const RecentTable = ({data, type, account = null}) => {
 			<StyledRecentTable>
 				<thead>
 					<tr key={'headings'}>
-						<th>Date</th>
-						<th>From</th>
-						<th>To</th>
-						<th>Amount</th>
+						<th>{'Date'}</th>
+						<th>{'From'}</th>
+						<th>{'To'}</th>
+						<th>{'Amount'}</th>
 						{showBalances && (
 							<>
-								<th>From Balance</th>
-								<th>To Balance</th>
+								<th>{'From Balance'}</th>
+								<th>{'To Balance'}</th>
 							</>
 						)}
-						<th>Comment</th>
+						<th>{'Comment'}</th>
 						<th />
 					</tr>
 				</thead>
 				<tbody>
 					{transactionsList.map((row, index) => (
 						<EditableRow
-							key={row.trn_id}
+							key={row.transactionId}
 							index={index}
 							row={row}
 							remove={handleDelete}
@@ -122,13 +116,17 @@ const RecentTable = ({data, type, account = null}) => {
 							cancel={handleCancel}
 							save={handleSave}
 							isEditing={isEditing}
-							idBeingEdited={idBeingEdited}
+							idBeingEdited={transactionBeingEdited}
 							accounts={data.accounts}
 							showBalances={showBalances}
 						/>
 					))}
 				</tbody>
 			</StyledRecentTable>
+			<TransactionEditModal
+				isEditing={isEditing}
+				transactionBeingEdited={transactionBeingEdited}
+			/>
 		</StyledRecentTableWrapper>
 	);
 };

@@ -8,22 +8,10 @@ const EditableRow = ({
 	row,
 	remove,
 	edit,
-	cancel,
-	save,
 	isEditing,
-	transactionBeingEdited,
-	accounts,
 	showBalances
 }) => {
-	return isEditing && transactionBeingEdited === row.trn_id ? (
-		<EditableRowEditingMode
-			accounts={accounts}
-			showBalances={showBalances}
-			save={save}
-			row={row}
-			cancel={cancel}
-		/>
-	) : (
+	return (
 		<EditableRowStaticMode
 			index={index}
 			row={row}

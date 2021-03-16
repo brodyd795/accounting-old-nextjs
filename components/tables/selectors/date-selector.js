@@ -1,25 +1,23 @@
 import React from 'react';
+import {useField, useFormikContext} from 'formik';
 
 import {getMaxDate} from '../../../lib/date-helpers';
 import {StyledDatePicker} from '../styles';
 
-const DateSelector = props => {
-	const {editedRow, setEditedRow} = props;
-
-	const handleDateEdit = date => {
-		setEditedRow({
-			...editedRow,
-			trn_id: date
-		});
-	};
+const DatePickerField = ({...props}) => {
+	const {setFieldValue} = useFormikContext();
+	const [field] = useField(props);
 
 	return (
 		<StyledDatePicker
-			selected={editedRow.trn_id}
-			maxDate={getMaxDate()}
-			onChange={date => handleDateEdit(date)}
+			{...field}
+			{...props}
+			selected={(field.value && new Date(field.value)) || null}
+			onChange={(val) => {
+				setFieldValue(field.name, val);
+			}}
 		/>
 	);
 };
 
-export default DateSelector;
+export default DatePickerField;

@@ -7,7 +7,7 @@ export default async ({account, dateRange}) => {
 
 	return conn().query(
 		escape`
-			SELECT DISTINCT
+			SELECT
 				transactions.transactionId,
 				transactions.date,
 				transactions.fromAccountId,
@@ -32,10 +32,14 @@ export default async ({account, dateRange}) => {
 				balances fromBalances
 			ON
 				fromBalances.accountId = transactions.fromAccountId
+			AND
+				fromBalances.date = ${startDate}
 			INNER JOIN
 				balances toBalances
 			ON
 				toBalances.accountId = transactions.toAccountId
+			AND
+				toBalances.date = ${startDate}
 			WHERE
 				toAccounts.accountName = ${account}
 			OR

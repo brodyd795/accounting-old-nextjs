@@ -14,6 +14,8 @@ export default async ({account, dateRange}) => {
 				transactions.toAccountId,
 				toAccounts.accountName toAccountName,
 				fromAccounts.accountName fromAccountName,
+				toAccounts.category toAccountCategory,
+				fromAccounts.category fromAccountCategory,
 				toBalances.balance toBalance,
 				fromBalances.balance fromBalance,
 				transactions.amount,

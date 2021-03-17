@@ -38,15 +38,25 @@ const validationSchema = yup.object().shape({
     date: yup.date().required('Required')
 });
 
+const cleanThing = (thing) => thing.replace('_', ' ');
+
 const TransactionEditModal = ({isEditing, transactionBeingEdited, accounts}) => {
     console.log('transactionBeingEdited', transactionBeingEdited)
     if (!transactionBeingEdited) {
         return null;
     }
-    const {fromAccountName, toAccountName, amount, comment, date} = transactionBeingEdited;
-    console.log('accounts', accounts)
+    const {
+        fromAccountName,
+        toAccountName,
+        fromAccountCategory,
+        toAccountCategory,
+        amount,
+        comment,
+        date
+    } = transactionBeingEdited;
 
-    // TODO: pre-fill the right to/from accounts in the dropdowns like I did before using accounts.find()
+    const fromAccountOption = accounts.find((category) => cleanThing(category.label) === cleanThing(fromAccountCategory)).options.find((account) => cleanThing(account.value) === cleanThing(fromAccountName));
+    const toAccountOption = accounts.find((category) => cleanThing(category.label) === cleanThing(toAccountCategory)).options.find((account) => cleanThing(account.value) === cleanThing(toAccountName));
 
     return (
         <StyledModal
@@ -57,8 +67,8 @@ const TransactionEditModal = ({isEditing, transactionBeingEdited, accounts}) => 
             <h2>{'Edit Transaction'}</h2>
             <Formik
                 initialValues={{
-                    fromAccountName,
-                    toAccountName,
+                    fromAccountName: fromAccountOption,
+                    toAccountName: toAccountOption,
                     amount,
                     comment,
                     date: new Date(date)

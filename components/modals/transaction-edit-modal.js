@@ -40,7 +40,7 @@ const validationSchema = yup.object().shape({
 
 const cleanThing = (thing) => thing.replace('_', ' ');
 
-const TransactionEditModal = ({isEditing, transactionBeingEdited, accounts}) => {
+const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, accounts}) => {
     console.log('transactionBeingEdited', transactionBeingEdited)
     if (!transactionBeingEdited) {
         return null;
@@ -63,7 +63,9 @@ const TransactionEditModal = ({isEditing, transactionBeingEdited, accounts}) => 
             isOpen={isEditing}
             contentLabel={'Edit Transaction Modal'}
             ariaHideApp={false}
+            onRequestClose={() => setIsEditing(false)}
         >
+            <button type={'button'} onClick={() => setIsEditing(false)}>{'X'}</button>
             <h2>{'Edit Transaction'}</h2>
             <Formik
                 initialValues={{

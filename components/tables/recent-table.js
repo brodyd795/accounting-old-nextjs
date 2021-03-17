@@ -125,6 +125,7 @@ const RecentTable = ({data, type, account = null}) => {
 			</StyledRecentTable>
 			<TransactionEditModal
 				isEditing={isEditing}
+				setIsEditing={setIsEditing}
 				transactionBeingEdited={transactionBeingEdited}
 				accounts={data.accounts}
 			/>

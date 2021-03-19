@@ -25,11 +25,11 @@ export default async ({account, dateRange}) => {
 			INNER JOIN
 				accounts toAccounts
 			ON
-				toAccounts.accountId = transactions.fromAccountId
+				toAccounts.accountId = transactions.toAccountId
 			INNER JOIN
 				accounts fromAccounts
 			ON
-				fromAccounts.accountId = transactions.toAccountId
+				fromAccounts.accountId = transactions.fromAccountId
 			INNER JOIN
 				balances fromBalances
 			ON

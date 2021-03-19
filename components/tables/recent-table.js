@@ -12,8 +12,6 @@ const RecentTable = ({data, type, account = null}) => {
 	const [transactionsList, setTransactionsList] = useState(data.recentTransactions);
 	const [showBalances, setShowBalances] = useState(false);
 
-	console.log({data, type, account})
-
 	const handleDelete = rowToDelete => {
 		const confirmDelete = confirm('Are you sure you wish to delete this transaction? This cannot be undone.');
 	
@@ -38,7 +36,6 @@ const RecentTable = ({data, type, account = null}) => {
 	};
 
 	const handleStartEditing = row => {
-		console.log('row', row)
 		setIsEditing(true);
 		setTransactionBeingEdited(row);
 	};

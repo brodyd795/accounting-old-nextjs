@@ -11,7 +11,8 @@ const getAccountsPageData = async () => {
 			.filter((account) => account.category === category)
 			.map((account) => ({
 				label: account.accountName.replace(/_/g, " "),
-				value: account.accountName
+				value: account.accountName,
+				accountId: account.accountId
 			}))
 	}));
 

@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import {Formik, Field, Form, ErrorMessage} from 'formik';
 import * as yup from 'yup';
 import DatePickerField from '../tables/selectors/date-selector';
+import AmountSelector from '../tables/selectors/amount-selector';
 import {StyledSelect} from '../tables/styles';
 
 const StyledModal = styled(Modal)`
@@ -71,7 +72,7 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                 initialValues={{
                     fromAccountName: fromAccountOption,
                     toAccountName: toAccountOption,
-                    amount,
+                    amount: amount / 100,
                     comment,
                     date: new Date(date)
                 }}
@@ -115,7 +116,7 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                             </div>
                             <div>
                                 <StyledLabel htmlFor={'amount'}>{'Amount'}</StyledLabel>
-                                <Field name={'amount'} type={'text'} />
+                                <Field name={'amount'} component={AmountSelector} />
                                 <ErrorMessage name={'amount'} />
                             </div>
                             <div>

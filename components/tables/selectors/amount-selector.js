@@ -3,26 +3,20 @@ import React from 'react';
 import {StyledNumberFormat} from '../styles';
 
 const AmountSelector = props => {
-	const {value, setEditedRow} = props;
-
-	const handleAmountEdit = e => {
-		const amount = e.target.value;
-
-		setEditedRow(editedRow => ({
-			...editedRow,
-			amount
-		}));
-	};
+	const {field, form} = props;
+	const {value, name} = field;
+	const {setFieldValue} = form;
 
 	return (
 		<StyledNumberFormat
-			value={value}
+			name={name}
+			decimalScale={2}
+			allowNegative={false}
 			thousandSeparator={','}
 			decimalSeparator={'.'}
 			prefix={'$'}
-			onBlur={handleAmountEdit}
-			allowNegative={false}
-			decimalScale={2}
+			value={value}
+			onValueChange={(val) => setFieldValue(name, val.floatValue)}
 		/>
 	);
 };

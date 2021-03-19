@@ -39,25 +39,22 @@ const validationSchema = yup.object().shape({
     date: yup.date().required('Required')
 });
 
-const cleanThing = (thing) => thing.replace('_', ' ');
-
 const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, accounts}) => {
-    console.log('transactionBeingEdited', transactionBeingEdited)
     if (!transactionBeingEdited) {
         return null;
     }
+
     const {
-        fromAccountName,
-        toAccountName,
-        fromAccountCategory,
-        toAccountCategory,
         amount,
         comment,
-        date
+        date,
+        fromAccountId,
+        toAccountId
     } = transactionBeingEdited;
 
-    const fromAccountOption = accounts.find((category) => cleanThing(category.label) === cleanThing(fromAccountCategory)).options.find((account) => cleanThing(account.value) === cleanThing(fromAccountName));
-    const toAccountOption = accounts.find((category) => cleanThing(category.label) === cleanThing(toAccountCategory)).options.find((account) => cleanThing(account.value) === cleanThing(toAccountName));
+    const flatAccounts = accounts.reduce((acc, current) => [...acc, current.options], []).flat();
+    const fromAccountOption = flatAccounts.find((account) => account.accountId === fromAccountId);
+    const toAccountOption = flatAccounts.find((account) => account.accountId === toAccountId);
 
     return (
         <StyledModal
@@ -78,7 +75,6 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
-                    console.log('submitted!');
                     console.log('values', values)
                 }}
             >
@@ -124,8 +120,17 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                                 <Field name={'comment'} type={'text'} />
                                 <ErrorMessage name={'comment'} />
                             </div>
-                            <button type={'button'}>{'Cancel'}</button>
-                            <button type={'submit'}>{'Update'}</button>
+                            <button
+                                type={'button'}
+                                onClick={() => setIsEditing(false)}
+                            >
+                                {'Cancel'}
+                            </button>
+                            <button
+                                type={'submit'}
+                            >
+                                {'Update'}
+                            </button>
                         </Form>
                     );
                 }}

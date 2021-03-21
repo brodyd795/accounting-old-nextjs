@@ -20,11 +20,13 @@ const RecentTable = ({data}) => {
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({rowToDelete})
+				body: JSON.stringify({
+					transactionId: rowToDelete.transactionId
+				})
 			});
 
 			if (res.ok) {
-				const transactionsListCopy = transactionsList.filter(row => row.trn_id !== rowToDelete.trn_id);
+				const transactionsListCopy = transactionsList.filter(row => row.transactionId !== rowToDelete.transactionId);
 
 				setTransactionsList(transactionsListCopy);
 				alert('Success!');

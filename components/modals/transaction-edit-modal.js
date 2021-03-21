@@ -109,6 +109,33 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
         transactionId
     } = transactionBeingEdited;
 
+    const handleSubmit = async (values) => {
+        const {amount, comment, date, fromAccountName, toAccountName} = values;
+        const res = await fetch(
+            `/api/controllers/transactions/edit`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    fromAccountId: fromAccountName.accountId,
+                    toAccountId: toAccountName.accountId,
+                    amount: amount * 100,
+                    comment,
+                    date: String(date.toISOString()).slice(0, 10),
+                    transactionId
+                })
+            }
+        );
+
+        if (res.status === 200) {
+            setUpdateStatusMessage('Success!');
+        } else {
+            setUpdateStatusMessage('Sorry, something went wrong.');
+        }
+    };
+
     const flatAccounts = accounts.reduce((acc, current) => [...acc, current.options], []).flat();
     const fromAccountOption = flatAccounts.find((account) => account.accountId === fromAccountId);
     const toAccountOption = flatAccounts.find((account) => account.accountId === toAccountId);
@@ -138,32 +165,7 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                     date: new Date(date)
                 }}
                 validationSchema={validationSchema}
-                onSubmit={async (values) => {
-                    const {amount, comment, date, fromAccountName, toAccountName} = values;
-                    const res = await fetch(
-                        `/api/controllers/transactions/edit`,
-                        {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                fromAccountId: fromAccountName.accountId,
-                                toAccountId: toAccountName.accountId,
-                                amount: amount * 100,
-                                comment,
-                                date: String(date.toISOString()).slice(0, 10),
-                                transactionId
-                            })
-                        }
-                    );
-
-                    if (res.status === 200) {
-                        setUpdateStatusMessage('Success!');
-                    } else {
-                        setUpdateStatusMessage('Sorry, something went wrong.');
-                    }
-                }}
+                onSubmit={handleSubmit}
             >
                 {({setFieldValue, values}) => (
                     <StyledForm>

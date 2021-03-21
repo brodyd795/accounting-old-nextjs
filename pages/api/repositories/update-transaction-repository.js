@@ -5,7 +5,7 @@ import {conn} from './transaction-wrapper-repository';
 export default async props => {
 	const {fromAccountId, toAccountId, amount, date, comment, transactionId} = props;
 
-	await conn().query(
+	return conn().query(
 		escape`
             UPDATE
                 transactions
@@ -19,6 +19,4 @@ export default async props => {
                 transactionId = ${transactionId}
         `
 	);
-
-	return 'OK';
 };

@@ -150,12 +150,11 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                                 toAccountId: toAccountName.accountId,
                                 amount: amount * 100,
                                 comment,
-                                date,
+                                date: String(date.toISOString()).slice(0, 10),
                                 transactionId
                             })
                         }
                     );
-                    const newData = await res.json();
                 }}
             >
                 {({setFieldValue, values}) => (

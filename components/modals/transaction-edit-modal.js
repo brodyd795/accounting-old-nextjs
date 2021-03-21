@@ -18,11 +18,51 @@ const StyledModal = styled(Modal)`
     transform: translate(-50%, -50%);
     padding: 20px;
     background-color: white;
+    width: 300px;
+`;
+
+const StyledModalHeader = styled.div`
+    text-align: center;
+    position: relative;
+`;
+
+const StyledModalHeading = styled.span`
+    font-size: 20px;
+`;
+
+const StyledCloseModalButton = styled.button`
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: transparent;
+    border: none;
+    margin-top: 5px;
 `;
 
 const StyledLabel = styled.label`
-    color: red;
     margin-right: 10px;
+    margin-bottom: 5px;
+`;
+
+const StyledForm = styled(Form)`
+    margin-top: 30px;
+`;
+
+const StyledFieldContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+`;
+
+const StyledButtonsContainer = styled.div`
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+`;
+
+const StyledButton = styled.button`
+    margin-right: 5px;
+    margin-left: 5px;
 `;
 
 const validationSchema = yup.object().shape({
@@ -77,8 +117,15 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
             ariaHideApp={false}
             onRequestClose={() => setIsEditing(false)}
         >
-            <button type={'button'} onClick={() => setIsEditing(false)}>{'X'}</button>
-            <h2>{'Edit Transaction'}</h2>
+            <StyledModalHeader>
+                <StyledModalHeading>{'Edit Transaction'}</StyledModalHeading>
+                <StyledCloseModalButton
+                    type={'button'}
+                    onClick={() => setIsEditing(false)}
+                >
+                    {'X'}
+                </StyledCloseModalButton>
+            </StyledModalHeader>
             <Formik
                 initialValues={{
                     fromAccountName: fromAccountOption,
@@ -93,13 +140,13 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                 }}
             >
                 {({setFieldValue, values}) => (
-                    <Form>
-                        <div>
+                    <StyledForm>
+                        <StyledFieldContainer>
                             <StyledLabel htmlFor={'date'}>{'Date'}</StyledLabel>
                             <DatePickerField name={'date'} type={'text'} />
                             <ErrorMessage name={'date'} />
-                        </div>
-                        <div>
+                        </StyledFieldContainer>
+                        <StyledFieldContainer>
                             <StyledLabel htmlFor={'fromAccountName'}>{'From account name'}</StyledLabel>
                             <StyledSelect
                                 options={accounts}
@@ -109,9 +156,9 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                                 id={'fromAccountName'}
                             />
                             <ErrorMessage name="fromAccountName" />
-                        </div>
-                        <div>
-                            <StyledLabel htmlFor={'toAccountName'}>{'To account namee'}</StyledLabel>
+                        </StyledFieldContainer>
+                        <StyledFieldContainer>
+                            <StyledLabel htmlFor={'toAccountName'}>{'To account name'}</StyledLabel>
                             <StyledSelect
                                 options={accounts}
                                 value={values.toAccountName}
@@ -120,29 +167,31 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                                 id={'toAccountName'}
                                 />
                             <ErrorMessage name="toAccountName" />
-                        </div>
-                        <div>
+                        </StyledFieldContainer>
+                        <StyledFieldContainer>
                             <StyledLabel htmlFor={'amount'}>{'Amount'}</StyledLabel>
                             <Field name={'amount'} component={AmountSelector} />
                             <ErrorMessage name={'amount'} />
-                        </div>
-                        <div>
+                        </StyledFieldContainer>
+                        <StyledFieldContainer>
                             <StyledLabel htmlFor={'comment'}>{'Comment'}</StyledLabel>
                             <Field name={'comment'} type={'text'} />
                             <ErrorMessage name={'comment'} />
-                        </div>
-                        <button
-                            type={'button'}
-                            onClick={() => setIsEditing(false)}
-                        >
-                            {'Cancel'}
-                        </button>
-                        <button
-                            type={'submit'}
-                        >
-                            {'Update'}
-                        </button>
-                    </Form>
+                        </StyledFieldContainer>
+                        <StyledButtonsContainer>
+                            <StyledButton
+                                type={'button'}
+                                onClick={() => setIsEditing(false)}
+                            >
+                                {'Cancel'}
+                            </StyledButton>
+                            <StyledButton
+                                type={'submit'}
+                            >
+                                {'Update'}
+                            </StyledButton>
+                        </StyledButtonsContainer>
+                    </StyledForm>
                 )}
             </Formik>
         </StyledModal>

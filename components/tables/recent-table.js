@@ -10,7 +10,6 @@ const RecentTable = ({data, type, account = null}) => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [transactionBeingEdited, setTransactionBeingEdited] = useState(null);
 	const [transactionsList, setTransactionsList] = useState(data.recentTransactions);
-	const [showBalances, setShowBalances] = useState(false);
 
 	const handleDelete = rowToDelete => {
 		const confirmDelete = confirm('Are you sure you wish to delete this transaction? This cannot be undone.');
@@ -78,13 +77,8 @@ const RecentTable = ({data, type, account = null}) => {
 		setIsEditing(false);
 	};
 
-	const toggleShowBalances = () => setShowBalances(!showBalances);
-
 	return (
 		<StyledRecentTableWrapper>
-			<button type={'button'} onClick={toggleShowBalances}>
-				Show balances
-			</button>
 			<StyledRecentTable>
 				<thead>
 					<tr key={'headings'}>
@@ -92,12 +86,6 @@ const RecentTable = ({data, type, account = null}) => {
 						<th>{'From'}</th>
 						<th>{'To'}</th>
 						<th>{'Amount'}</th>
-						{showBalances && (
-							<>
-								<th>{'From Balance'}</th>
-								<th>{'To Balance'}</th>
-							</>
-						)}
 						<th>{'Comment'}</th>
 						<th />
 					</tr>
@@ -115,7 +103,6 @@ const RecentTable = ({data, type, account = null}) => {
 							isEditing={isEditing}
 							idBeingEdited={transactionBeingEdited}
 							accounts={data.accounts}
-							showBalances={showBalances}
 						/>
 					))}
 				</tbody>

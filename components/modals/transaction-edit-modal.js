@@ -103,7 +103,8 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
         comment,
         date,
         fromAccountId,
-        toAccountId
+        toAccountId,
+        transactionId
     } = transactionBeingEdited;
 
     const flatAccounts = accounts.reduce((acc, current) => [...acc, current.options], []).flat();
@@ -135,8 +136,26 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                     date: new Date(date)
                 }}
                 validationSchema={validationSchema}
-                onSubmit={(values) => {
-                    console.log('values', values)
+                onSubmit={async (values) => {
+                    const {amount, comment, date, fromAccountName, toAccountName} = values;
+                    const res = await fetch(
+                        `/api/controllers/transactions/edit`,
+                        {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                fromAccountId: fromAccountName.accountId,
+                                toAccountId: toAccountName.accountId,
+                                amount: amount * 100,
+                                comment,
+                                date,
+                                transactionId
+                            })
+                        }
+                    );
+                    const newData = await res.json();
                 }}
             >
                 {({setFieldValue, values}) => (

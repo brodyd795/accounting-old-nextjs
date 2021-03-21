@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
 import Modal from 'react-modal';
 import {Formik, Field, Form, ErrorMessage} from 'formik';
@@ -94,6 +94,8 @@ const validationSchema = yup.object().shape({
   });
 
 const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, accounts}) => {
+    const [updateStatusMessage, setUpdateStatusMessage] = useState('');
+
     if (!transactionBeingEdited) {
         return null;
     }
@@ -155,6 +157,12 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                             })
                         }
                     );
+
+                    if (res.status === 200) {
+                        setUpdateStatusMessage('Success!');
+                    } else {
+                        setUpdateStatusMessage('Sorry, something went wrong.');
+                    }
                 }}
             >
                 {({setFieldValue, values}) => (
@@ -209,6 +217,9 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                                 {'Update'}
                             </StyledButton>
                         </StyledButtonsContainer>
+                        <div>
+                            {updateStatusMessage}
+                        </div>
                     </StyledForm>
                 )}
             </Formik>

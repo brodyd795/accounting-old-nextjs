@@ -28,16 +28,30 @@ const StyledLabel = styled.label`
 const validationSchema = yup.object().shape({
     fromAccountName: yup.object().shape({
         label: yup.string().required(),
-        value: yup.string().required()
-    }),
+        value: yup.string().required(),
+        accountId: yup.number().required()
+    }).test(
+        'accounts-match',
+        'To and From accounts must be different',
+        function () {
+            return this.parent.fromAccountName.accountId !== this.parent.toAccountName.accountId;
+        }
+    ),
     toAccountName: yup.object().shape({
         label: yup.string().required(),
-        value: yup.string().required()
-    }),
+        value: yup.string().required(),
+        accountId: yup.number().required()
+    }).test(
+        'accounts-match',
+        'To and From accounts must be different',
+        function () {
+            return this.parent.fromAccountName.accountId !== this.parent.toAccountName.accountId;
+        }
+    ),
     amount: yup.number().required('Required'),
     comment: yup.string().notRequired(),
     date: yup.date().required('Required')
-});
+  });
 
 const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, accounts}) => {
     if (!transactionBeingEdited) {
@@ -78,62 +92,58 @@ const TransactionEditModal = ({isEditing, setIsEditing, transactionBeingEdited, 
                     console.log('values', values)
                 }}
             >
-                {(props) => {
-                    const {setFieldValue} = props;
-
-                    return (
-                        <Form>
-                            <div>
-                                <StyledLabel htmlFor={'date'}>{'Date'}</StyledLabel>
-                                <DatePickerField name={'date'} type={'text'} />
-                                <ErrorMessage name={'date'} />
-                            </div>
-                            <div>
-                                <StyledLabel htmlFor={'fromAccountName'}>{'From account name'}</StyledLabel>
-                                <StyledSelect
-                                    options={accounts}
-                                    value={props.values.fromAccountName}
-                                    onChange={(option) => setFieldValue('fromAccountName', option)}
-                                    name={'fromAccountName'}
-                                    id={'fromAccountName'}
+                {({setFieldValue, values}) => (
+                    <Form>
+                        <div>
+                            <StyledLabel htmlFor={'date'}>{'Date'}</StyledLabel>
+                            <DatePickerField name={'date'} type={'text'} />
+                            <ErrorMessage name={'date'} />
+                        </div>
+                        <div>
+                            <StyledLabel htmlFor={'fromAccountName'}>{'From account name'}</StyledLabel>
+                            <StyledSelect
+                                options={accounts}
+                                value={values.fromAccountName}
+                                onChange={(option) => setFieldValue('fromAccountName', option)}
+                                name={'fromAccountName'}
+                                id={'fromAccountName'}
+                            />
+                            <ErrorMessage name="fromAccountName" />
+                        </div>
+                        <div>
+                            <StyledLabel htmlFor={'toAccountName'}>{'To account namee'}</StyledLabel>
+                            <StyledSelect
+                                options={accounts}
+                                value={values.toAccountName}
+                                onChange={(option) => setFieldValue('toAccountName', option)}
+                                name={'toAccountName'}
+                                id={'toAccountName'}
                                 />
-                                <ErrorMessage name={'fromAccountName'} />
-                            </div>
-                            <div>
-                                <StyledLabel htmlFor={'toAccountName'}>{'To account name'}</StyledLabel>
-                                <StyledSelect
-                                    options={accounts}
-                                    value={props.values.toAccountName}
-                                    onChange={(option) => setFieldValue('toAccountName', option)}
-                                    name={'toAccountName'}
-                                    id={'toAccountName'}
-                                />
-                                <ErrorMessage name={'toAccountName'} />
-                            </div>
-                            <div>
-                                <StyledLabel htmlFor={'amount'}>{'Amount'}</StyledLabel>
-                                <Field name={'amount'} component={AmountSelector} />
-                                <ErrorMessage name={'amount'} />
-                            </div>
-                            <div>
-                                <StyledLabel htmlFor={'comment'}>{'Comment'}</StyledLabel>
-                                <Field name={'comment'} type={'text'} />
-                                <ErrorMessage name={'comment'} />
-                            </div>
-                            <button
-                                type={'button'}
-                                onClick={() => setIsEditing(false)}
-                            >
-                                {'Cancel'}
-                            </button>
-                            <button
-                                type={'submit'}
-                            >
-                                {'Update'}
-                            </button>
-                        </Form>
-                    );
-                }}
+                            <ErrorMessage name="toAccountName" />
+                        </div>
+                        <div>
+                            <StyledLabel htmlFor={'amount'}>{'Amount'}</StyledLabel>
+                            <Field name={'amount'} component={AmountSelector} />
+                            <ErrorMessage name={'amount'} />
+                        </div>
+                        <div>
+                            <StyledLabel htmlFor={'comment'}>{'Comment'}</StyledLabel>
+                            <Field name={'comment'} type={'text'} />
+                            <ErrorMessage name={'comment'} />
+                        </div>
+                        <button
+                            type={'button'}
+                            onClick={() => setIsEditing(false)}
+                        >
+                            {'Cancel'}
+                        </button>
+                        <button
+                            type={'submit'}
+                        >
+                            {'Update'}
+                        </button>
+                    </Form>
+                )}
             </Formik>
         </StyledModal>
     );

@@ -59,3 +59,36 @@ export const insertTransaction = async props => {
 
 	return 'OK';
 };
+
+export const deleteAllBalances = async () =>
+	conn().query(
+		escape`
+			DELETE FROM
+				balances
+			WHERE
+				balanceId > 0
+		`
+	);
+
+export const selectAllTransactions = async () =>
+    conn().query(
+		escape`
+			SELECT
+				date,
+				fromAccountId,
+				toAccountId,
+				amount
+			FROM
+				transactions
+			ORDER BY
+				date
+		`
+	);
+
+export const reinsertAllBalancesNew = async (balancesString) =>
+    conn().query(`
+		INSERT INTO
+			balances (accountId, balance, date)
+		VALUES
+			${balancesString}
+	`);

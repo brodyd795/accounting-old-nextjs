@@ -1,58 +1,42 @@
-import {
-	selectAll,
-	createTempTable,
-	renameTablesAndDropOldTable,
-	insertTransaction
-} from '../repositories/rebalance-repository';
 import {withTransactionWrapper} from '../repositories/transaction-wrapper-repository';
-
-import getLastAccountBalancesService from './last-account-balances-service';
-
-const processTransaction = async (transaction, user) => {
-	const lastBalances = await getLastAccountBalancesService({
-		toAccount: transaction.to_account,
-		fromAccount: transaction.from_account,
-		id: transaction.trn_id,
-		user
-	});
-	const toBalance = lastBalances.toAccount + transaction.amount;
-	const fromBalance = lastBalances.fromAccount - transaction.amount;
-
-	const newTransaction = {
-		id: transaction.trn_id,
-		userEmail: 'brodydingel@gmail.com',
-		toAccount: transaction.to_account,
-		fromAccount: transaction.from_account,
-		amount: transaction.amount,
-		toBalance,
-		fromBalance,
-		comment: transaction.comment
-	};
-
-	await insertTransaction({
-		transaction: newTransaction,
-		user
-	});
-};
-
-const processTransactions = async (allTransactions, user) => {
-	for (const transaction of allTransactions) {
-		await processTransaction(transaction, user);
-	}
-};
+import {deleteAllBalances, reinsertAllBalancesNew, selectAllTransactions} from '../repositories/rebalance-repository';
+import {formatBalanceDate} from '../helpers/date-helpers';
+import {formatBalancesForDb, getCurrentAccountBalance, getPreviousBalanceDate, reduceBalancesToString} from '../helpers/balance-helpers';
 
 const rebalanceService = async props => {
-	const {user} = props;
+	await deleteAllBalances();
 
-	const allTransactions = await selectAll(props);
+	const transactions = await selectAllTransactions();
 
-	await createTempTable({user});
+	let balances = {};
+	let previousBalanceDate, currentBalanceDate;
 
-	await processTransactions(allTransactions, user);
+	transactions.forEach((transaction) => {
+		const {date, fromAccountId, toAccountId, amount} = transaction;
 
-	await renameTablesAndDropOldTable({user});
+        currentBalanceDate = formatBalanceDate(date);
+		previousBalanceDate = getPreviousBalanceDate(currentBalanceDate, previousBalanceDate);
 
-	return;
+		const fromBalance = getCurrentAccountBalance(fromAccountId, balances, currentBalanceDate, previousBalanceDate) - amount;
+        const toBalance = getCurrentAccountBalance(toAccountId, balances, currentBalanceDate, previousBalanceDate) + amount;
+
+        balances = {
+            ...balances,
+            [fromAccountId]: {
+                ...balances[fromAccountId],
+                [currentBalanceDate]: fromBalance
+            },
+            [toAccountId]: {
+                ...balances[toAccountId],
+                [currentBalanceDate]: toBalance
+            }
+        };
+	});
+
+	const balancesToInsert = formatBalancesForDb(balances);
+	const valuesString = reduceBalancesToString(balancesToInsert);
+
+    await reinsertAllBalancesNew(valuesString);
 };
 
 export default async props => withTransactionWrapper(rebalanceService, props);

@@ -2,7 +2,9 @@ import rebalanceService from '../services/rebalance-service';
 
 export default async (req, res) => {
 	try {
-		await rebalanceService();
+		const {date = null} = req.body;
+
+		await rebalanceService({date});
 		
 		res.status(200).end();
 	} catch (error) {

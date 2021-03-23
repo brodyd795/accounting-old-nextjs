@@ -3,10 +3,10 @@ import {deleteAllBalances, reinsertAllBalancesNew, selectAllTransactions} from '
 import {formatBalanceDate} from '../helpers/date-helpers';
 import {formatBalancesForDb, getCurrentAccountBalance, getPreviousBalanceDate, reduceBalancesToString} from '../helpers/balance-helpers';
 
-const rebalanceService = async props => {
-	await deleteAllBalances();
+const rebalanceService = async ({date}) => {
+	await deleteAllBalances({date});
 
-	const transactions = await selectAllTransactions();
+	const transactions = await selectAllTransactions({date});
 
 	let balances = {};
 	let previousBalanceDate, currentBalanceDate;

@@ -60,17 +60,17 @@ export const insertTransaction = async props => {
 	return 'OK';
 };
 
-export const deleteAllBalances = async () =>
+export const deleteAllBalances = async ({date}) =>
 	conn().query(
 		escape`
 			DELETE FROM
 				balances
 			WHERE
-				balanceId > 0
+				date >= ${date ? date : '2000-01-01'}
 		`
 	);
 
-export const selectAllTransactions = async () =>
+export const selectAllTransactions = async ({date}) =>
     conn().query(
 		escape`
 			SELECT
@@ -80,6 +80,8 @@ export const selectAllTransactions = async () =>
 				amount
 			FROM
 				transactions
+			WHERE
+				date >= ${date ? date : '2000-01-01'}
 			ORDER BY
 				date
 		`

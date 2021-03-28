@@ -41,9 +41,9 @@ export const withTransactionWrapper = async (queries, props) => {
 			return results;
 		} catch (error) {
 			await conn().query('ROLLBACK');
-			console.log('error', error)
+			console.log('Error in transaction', error)
 
-			return new Error(error);
+			throw error;
 		} finally {
 			await conn().end();
 			isMidTransaction = false;

@@ -21,7 +21,8 @@ const RecentTable = ({data}) => {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					transactionId: rowToDelete.transactionId
+					transactionId: rowToDelete.transactionId,
+					date: rowToDelete.date
 				})
 			});
 

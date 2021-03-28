@@ -2,37 +2,6 @@ import escape from 'sql-template-strings';
 
 import {conn} from './transaction-wrapper-repository';
 
-export const selectAll = async props => {
-	const {user} = props;
-
-	const allTransactions = await conn(user).query(
-		'select * from transactions order by trn_id asc'
-	);
-
-	return allTransactions;
-};
-
-export const createTempTable = async props => {
-	const {user} = props;
-
-	await conn(user).query(
-		'create table if not exists transactions_TEMP like transactions'
-	);
-
-	return;
-};
-
-export const renameTablesAndDropOldTable = async props => {
-	const {user} = props;
-
-	await conn(user).query(
-		`rename table transactions TO transactions_OLD, transactions_TEMP TO transactions`
-	);
-	await conn(user).query(`drop table transactions_OLD`);
-
-	return;
-};
-
 export const insertTransaction = async props => {
 	const {transaction, user} = props;
 

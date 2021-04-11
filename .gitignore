@@ -14,7 +14,4 @@
 # local env files
 .env
 
-# scripts
-run.sh
-
 .vercel

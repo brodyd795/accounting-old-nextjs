@@ -22,7 +22,7 @@
 		}
 	},
 	"dependencies": {
-		"@auth0/nextjs-auth0": "^0.15.0",
+		"@auth0/nextjs-auth0": "^1.6.2",
 		"@svgr/webpack": "^5.4.0",
 		"date-fns": "^2.19.0",
 		"dotenv": "^8.2.0",

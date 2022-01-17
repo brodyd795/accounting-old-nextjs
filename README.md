@@ -1,3 +1,3 @@
 ### Description
 
-A personal accounting app. Hosted at https://accounting.dingel.dev/
+A previous iteration of my personal accounting app. No longer live or maintained.
